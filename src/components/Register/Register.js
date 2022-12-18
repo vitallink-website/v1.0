@@ -1,7 +1,6 @@
-import React from "react";
 import { Container, Form, Button, Row, Col } from "react-bootstrap";
 import { AiOutlineCheck, AiOutlineClose } from "react-icons/ai";
-import { useState } from "react";
+import React, { useState } from "react";
 
 function Register() {
   const [deviceRegistered, setDeviceRegistered] = useState(0);
@@ -9,13 +8,12 @@ function Register() {
   const [registerationCode, setRegisterationCode] = useState("");
 
   function checkRegisterationCode() {
-    console.log('check' + registerationCode)
+    console.log("check" + registerationCode);
     setDeviceRegistered(true);
     if (registerationCode > 100000000) {
+      localStorage.setItem("AUTH", "true");
       setDeviceCheck(true);
-    }
-    else
-      setDeviceCheck(false);
+    } else setDeviceCheck(false);
   }
 
   return (
@@ -34,10 +32,7 @@ function Register() {
               onChange={(event) => setRegisterationCode(event.target.value)}
             />
           </Form.Group>
-          <Button
-            type='button'
-            onClick={() => checkRegisterationCode()}
-          >
+          <Button type="button" onClick={() => checkRegisterationCode()}>
             Confirm
           </Button>
           <br />
@@ -57,8 +52,6 @@ function Register() {
           ) : (
             <h3></h3>
           )}
-          
-          
         </Form>
       </Container>
     </div>

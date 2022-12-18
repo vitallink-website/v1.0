@@ -5,16 +5,8 @@ import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import logo from "../Assets/logo.png";
 import { Link } from "react-router-dom";
-import { AiOutlineLogin } from "react-icons/ai";
-import { ImBlog } from "react-icons/im";
-import {
-  CiRuler,
-  AiOutlineHome,
-  AiOutlineUser,
-} from "react-icons/ai";
-import {
-  CiStethoscope
-}from "react-icons/ci";
+import { AiOutlineHome, AiOutlineUser, AiOutlineLogin } from "react-icons/ai";
+import { CiStethoscope } from "react-icons/ci";
 
 function NavBar() {
   const [expand, updateExpanded] = useState(false);
@@ -32,10 +24,10 @@ function NavBar() {
 
   return (
     <Navbar
-    expanded={expand}
-    fixed="top"
-    expand="md"
-    className={navColour ? "sticky" : "navbar"}
+      expanded={expand}
+      fixed="top"
+      expand="md"
+      className={navColour ? "sticky" : "navbar"}
     >
       <Container>
         {/* <Navbar.Brand href="/" className="d-flex">
@@ -46,7 +38,7 @@ function NavBar() {
             width="100px"
             height="80px"
           />
-        </Navbar.Brand> remember this for putting logo*/} 
+        </Navbar.Brand> remember this for putting logo*/}
         <Navbar.Toggle
           aria-controls="responsive-navbar-nav"
           onClick={() => {
@@ -86,7 +78,7 @@ function NavBar() {
             </Nav.Item>
           </Nav>
           <Nav>
-            <Nav.Item className = "NavTitle">
+            <Nav.Item className="NavTitle">
               <h1>HekiDesk</h1>
             </Nav.Item>
           </Nav>

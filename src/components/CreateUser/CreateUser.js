@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Container, Form, Button } from "react-bootstrap";
 import { useIndexedDB } from "react-indexed-db";
-
 
 function CreateUser() {
   const [name, setName] = useState("");
@@ -82,7 +81,7 @@ function CreateUser() {
               placeholder="date"
               onChange={(e) => setDate(e.target.value)}
             />
-          <span className="text-danger">{errors.dob}</span>
+            <span className="text-danger">{errors.dob}</span>
           </Form.Group>
 
           <Form.Group className="create-user-input">
@@ -92,7 +91,7 @@ function CreateUser() {
               placeholder="Weight"
               onChange={(e) => setWeight(e.target.value)}
             />
-          <span className="text-danger">{errors.weight}</span>
+            <span className="text-danger">{errors.weight}</span>
           </Form.Group>
 
           <Form.Group className="create-user-input">

@@ -1,29 +1,25 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import Button from 'react-bootstrap/Button';
-import {Link} from "react-router-dom";
+import Button from "react-bootstrap/Button";
+import { Link } from "react-router-dom";
 
 function Measure() {
   return (
-    <div className = "measure-section">
-      <Container className = "measure">
+    <div className="measure-section">
+      <Container className="measure">
         <Row>
-          <h1 className = "measure-title">User Name</h1>
+          <h1 className="measure-title">User Name</h1>
         </Row>
         <Row>
           <Col>
-          <Link to = "/Measure/Measurement" className = "measure-btn-link">
-            <Button className = "measure-btn">
-                 Measurement 
-            </Button>
+            <Link to="/Measure/Measurement" className="measure-btn-link">
+              <Button className="measure-btn">Measurement</Button>
             </Link>
           </Col>
           <Col>
-          <Link to = "/Measure/History" className = "measure-btn-link">
-            <Button className = "measure-btn">
-               History 
-            </Button>
-          </Link>
+            <Link to="/Measure/History" className="measure-btn-link">
+              <Button className="measure-btn">History</Button>
+            </Link>
           </Col>
         </Row>
       </Container>

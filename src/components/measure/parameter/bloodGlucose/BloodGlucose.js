@@ -1,11 +1,7 @@
-import React from 'react'
+import React from "react";
 
 function BloodGlucose() {
-  return (
-    <div class="measure-section">
-      
-    </div>
-  )
+  return <div class="measure-section"></div>;
 }
 
-export default BloodGlucose
+export default BloodGlucose;
