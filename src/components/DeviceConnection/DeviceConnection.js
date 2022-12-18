@@ -4,6 +4,7 @@ import SyncLoader from "react-spinners/SyncLoader";
 
 function DeviceConnection() {
   const [showSymbol, changeShowSymbol] = useState(0);
+
   return (
     <div class="register-section">
       <h1 style={{ marginBottom: "50px" }}>Device Connection</h1>

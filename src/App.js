@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createContext, useState } from "react";
 import Navbar from "./components/Navbar";
 import Home from "./components/Home/Home";
 import Footer from "./components/Footer";
@@ -30,92 +30,98 @@ import BPEstimate from "./components/measure/parameter/bloodPressure/BPEstimate"
 import ParameterHistory from "./components/measure/history/parameterHistory/ParameterHistory";
 import { initDB } from "react-indexed-db";
 import { DBConfig } from "./components/DBConfig/DBConfig";
-import { PrivateRoute } from "./components/PrivateRoute";
+import Protected from "./components/PrivateRoute";
 
+export const DeviceContext = createContext({});
+initDB(DBConfig);
 function App() {
-  initDB(DBConfig);
+  const [device, setDevice] = useState({});
+  const [isSignedIn] = useState(false);
   return (
     <div class="first-class">
       <Router>
-        <ScrollToTop>
-          {" "}
+        <DeviceContext.Provider value={{ device, setDevice }}>
           <div className="App">
             <Navbar />
             <Routes>
-              <Route path="/" element={<Home />} />
               <Route path="/About" element={<About />} />
               <Route path="/Register" element={<Register />} />
               <Route path="/CreateUser" element={<CreateUser />} />
-              <PrivateRoute
+              <Route
                 path="/DeviceConnection"
-                element={<DeviceConnection />}
+                element={
+                  <Protected isSignedIn={isSignedIn}>
+                    <DeviceConnection />
+                  </Protected>
+                }
               />
-              <PrivateRoute
+              <Route
                 path="/Measure/History/TimeHistory"
                 element={<TimeHistory />}
               />
-              <PrivateRoute
+              <Route
+                userRegistered
                 path="/Measure/History/ParameterHistory"
                 element={<ParameterHistory />}
               />
-              <PrivateRoute path="/Measure/History" element={<History />} />
-              <PrivateRoute
+              <Route path="/Measure/History" element={<History />} />
+              <Route
+                userRegistered
                 path="/Measure/Measurement/HeartAndLungSound"
                 element={<HeartAndLungSound />}
               />
-              <PrivateRoute
+              <Route
                 path="/Measure/Measurement/BloodGlucose"
                 element={<BloodGlucose />}
               />
-              <PrivateRoute
+              <Route
                 path="/Measure/Measurement/GalvanicSkinResponse"
                 element={<GalvanicSkinResponse />}
               />
-              <PrivateRoute
+              <Route
                 path="/Measure/Measurement/Oximetry"
                 element={<Oximetry />}
               />
-              <PrivateRoute
+              <Route
                 path="/Measure/Measurement/Temperature"
                 element={<Temperature />}
               />
-              <PrivateRoute
+              <Route
                 path="/Measure/Measurement/Cardiogram/AbnormalityDetection"
                 element={<AbnormalityDetection />}
               />{" "}
-              <PrivateRoute
+              <Route
                 path="/Measure/Measurement/Cardiogram"
                 element={<Cardiogram />}
               />
-              <PrivateRoute
+              <Route
                 path="/Measure/Measurement/BloodPressure/BPWithoutCalibration"
                 element={<BPWithoutCalibration />}
               />
-              <PrivateRoute
+              <Route
                 path="/Measure/Measurement/BloodPressure/BPWithCalibration"
                 element={<BPWithCalibration />}
               />
-              <PrivateRoute
+              <Route
                 path="/Measure/Measurement/BloodPressure/BPWithCalibration/BPCalibrationProcess"
                 element={<BPCalibrationProcess />}
               />
-              <PrivateRoute
+              <Route
                 path="/Measure/Measurement/BloodPressure/BPWithCalibration/BPEstimate"
                 element={<BPEstimate />}
               />{" "}
-              <PrivateRoute
+              <Route
                 path="/Measure/Measurement/BloodPressure"
                 element={<BloodPressure />}
               />
-              <PrivateRoute
-                path="/Measure/Measurement"
-                element={<Measurement />}
-              />
-              <PrivateRoute path="/Measure" element={<Measure />} />
+              <Route path="/Measure/Measurement" element={<Measurement />} />
+              <Route path="/Measure" element={<Measure />} />
+              <Route path="/" element={<Home />} />
             </Routes>
             <Footer />
           </div>
-        </ScrollToTop>
+        </DeviceContext.Provider>
+        <ScrollToTop />
       </Router>
     </div>
   );

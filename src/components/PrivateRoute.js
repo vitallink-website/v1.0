@@ -1,18 +1,9 @@
-import * as React from "react";
-import { useEffect } from "react";
-import { Route, useHistory } from "react-router-dom";
-
-export const PrivateRoute = ({ element, path }) => {
-  const isAuthenticated = localStorage.getItem("AUTH");
-  const history = useHistory();
-
-  useEffect(() => {
-    if (isAuthenticated === false) {
-      history.push("/v2/Identity/login");
-    }
-  }, [isAuthenticated, history]);
-
-  return isAuthenticated === true ? (
-    <Route path={path} element={element} />
-  ) : null;
-};
+import React from 'react'
+import { Navigate } from 'react-router-dom'
+function Protected({ isSignedIn, children }) {
+  if (!isSignedIn) {
+    return <Navigate to="/Register" replace />
+  }
+  return children
+}
+export default Protected
