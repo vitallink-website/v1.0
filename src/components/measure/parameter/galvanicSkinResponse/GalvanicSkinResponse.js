@@ -1,22 +1,29 @@
 import React from "react";
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Row, Col, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 function GalvanicSkinResponse() {
   return (
-    <div class="measure-section">
+    <div className="measure-section">
       <br />
       <br />
       <h2 className="measure-title">Galvanic Skin Response</h2>
 
       <Row className="measure-button-row">
         <Col>
-          <Button href="/Measure/Measurement"> Back </Button>
+          <Link to="/Measure/Measurement">
+            <Button> Back</Button>
+          </Link>
         </Col>
         <Col>
-          <Button href="./"> Output </Button>
+          <Link to="/">
+            <Button> Output</Button>
+          </Link>
         </Col>
         <Col>
-          <Button href="./"> Save </Button>
+          <Link to="/">
+            <Button> Save</Button>
+          </Link>
         </Col>
       </Row>
     </div>

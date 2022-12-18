@@ -1,9 +1,10 @@
 import React from "react";
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Row, Col, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 function BPWithCalibration() {
   return (
-    <div class="measure-section">
+    <div className="measure-section">
       <br />
       <br />
       <h2 className="measure-title">
@@ -11,21 +12,21 @@ function BPWithCalibration() {
       </h2>
       <Row>
         <Col>
-          <Button href="/Measure/Measurement/BloodPressure/BPWithCalibration/BPCalibrationProcess">
-            {" "}
-            Calibration{" "}
-          </Button>
+          <Link to="/Measure/Measurement/BloodPressure/BPWithCalibration/BPCalibrationProcess">
+            <Button> Calibration</Button>
+          </Link>
         </Col>
         <Col>
-          <Button href="/Measure/Measurement/BloodPressure/BPWithCalibration/BPEstimate">
-            {" "}
-            Measurement{" "}
-          </Button>
+          <Link to="/Measure/Measurement/BloodPressure/BPWithCalibration/BPEstimate">
+            <Button> Measurement</Button>
+          </Link>
         </Col>
       </Row>
       <Row>
         <Col className="measure-button-row">
-          <Button href="/Measure/Measurement/BloodPressure"> Back </Button>
+          <Link to="/Measure/Measurement/BloodPressure">
+            <Button> Back</Button>
+          </Link>
         </Col>
       </Row>
     </div>

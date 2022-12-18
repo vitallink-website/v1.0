@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext } from "react";
 import Navbar from "./components/Navbar";
 import Home from "./components/Home/Home";
 import Footer from "./components/Footer";
@@ -31,30 +31,43 @@ import ParameterHistory from "./components/measure/history/parameterHistory/Para
 import { initDB } from "react-indexed-db";
 import { DBConfig } from "./components/DBConfig/DBConfig";
 import Protected from "./components/PrivateRoute";
+import { useSignalFeed } from "./utilities/bluetooth";
 
 export const DeviceContext = createContext({});
 initDB(DBConfig);
 function App() {
-  const [device, setDevice] = useState({});
-  const [isSignedIn] = useState(false);
+  const {
+    device,
+    stop,
+    start,
+    isConnected,
+    channelConnected,
+    connect,
+    disconnect,
+    sendCommand,
+  } = useSignalFeed();
   return (
-    <div class="first-class">
+    <div className="first-class">
       <Router>
-        <DeviceContext.Provider value={{ device, setDevice }}>
+        <DeviceContext.Provider
+          value={{
+            device,
+            stop,
+            start,
+            isConnected,
+            channelConnected,
+            connect,
+            disconnect,
+            sendCommand,
+          }}
+        >
           <div className="App">
             <Navbar />
             <Routes>
               <Route path="/About" element={<About />} />
               <Route path="/Register" element={<Register />} />
               <Route path="/CreateUser" element={<CreateUser />} />
-              <Route
-                path="/DeviceConnection"
-                element={
-                  <Protected isSignedIn={isSignedIn}>
-                    <DeviceConnection />
-                  </Protected>
-                }
-              />
+              <Route path="/DeviceConnection" element={<DeviceConnection />} />
               <Route
                 path="/Measure/History/TimeHistory"
                 element={<TimeHistory />}
@@ -92,7 +105,11 @@ function App() {
               />{" "}
               <Route
                 path="/Measure/Measurement/Cardiogram"
-                element={<Cardiogram />}
+                element={
+                  <Protected isSignedIn={isConnected}>
+                    <Cardiogram />
+                  </Protected>
+                }
               />
               <Route
                 path="/Measure/Measurement/BloodPressure/BPWithoutCalibration"
@@ -115,7 +132,14 @@ function App() {
                 element={<BloodPressure />}
               />
               <Route path="/Measure/Measurement" element={<Measurement />} />
-              <Route path="/Measure" element={<Measure />} />
+              <Route
+                path="/Measure"
+                element={
+                  <Protected isSignedIn={isConnected}>
+                    <Measure />
+                  </Protected>
+                }
+              />
               <Route path="/" element={<Home />} />
             </Routes>
             <Footer />

@@ -1,7 +1,7 @@
 import React from "react";
 
 function BloodGlucose() {
-  return <div class="measure-section"></div>;
+  return <div className="measure-section"></div>;
 }
 
 export default BloodGlucose;

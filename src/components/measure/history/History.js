@@ -1,5 +1,6 @@
 import React from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 function History() {
   return (
@@ -7,22 +8,21 @@ function History() {
       <Container>
         <Row>
           <Col>
-            <Button href="/Measure/History/TimeHistory" className="measure-btn">
-              Time
-            </Button>
+            <Link to="/Measure/History/TimeHistory">
+              <Button className="measure-btn"> Time</Button>
+            </Link>
           </Col>
           <Col>
-            <Button
-              href="/Measure/History/ParameterHistory"
-              className="measure-btn"
-            >
-              Parameter
-            </Button>
+            <Link to="/Measure/History/ParameterHistory">
+              <Button className="measure-btn"> Parameter</Button>
+            </Link>
           </Col>
         </Row>
         <Row className="measure-button-row">
           <Col>
-            <Button href="/Measure"> Back </Button>
+            <Link to="/Measure">
+              <Button> Back</Button>
+            </Link>
           </Col>
         </Row>
       </Container>

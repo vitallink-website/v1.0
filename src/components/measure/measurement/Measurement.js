@@ -1,75 +1,55 @@
 import React from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 function Measurement() {
   return (
-    <div class="measure-section">
+    <div className="measure-section">
       <br />
       <br />
       <br />
       <Container>
         <Row>
           <Col>
-            <Button
-              href="/Measure/Measurement/HeartAndLungSound"
-              className="measure-btn"
-            >
-              Heart and Lung Sound
-            </Button>
+            <Link to="/Measure/Measurement/HeartAndLungSound">
+              <Button className="measure-btn"> Heart and Lung Sound</Button>
+            </Link>
           </Col>
         </Row>
         <Row>
           <Col>
-            <Button
-              href="/Measure/Measurement/Oximetry"
-              className="measure-btn"
-            >
-              Oximetry
-            </Button>
+            <Link to="/Measure/Measurement/Oximetry">
+              <Button className="measure-btn">Oximetry</Button>
+            </Link>
           </Col>
           <Col>
-            <Button
-              href="/Measure/Measurement/Cardiogram"
-              className="measure-btn"
-            >
-              Cardiogram
-            </Button>
+            <Link to="/Measure/Measurement/Cardiogram">
+              <Button className="measure-btn">Cardiogram</Button>
+            </Link>
           </Col>
         </Row>
         <Row>
           <Col>
-            <Button
-              href="/Measure/Measurement/BloodGlucose"
-              className="measure-btn"
-            >
-              Blood Glucose
-            </Button>
+            <Link to="/Measure/Measurement/BloodGlucose">
+              <Button className="measure-btn"> Blood Glucose</Button>
+            </Link>
           </Col>
           <Col>
-            <Button
-              href="/Measure/Measurement/BloodPressure"
-              className="measure-btn"
-            >
-              Blood Pressure
-            </Button>
+            <Link to="/Measure/Measurement/BloodPressure">
+              <Button className="measure-btn"> Blood Pressure</Button>
+            </Link>
           </Col>
         </Row>
         <Row>
           <Col>
-            <Button
-              href="/Measure/Measurement/Temperature"
-              className="measure-btn"
-            >
-              Temperature
-            </Button>
+            <Link to="/Measure/Measurement/Temperature">
+              <Button className="measure-btn">Temperature</Button>
+            </Link>
           </Col>
           <Col>
-            <Button
-              href="/Measure/Measurement/GalvanicSkinResponse"
-              className="measure-btn"
-            >
-              Galvanic Skin Response
-            </Button>
+            <Link to="/Measure/Measurement/GalvanicSkinResponse">
+              <Button className="measure-btn">Galvanic Skin Response</Button>
+            </Link>
           </Col>
         </Row>
         <br />
@@ -80,7 +60,9 @@ function Measurement() {
         </Row>
         <Row>
           <Col>
-            <Button href="/Measure"> Back </Button>
+            <Link to="/Measure">
+              <Button> Back </Button>
+            </Link>
           </Col>
         </Row>
       </Container>

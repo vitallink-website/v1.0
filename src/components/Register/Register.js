@@ -1,4 +1,4 @@
-import { Container, Form, Button, Row, Col } from "react-bootstrap";
+import { Container, Form, Button } from "react-bootstrap";
 import { AiOutlineCheck, AiOutlineClose } from "react-icons/ai";
 import React, { useState } from "react";
 
@@ -17,7 +17,7 @@ function Register() {
   }
 
   return (
-    <div class="register-section">
+    <div className="register-section">
       <Container>
         <h1 className="register-title">Registration of device</h1>
         <Form>
@@ -50,7 +50,7 @@ function Register() {
               </h3>
             )
           ) : (
-            <h3></h3>
+            <></>
           )}
         </Form>
       </Container>

@@ -3,25 +3,31 @@ import Particle from "../Particle";
 import { Row, Col, Button } from "react-bootstrap";
 import React from "react";
 import Home2 from "./Home2";
-
+import { Link } from "react-router-dom";
 
 function Home() {
   return (
     <div>
       <Particle />
-      <div class="home-section">
+      <div className="home-section">
         <Row>
           <Col>
-            <Button href="/Register" className="register-btn-inner" size="lg">
-              Register your device
-            </Button>
+            <Link to="/Register">
+              <Button className="register-btn-inner" size="lg">
+                {" "}
+                Register your device
+              </Button>
+            </Link>
           </Col>
         </Row>
         <Row>
           <Col>
-            <Button href="/CreateUser" className="register-btn-inner" size="lg">
-              Select User
-            </Button>
+            <Link to="/CreateUser">
+              <Button className="register-btn-inner" size="lg">
+                {" "}
+                Select User
+              </Button>
+            </Link>
           </Col>
         </Row>
         <br />

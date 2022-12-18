@@ -1,20 +1,23 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import { Button } from "react-bootstrap";
-import SyncLoader from "react-spinners/SyncLoader";
+// import SyncLoader from "react-spinners/SyncLoader";
+import { DeviceContext } from "../../App";
 
 function DeviceConnection() {
-  const [showSymbol, changeShowSymbol] = useState(0);
+  const bluetooth = useContext(DeviceContext);
 
   return (
-    <div class="register-section">
+    <div className="register-section">
       <h1 style={{ marginBottom: "50px" }}>Device Connection</h1>
-      <SyncLoader
+      {/* <SyncLoader
         color={"#fff"}
         size={15}
-        style={{ display: showSymbol ? "block" : "none" }}
+        style={{ display: bluetooth.isConnected ? "block" : "none" }}
       />
-      <br />
-      <Button onClick={() => changeShowSymbol(true)}>Pair</Button>
+      <br /> */}
+      <Button onClick={bluetooth.connect} disabled={bluetooth.isConnected}>
+        {bluetooth.isConnected ? "Paired!" : "Pair"}
+      </Button>
     </div>
   );
 }

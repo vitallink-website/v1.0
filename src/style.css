@@ -1,7 +1,7 @@
 html {
   --section-background-color: linear-gradient(
     to bottom,
-    #6DD3D5,
+    #6dd3d5,
     rgba(255, 255, 255, 0.904)
   );
 
@@ -22,7 +22,7 @@ button:focus {
 /*  Preloader */
 /* --------- */
 .first-class {
-  background-color: #6DD3D5;
+  background-color: #6dd3d5;
 }
 
 /* --------- */
@@ -50,7 +50,7 @@ button:focus {
   border-radius: 12px;
 }
 
-.row{
+.row {
   margin-right: 0px !important;
   margin-left: 0px !important;
 }
@@ -129,7 +129,7 @@ button:focus {
   padding-left: 1rem !important;
 }
 
-.NavTitle{
+.NavTitle {
   color: rgb(6, 6, 6);
   padding-left: 100px;
 }
@@ -144,14 +144,14 @@ button:focus {
   .navbar-nav .nav-item a::after {
     display: none !important;
   }
-  
+
   .navbar-nav .nav-link {
     color: rgb(255, 255, 255) !important;
     padding-right: 1rem !important;
     padding-left: 1rem !important;
   }
 
-  .NavTitle{
+  .NavTitle {
     padding-left: 30px;
     margin-top: 5px;
     color: rgb(255, 255, 255);
@@ -165,7 +165,6 @@ button:focus {
   height: 1.4em !important;
   width: 2.5em !important;
 }
-
 
 .nav-link {
   padding: 0.8rem 1rem !important;
@@ -267,7 +266,6 @@ button:focus {
   color: whitesmoke;
   text-align: center;
 }
-
 
 .heading {
   font-size: 2.4em !important;
@@ -623,7 +621,7 @@ button:focus {
   color: white !important;
 }
 
-.register-section{
+.register-section {
   position: relative !important;
   padding-top: 150px !important;
   padding-bottom: 30px !important;
@@ -632,28 +630,27 @@ button:focus {
   color: rgb(5, 5, 5) !important;
 }
 
-
-.register-input{
+.register-input {
   margin: 0 auto !important;
   width: 50% !important;
 }
 
-.time-history-row{
+.time-history-row {
   margin-bottom: 30px;
 }
 
-.create-user-input{
+.create-user-input {
   margin: 20px auto !important;
   width: 30% !important;
 }
 
-.btn{
+.btn {
   margin-top: 30px;
   padding: 10px 40px !important;
   background-color: #000000 !important;
 }
 
-.btn:hover{
+.btn:hover {
   transform: translateY(-2px) !important;
   background-color: #067ff886 !important;
   border-color: #067ff886 !important;
@@ -666,12 +663,12 @@ button:focus {
   background-color: #000000 !important;
 }
 
-.measure-btn .measure-btn-link{
+.measure-btn .measure-btn-link {
   text-decoration: none !important;
   color: #fffdfd !important;
 }
 
-.measure-btn{
+.measure-btn {
   position: relative;
   line-height: 1.4em !important;
   background-color: rgba(0, 0, 0, 1) !important;
@@ -683,18 +680,18 @@ button:focus {
   text-align: center !important;
 }
 
-.measure-btn:hover{
+.measure-btn:hover {
   transform: translateY(-2px) !important;
   background-color: #067ff886 !important;
   border-color: #067ff886 !important;
 }
 
-.measure-title{
+.measure-title {
   color: #060606;
   font-family: "cursive";
 }
 
-.register-title{
+.register-title {
   font-family: "cursive";
   margin-bottom: 50px;
 }
@@ -712,7 +709,6 @@ button:focus {
 .measure-right {
   padding-left: 80px !important;
 }
-
 
 @media (max-width: 767px) {
   .measure-left {
@@ -734,9 +730,7 @@ button:focus {
   color: #000000;
 }
 
-.measure-button-row{
-  bottom: 80px;
-  position: absolute;
+.measure-button-row {
   margin-left: auto;
   margin-right: auto;
   left: 0;
@@ -846,7 +840,7 @@ button:focus {
   display: none !important;
 }
 
-.register-btn-inner{
+.register-btn-inner {
   position: relative !important;
   line-height: 1.4em !important;
   background-color: rgba(0, 0, 0, 1) !important;
@@ -858,7 +852,7 @@ button:focus {
   text-align: center !important;
 }
 
-.register-btn-inner:hover{
+.register-btn-inner:hover {
   transform: translateY(-2px) !important;
   background-color: #067ff886 !important;
   border-color: #067ff886 !important;
@@ -868,8 +862,7 @@ button:focus {
   display: none !important;
 }
 
-Particle{
+Particle {
   position: relative;
   color: hsl(0, 90%, 50%);
 }
-

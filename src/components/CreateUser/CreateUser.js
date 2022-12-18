@@ -60,7 +60,7 @@ function CreateUser() {
   };
 
   return (
-    <div class="register-section">
+    <div className="register-section">
       <Container>
         <h1 style={{ marginBottom: "50px" }}>Create a new User</h1>
         <Form>

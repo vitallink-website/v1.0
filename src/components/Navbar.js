@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
-import logo from "../Assets/logo.png";
+// import logo from "../Assets/logo.png";
 import { Link } from "react-router-dom";
 import { AiOutlineHome, AiOutlineUser, AiOutlineLogin } from "react-icons/ai";
 import { CiStethoscope } from "react-icons/ci";
+import { DeviceContext } from "../App";
 
 function NavBar() {
   const [expand, updateExpanded] = useState(false);
@@ -19,6 +20,7 @@ function NavBar() {
       updateNavbar(false);
     }
   }
+  const bluetooth = useContext(DeviceContext);
 
   window.addEventListener("scroll", scrollHandler);
 
@@ -84,10 +86,12 @@ function NavBar() {
           </Nav>
           <Nav className="ms-auto" defaultActiveKey="#connect">
             <Nav.Item className="connect-btn">
-              <Button href="/DeviceConnection" className="connect-btn-inner">
-                <AiOutlineLogin style={{ fontSize: "1.2em" }} />
-                {" Connect your device "}
-              </Button>
+              <Link to="/DeviceConnection">
+                <Button className="connect-btn-inner">
+                  <AiOutlineLogin style={{ fontSize: "1.2em" }} />
+                  {bluetooth.isConnected ? "Connected" : "Connect your device "}
+                </Button>
+              </Link>
             </Nav.Item>
           </Nav>
         </Navbar.Collapse>
