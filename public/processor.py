@@ -15,7 +15,7 @@ def HeartBeat(ECG, fs):
   dt = 1/ fs
   t = np.linspace(0, len(ECG)/fs, len(ECG), endpoint = True)
   ECG_filtered1 = filter(ECG, 5, fs, 10, 'high')
-  ECG_filtered = filter(ECG_filtered1, fs / 2, fs, 10, 'low')
+  ECG_filtered = filter(ECG_filtered1, 15, fs, 10, 'low')
   z = ECG_filtered
   pos = z * (z>0)
   thr_R = (max(pos) + np.mean(pos)) / 3
@@ -50,8 +50,6 @@ def HeartBeat(ECG, fs):
   period = np.mean(peak_times[1:] - peak_times[:-1])
   HR = 60 / period
 
-  print("Here")
-  print(HR)
   return HR
 
 def HeartBeat_Adapter(ECG_data, sample_duration):
