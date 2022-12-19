@@ -13,7 +13,8 @@ function Cardiogram() {
     force: [],
   });
 
-  // const [heartBeat, setHeartBeat] = useState(0);
+  const [heartBeat, setHeartBeat] = useState(0);
+
   const [startSecond, setStart] = useState();
   const [active, setActive] = useState(false);
 
@@ -22,9 +23,7 @@ function Cardiogram() {
   const forces = [];
 
   useEffect(() => {
-    if (!bluetooth.channelConnected) {
-      bluetooth.sendCommand(0x03, hanldeCallback);
-    }
+    bluetooth.sendCommand(0x02, hanldeCallback);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bluetooth]);
 
@@ -44,9 +43,11 @@ function Cardiogram() {
     const duration = performance.now() - startSecond;
     console.log(Math.round(duration / 1000), duration);
     console.log(data);
-    const heartBeat = HeartBeat(ecg, Math.round(duration / 1000));
+    // eslint-disable-next-line no-undef
+    const heartBeat = HeartBeat(data.ecg, Math.round(duration / 1000));
     setHeartBeat(heartBeat);
   };
+    console.log("🚀 ~ file: Cardiogram.js:50 ~ stopInput ~ heartBeat", heartBeat)
 
   const autoStart = () => {
     !active ? startInput() : stopInput();
@@ -69,7 +70,17 @@ function Cardiogram() {
         </Col>
       </Row>
       <Row>
-        <Diagram dataKey={"ecg"} flow={data.ecg} />
+        <h1> {heartBeat}</h1>
+      </Row>
+      <Row>
+        <Diagram
+          dataKey={"ecg"}
+          flow={
+            active
+              ? data.ecg.slice(data.ecg.length - 200, data.ecg.length)
+              : data.ecg
+          }
+        />
       </Row>
       <Row className="measure-button-row">
         <Col>
@@ -84,7 +95,18 @@ function Cardiogram() {
         </Col>
         <Col>
           <Link to="/">
-            <Button> Save</Button>
+            <Button
+              onClick={() => {
+                setData({
+                  ppg: [],
+                  ecg: [],
+                  force: [],
+                });
+              }}
+            >
+              {" "}
+              Save
+            </Button>
           </Link>
         </Col>
       </Row>

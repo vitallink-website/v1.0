@@ -7,27 +7,30 @@ const WriteCharistristicUUID = "e505ffd3-ecd5-4365-b57d-70202ab71692";
 export const useSignalFeed = () => {
   const [device, setDevice] = useState();
   const [service, setService] = useState();
-  const [charastirctic, setCharastirctic] = useState();
-  console.log(
-    "🚀 ~ file: bluetooth.jsx:11 ~ useSignalFeed ~ charastirctic",
-    charastirctic
-  );
+  const [read_charastirctic, setCharastircticR] = useState();
+  const [write_charastirctic, setCharastircticW] = useState();
 
   const disconnect = () => {
+    console.log("disconnect");
+
     device.gatt.disconnect();
-    setService(null);
-    setCharastirctic(null);
+    setCharastircticR(null);
   };
 
   const start = async () => {
-    charastirctic.startNotifications();
+    console.log("start");
+
+    read_charastirctic.startNotifications();
   };
 
   const stop = async () => {
-    charastirctic.stopNotifications();
+    console.log("stop");
+
+    read_charastirctic.stopNotifications();
   };
 
   const connect = () => {
+    console.log("connect");
     navigator.bluetooth
       .requestDevice({
         optionalServices: [ServiceUUID],
@@ -40,6 +43,10 @@ export const useSignalFeed = () => {
             setService(service);
             service.getCharacteristic(WriteCharistristicUUID).then((char) => {
               char.writeValue(new Uint8Array([0x8f]).buffer);
+              setCharastircticW(char);
+            });
+            service.getCharacteristic(ReadCharistristicUUID).then((char) => {
+              setCharastircticR(char);
             });
           });
         });
@@ -47,29 +54,16 @@ export const useSignalFeed = () => {
   };
 
   const sendCommand = async (command, callBack) => {
-    setCharastirctic(null);
-    console.log("called");
-    service
-      .getCharacteristic(WriteCharistristicUUID)
-      .then((char2) => {
-        return char2.writeValue(new Uint8Array([command]).buffer);
-      })
-      .then(() => {
-        service
-          .getCharacteristic(ReadCharistristicUUID)
-          .then((charastirctic) => {
-            charastirctic.oncharacteristicvaluechanged = (data) => {
-              const ppg = data.srcElement.value.getUint16(0, true);
-              const ecg = data.srcElement.value.getInt16(2, true);
-              const force = Bytes2Float16(
-                data.srcElement.value.getUint16(4, true)
-              );
+    console.log("command");
+    write_charastirctic.writeValue(new Uint8Array([command]).buffer);
 
-              callBack({ ppg, ecg, force });
-            };
-            setCharastirctic(charastirctic);
-          });
-      });
+    read_charastirctic.oncharacteristicvaluechanged = (data) => {
+      const ppg = data.srcElement.value.getUint16(0, true);
+      const ecg = data.srcElement.value.getInt16(4, true);
+      const force = Bytes2Float16(data.srcElement.value.getUint16(6, true));
+
+      callBack({ ppg, ecg, force });
+    };
   };
 
   return {
@@ -77,7 +71,7 @@ export const useSignalFeed = () => {
     stop,
     start,
     isConnected: service !== undefined,
-    channelConnected: !!charastirctic,
+    channelConnected: !!read_charastirctic,
     connect,
     disconnect,
     sendCommand,
