@@ -41,13 +41,10 @@ function Cardiogram() {
   const stopInput = () => {
     bluetooth.stop();
     const duration = performance.now() - startSecond;
-    console.log(Math.round(duration / 1000), duration);
-    console.log(data);
     // eslint-disable-next-line no-undef
     const heartBeat = HeartBeat(data.ecg, Math.round(duration / 1000));
     setHeartBeat(heartBeat);
   };
-    console.log("🚀 ~ file: Cardiogram.js:50 ~ stopInput ~ heartBeat", heartBeat)
 
   const autoStart = () => {
     !active ? startInput() : stopInput();

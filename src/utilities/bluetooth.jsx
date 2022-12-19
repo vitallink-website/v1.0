@@ -54,7 +54,7 @@ export const useSignalFeed = () => {
   };
 
   const sendCommand = async (command, callBack) => {
-    console.log("command");
+    console.log("command ", command);
     write_charastirctic.writeValue(new Uint8Array([command]).buffer);
 
     read_charastirctic.oncharacteristicvaluechanged = (data) => {
