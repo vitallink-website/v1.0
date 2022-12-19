@@ -44,8 +44,8 @@ function Cardiogram() {
     const duration = performance.now() - startSecond;
     console.log(Math.round(duration / 1000), duration);
     console.log(data);
-    //const heartBeat = HeartBeat(ecg, Math.round(duration / 1000));
-    // setHeartBeat(heartBeat);
+    const heartBeat = HeartBeat(ecg, Math.round(duration / 1000));
+    setHeartBeat(heartBeat);
   };
 
   const autoStart = () => {
