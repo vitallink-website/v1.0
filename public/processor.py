@@ -57,6 +57,9 @@ def HeartBeat(ECG, fs):
 def HeartBeat_Adapter(ECG_data, sample_duration):
     array = np.asarray(ECG_data.to_py())
     fs = len(array) / sample_duration
-    return HeartBeat(array, fs)
+    try :
+      return HeartBeat(array, fs)
+    except: 
+      return 0
 
 createObject(create_proxy(HeartBeat_Adapter), "HeartBeat")
