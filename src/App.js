@@ -1,4 +1,4 @@
-import React, { createContext } from "react";
+import React, { createContext, useMemo } from "react";
 import Navbar from "./components/Navbar";
 import Home from "./components/Home/Home";
 import Footer from "./components/Footer";
@@ -46,21 +46,24 @@ function App() {
     disconnect,
     sendCommand,
   } = useSignalFeed();
+
+  const bluetooth = useMemo(
+    () => ({
+      device,
+      stop,
+      start,
+      isConnected,
+      channelConnected,
+      connect,
+      disconnect,
+      sendCommand,
+    }),
+    [channelConnected, connect, device, disconnect, isConnected, sendCommand, start, stop]
+  );
   return (
     <div className="first-class">
       <Router>
-        <DeviceContext.Provider
-          value={{
-            device,
-            stop,
-            start,
-            isConnected,
-            channelConnected,
-            connect,
-            disconnect,
-            sendCommand,
-          }}
-        >
+        <DeviceContext.Provider value={bluetooth}>
           <div className="App">
             <Navbar />
             <Routes>
