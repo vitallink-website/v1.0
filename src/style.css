@@ -67,7 +67,7 @@ button:focus {
 
 .navbar {
   position: fixed !important;
-  transition: all 0.3s ease-out 0s !important;
+  /* transition: all 0.3s ease-out 0s !important; */
   padding: 1.5rem 1rem !important;
   font-size: 1.2rem !important;
 }
@@ -129,9 +129,15 @@ button:focus {
   padding-left: 1rem !important;
 }
 
-.NavTitle {
+.nav-title {
   color: rgb(6, 6, 6);
   padding-left: 100px;
+}
+
+.nav-user-name{
+  color: rgb(6, 6, 6);
+  padding-top: 30px;
+  padding-left: 240px;
 }
 
 @media (max-width: 767px) {
@@ -188,7 +194,7 @@ button:focus {
   z-index: 1;
 }
 
-.navbar-nav .nav-item a::after {
+.navbar-nav .nav-item:not(.connect-btn) a::after {
   content: "";
   position: relative;
   display: block;
@@ -259,6 +265,7 @@ button:focus {
   position: relative !important;
   padding-top: 200px !important;
   padding-bottom: 30px !important;
+  min-height: 100vh !important;
 }
 
 .home-content {
@@ -865,4 +872,8 @@ button:focus {
 Particle {
   position: relative;
   color: hsl(0, 90%, 50%);
+}
+
+.user-dropdown-link{
+  padding: 10px 40px !important;
 }

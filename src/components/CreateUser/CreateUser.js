@@ -40,7 +40,6 @@ function CreateUser() {
     let err = Validator();
     setErrors(err);
     if (!Object.keys(err).length > 0) {
-      console.log("hi");
       add({
         name: name,
         weight: weight,
@@ -52,11 +51,15 @@ function CreateUser() {
           console.log("Data added: ", event);
         },
         (error) => {
-          console.log(":)");
           console.log(error);
         }
       );
     }
+    setName('');
+    setDate('');
+    setWeight('');
+    setHeight('');
+    setGender('');
   };
 
   return (
@@ -69,6 +72,7 @@ function CreateUser() {
             <Form.Control
               type="name"
               placeholder="Enter your name"
+              value = {name}
               onChange={(e) => setName(e.target.value)}
             />
             <span className="text-danger">{errors.userName}</span>
@@ -78,6 +82,7 @@ function CreateUser() {
             <Form.Label>Date of Birth</Form.Label>
             <Form.Control
               type="date"
+              value = {date}
               placeholder="date"
               onChange={(e) => setDate(e.target.value)}
             />
@@ -88,6 +93,7 @@ function CreateUser() {
             <Form.Label>Weight (kg) </Form.Label>
             <Form.Control
               type="data"
+              value = {weight}
               placeholder="Weight"
               onChange={(e) => setWeight(e.target.value)}
             />
@@ -98,6 +104,7 @@ function CreateUser() {
             <Form.Label>Height (Cm) </Form.Label>
             <Form.Control
               type="data"
+              value = {height}
               placeholder="Height"
               onChange={(e) => setHeight(e.target.value)}
             />
