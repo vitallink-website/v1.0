@@ -1,10 +1,9 @@
 import * as React from "react";
 import {
   Brush,
-  CartesianGrid,
+  Legend,
   Line,
   LineChart,
-  ReferenceArea,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -42,7 +41,6 @@ const Diagram = ({ dataKey = "", flow = [] }) => {
             setState({ ...state, refAreaRight: e.activeLabel })
           }
         >
-          <CartesianGrid />
           <XAxis
             dataKey="name"
             domain={[state.left, state.right]}
@@ -50,6 +48,7 @@ const Diagram = ({ dataKey = "", flow = [] }) => {
           />
           <YAxis domain={[state.bottom, state.top]} type="number" yAxisId="1" />
           <Tooltip />
+          <Legend />
           <Line
             yAxisId="1"
             type="linear"
@@ -58,14 +57,7 @@ const Diagram = ({ dataKey = "", flow = [] }) => {
             dot={false}
             animationDuration={500}
           />
-          {state.refAreaLeft && state.refAreaRight ? (
-            <ReferenceArea
-              yAxisId="1"
-              x1={state.refAreaLeft}
-              x2={state.refAreaRight}
-              strokeOpacity={0.3}
-            />
-          ) : null}
+
           <Brush />
         </LineChart>
       </ResponsiveContainer>

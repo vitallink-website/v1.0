@@ -41,7 +41,7 @@ const Oximetry = () => {
     bluetooth.start();
   };
 
-  const stopInput = (ppgs) => {
+  const stopInput = () => {
     bluetooth.stop();
   };
 

@@ -15,6 +15,7 @@ export const useSignalFeed = () => {
 
     device.gatt.disconnect();
     setCharastircticR(null);
+    setService();
   };
 
   const start = async () => {
