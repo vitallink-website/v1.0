@@ -32,8 +32,11 @@ import { initDB } from "react-indexed-db";
 import { DBConfig } from "./components/DBConfig/DBConfig";
 import Protected from "./components/PrivateRoute";
 import { useSignalFeed } from "./utilities/bluetooth";
+import UserInfo from "./utilities/UserInfo";
 
 export const DeviceContext = createContext({});
+export const UserContext = createContext({});
+
 initDB(DBConfig);
 function App() {
   const {
@@ -69,93 +72,122 @@ function App() {
       stop,
     ]
   );
+  const {
+    isUserSelected,
+    setIsUserSelected,
+    username,
+    setUsername,
+    setDate,
+    setWeight,
+    setHeight,
+    setGender,
+  } = UserInfo();
   return (
     <div className="first-class">
       <Router>
         <DeviceContext.Provider value={bluetooth}>
-          <div className="App">
-            <Navbar />
-            <Routes>
-              <Route path="/About" element={<About />} />
-              <Route path="/Register" element={<Register />} />
-              <Route path="/CreateUser" element={<CreateUser />} />
-              <Route path="/DeviceConnection" element={<DeviceConnection />} />
-              <Route
-                path="/Measure/History/TimeHistory"
-                element={<TimeHistory />}
-              />
-              <Route
-                userRegistered
-                path="/Measure/History/ParameterHistory"
-                element={<ParameterHistory />}
-              />
-              <Route path="/Measure/History" element={<History />} />
-              <Route
-                userRegistered
-                path="/Measure/Measurement/HeartAndLungSound"
-                element={<HeartAndLungSound />}
-              />
-              <Route
-                path="/Measure/Measurement/BloodGlucose"
-                element={<BloodGlucose />}
-              />
-              <Route
-                path="/Measure/Measurement/GalvanicSkinResponse"
-                element={<GalvanicSkinResponse />}
-              />
-              <Route
-                path="/Measure/Measurement/Oximetry"
-                element={<Oximetry />}
-              />
-              <Route
-                path="/Measure/Measurement/Temperature"
-                element={<Temperature />}
-              />
-              <Route
-                path="/Measure/Measurement/Cardiogram/AbnormalityDetection"
-                element={<AbnormalityDetection />}
-              />{" "}
-              <Route
-                path="/Measure/Measurement/Cardiogram"
-                element={
-                  <Protected isSignedIn={isConnected}>
-                    <Cardiogram />
-                  </Protected>
-                }
-              />
-              <Route
-                path="/Measure/Measurement/BloodPressure/BPWithoutCalibration"
-                element={<BPWithoutCalibration />}
-              />
-              <Route
-                path="/Measure/Measurement/BloodPressure/BPWithCalibration"
-                element={<BPWithCalibration />}
-              />
-              <Route
-                path="/Measure/Measurement/BloodPressure/BPWithCalibration/BPCalibrationProcess"
-                element={<BPCalibrationProcess />}
-              />
-              <Route
-                path="/Measure/Measurement/BloodPressure/BPWithCalibration/BPEstimate"
-                element={<BPEstimate />}
-              />{" "}
-              <Route
-                path="/Measure/Measurement/BloodPressure"
-                element={<BloodPressure />}
-              />
-              <Route path="/Measure/Measurement" element={<Measurement />} />
-              <Route
-                path="/Measure"
-                element={
-                  <Protected isSignedIn={isConnected}>
-                    <Measure />
-                  </Protected>
-                }
-              />
-              <Route path="/" element={<Home />} />
-            </Routes>
-            <Footer />
-          </div>
+          <UserContext.Provider
+            value={{
+              isUserSelected,
+              setIsUserSelected,
+              username,
+              setUsername,
+              setDate,
+              setWeight,
+              setHeight,
+              setGender,
+            }}
+          >
+            <div className="App">
+              <Navbar />
+              <Routes>
+                <Route path="/About" element={<About />} />
+                <Route path="/Register" element={<Register />} />
+                <Route path="/CreateUser" element={<CreateUser />} />
+                <Route
+                  path="/DeviceConnection"
+                  element={<DeviceConnection />}
+                />
+                <Route
+                  path="/Measure/History/TimeHistory"
+                  element={<TimeHistory />}
+                />
+                <Route
+                  userRegistered
+                  path="/Measure/History/ParameterHistory"
+                  element={<ParameterHistory />}
+                />
+                <Route path="/Measure/History" element={<History />} />
+                <Route
+                  userRegistered
+                  path="/Measure/Measurement/HeartAndLungSound"
+                  element={<HeartAndLungSound />}
+                />
+                <Route
+                  path="/Measure/Measurement/BloodGlucose"
+                  element={<BloodGlucose />}
+                />
+                <Route
+                  path="/Measure/Measurement/GalvanicSkinResponse"
+                  element={<GalvanicSkinResponse />}
+                />
+                <Route
+                  path="/Measure/Measurement/Oximetry"
+                  element={<Oximetry />}
+                />
+                <Route
+                  path="/Measure/Measurement/Temperature"
+                  element={<Temperature />}
+                />
+                <Route
+                  path="/Measure/Measurement/Cardiogram/AbnormalityDetection"
+                  element={<AbnormalityDetection />}
+                />{" "}
+                <Route
+                  path="/Measure/Measurement/Cardiogram"
+                  element={
+                    <Protected
+                      isSignedIn={true}
+                      isUserSelected={isUserSelected}
+                    >
+                      <Cardiogram />
+                    </Protected>
+                  }
+                />
+                <Route
+                  path="/Measure/Measurement/BloodPressure/BPWithoutCalibration"
+                  element={<BPWithoutCalibration />}
+                />
+                <Route
+                  path="/Measure/Measurement/BloodPressure/BPWithCalibration"
+                  element={<BPWithCalibration />}
+                />
+                <Route
+                  path="/Measure/Measurement/BloodPressure/BPWithCalibration/BPCalibrationProcess"
+                  element={<BPCalibrationProcess />}
+                />
+                <Route
+                  path="/Measure/Measurement/BloodPressure/BPWithCalibration/BPEstimate"
+                  element={<BPEstimate />}
+                />{" "}
+                <Route
+                  path="/Measure/Measurement/BloodPressure"
+                  element={<BloodPressure />}
+                />
+                <Route path="/Measure/Measurement" element={<Measurement />} />
+                <Route
+                  path="/Measure"
+                  element={
+                    <Protected isSignedIn={isConnected}>
+                      <Measure />
+                    </Protected>
+                  }
+                />
+                <Route path="/" element={<Home />} />
+              </Routes>
+              <Footer />
+            </div>
+          </UserContext.Provider>
         </DeviceContext.Provider>
         <ScrollToTop />
       </Router>
