@@ -72,6 +72,8 @@ function App() {
       stop,
     ]
   );
+
+
   const {
     isUserSelected,
     setIsUserSelected,
@@ -81,6 +83,7 @@ function App() {
     setWeight,
     setHeight,
     setGender,
+    SetAllInfo
   } = UserInfo();
   return (
     <div className="first-class">
@@ -96,10 +99,11 @@ function App() {
               setWeight,
               setHeight,
               setGender,
+              SetAllInfo
             }}
           >
             <div className="App">
-              <Navbar />
+              <Navbar username={username} />
               <Routes>
                 <Route path="/About" element={<About />} />
                 <Route path="/Register" element={<Register />} />
@@ -147,7 +151,7 @@ function App() {
                   path="/Measure/Measurement/Cardiogram"
                   element={
                     <Protected
-                      isSignedIn={true}
+                      isSignedIn={isConnected}
                       isUserSelected={isUserSelected}
                     >
                       <Cardiogram />
@@ -178,7 +182,7 @@ function App() {
                 <Route
                   path="/Measure"
                   element={
-                    <Protected isSignedIn={isConnected}>
+                    <Protected isSignedIn={isConnected} isUserSelected={isUserSelected}>
                       <Measure />
                     </Protected>
                   }

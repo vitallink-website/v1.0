@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Container, Form, Button } from "react-bootstrap";
 import { useIndexedDB } from "react-indexed-db";
+import { UserContext } from "../../App";
+import { useNavigate } from "react-router-dom";
 
 function CreateUser() {
   const [name, setName] = useState("");
@@ -11,6 +13,8 @@ function CreateUser() {
   const [errors, setErrors] = useState({});
   const { add } = useIndexedDB("users");
 
+  const UserInfo = useContext(UserContext);
+  const history = useNavigate();
   const handleSelectedChanges = (event) => {
     setGender(event.target.value);
   };
@@ -40,6 +44,14 @@ function CreateUser() {
     let err = Validator();
     setErrors(err);
     if (!Object.keys(err).length > 0) {
+      console.log("here");
+      UserInfo.SetAllInfo({
+        name,
+        weight,
+        height,
+        date,
+        gender,
+      });
       add({
         name: name,
         weight: weight,
@@ -55,11 +67,13 @@ function CreateUser() {
         }
       );
     }
-    setName('');
-    setDate('');
-    setWeight('');
-    setHeight('');
-    setGender('');
+    setName("");
+    setDate("");
+    setWeight("");
+    setHeight("");
+    setGender("");
+
+    history("/");
   };
 
   return (
@@ -72,7 +86,7 @@ function CreateUser() {
             <Form.Control
               type="name"
               placeholder="Enter your name"
-              value = {name}
+              value={name}
               onChange={(e) => setName(e.target.value)}
             />
             <span className="text-danger">{errors.userName}</span>
@@ -82,7 +96,7 @@ function CreateUser() {
             <Form.Label>Date of Birth</Form.Label>
             <Form.Control
               type="date"
-              value = {date}
+              value={date}
               placeholder="date"
               onChange={(e) => setDate(e.target.value)}
             />
@@ -93,7 +107,7 @@ function CreateUser() {
             <Form.Label>Weight (kg) </Form.Label>
             <Form.Control
               type="data"
-              value = {weight}
+              value={weight}
               placeholder="Weight"
               onChange={(e) => setWeight(e.target.value)}
             />
@@ -104,7 +118,7 @@ function CreateUser() {
             <Form.Label>Height (Cm) </Form.Label>
             <Form.Control
               type="data"
-              value = {height}
+              value={height}
               placeholder="Height"
               onChange={(e) => setHeight(e.target.value)}
             />

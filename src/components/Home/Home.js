@@ -4,23 +4,24 @@ import { Row, Col, Button, Dropdown, DropdownButton } from "react-bootstrap";
 import React from "react";
 import Home2 from "./Home2";
 import { Link } from "react-router-dom";
-import { useIndexedDB } from 'react-indexed-db';
+import { useIndexedDB } from "react-indexed-db";
 import { useState, useEffect, useContext } from "react";
 import { UserContext } from "../../App";
 
 function Home() {
   const UserInfo = useContext(UserContext);
 
-  const { getAll } = useIndexedDB('users');
+  const { getAll } = useIndexedDB("users");
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    getAll().then(usersFromDB => {
+    getAll().then((usersFromDB) => {
       setUsers(usersFromDB);
     });
   }, []);
 
   const handleChange = (user) => {
+    console.log("🚀 ~ file: Home.js:24 ~ handleChange ~ user", user)
     UserInfo.setIsUserSelected(true);
     UserInfo.setUsername(user.name);
     UserInfo.setDate(user.date);
@@ -46,17 +47,25 @@ function Home() {
         <Row>
           <Col>
             <DropdownButton className="user-dropdown-btn" title="Select User">
-              {users.map(user => (
-                  <Dropdown.Item className="user-dropdown-link" href="" onClick={() => handleChange(user)}>{user.name}</Dropdown.Item>
-                ))}
+              {users.map((user) => (
+                <Dropdown.Item
+                  className="user-dropdown-link"
+                  href=""
+                  onClick={() => handleChange(user)}
+                >
+                  {user.name}
+                </Dropdown.Item>
+              ))}
               <Dropdown.Divider />
-              <Dropdown.Item className="user-dropdown-link" href="/CreateUser">Create User</Dropdown.Item>
-            </DropdownButton>            
+              <Dropdown.Item className="user-dropdown-link">
+                <Link to="/CreateUser">Create User</Link>
+              </Dropdown.Item>
+            </DropdownButton>
           </Col>
         </Row>
       </div>
 
-        <Home2 />
+      <Home2 />
     </div>
   );
 }
