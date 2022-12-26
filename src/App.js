@@ -10,7 +10,7 @@ import Register from "./components/Register/Register";
 import CreateUser from "./components/CreateUser/CreateUser";
 import DeviceConnection from "./components/DeviceConnection/DeviceConnection";
 import TimeHistory from "./components/measure/history/timeHistory/TimeHistory";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { HashRouter as Router, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./components/ScrollToTop";
 import "./style.css";
 import "./App.css";
@@ -58,7 +58,16 @@ function App() {
       disconnect,
       sendCommand,
     }),
-    [channelConnected, connect, device, disconnect, isConnected, sendCommand, start, stop]
+    [
+      channelConnected,
+      connect,
+      device,
+      disconnect,
+      isConnected,
+      sendCommand,
+      start,
+      stop,
+    ]
   );
   return (
     <div className="first-class">
