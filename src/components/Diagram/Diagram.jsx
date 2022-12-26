@@ -1,9 +1,9 @@
 import * as React from "react";
 import {
-  CartesianGrid,
+  Brush,
+  Legend,
   Line,
   LineChart,
-  ReferenceArea,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -28,61 +28,11 @@ const Diagram = ({ dataKey = "", flow = [] }) => {
     animation: true,
   });
 
-  const getAxisYDomain = (from, to, ref, offset) => {
-    const refData = steam.slice(from - 1, to);
-    let [bottom, top] = [refData[0][ref], refData[0][ref]];
-    refData.forEach((d) => {
-      if (d[ref] > top) top = d[ref];
-      if (d[ref] < bottom) bottom = d[ref];
-    });
-
-    return [(bottom | 0) - offset, (top | 0) + offset];
-  };
-
-  function zoom() {
-    let { refAreaLeft, refAreaRight } = state;
-
-    if (refAreaLeft === refAreaRight || refAreaRight === "") {
-      setState(() => ({
-        refAreaLeft: "",
-        refAreaRight: "",
-      }));
-      return;
-    }
-
-    if (refAreaLeft > refAreaRight)
-      [refAreaLeft, refAreaRight] = [refAreaRight, refAreaLeft];
-
-    const [bottom, top] = getAxisYDomain(refAreaLeft, refAreaRight, "cost", 1);
-
-    setState(() => ({
-      refAreaLeft: "",
-      refAreaRight: "",
-      data: steam.slice(refAreaLeft, refAreaRight),
-      left: refAreaLeft,
-      right: refAreaRight,
-      bottom,
-      top,
-    }));
-  }
-
-  function zoomOut() {
-    setState(() => ({
-      data: undefined,
-      refAreaLeft: "",
-      refAreaRight: "",
-      left: "dataMin",
-      right: "dataMax",
-      top: "dataMax+1",
-      bottom: "dataMin",
-    }));
-  }
   return (
     <div className="highlight-bar-charts" style={{ userSelect: "none" }}>
-      <button onClick={zoomOut}>zoom out</button>
-      <ResponsiveContainer height={650} width={"100%"}>
+      <ResponsiveContainer height={400} width={"100%"}>
         <LineChart
-          data={state.data ?? steam}
+          data={steam}
           onMouseDown={(e) =>
             setState({ ...state, refAreaLeft: e.activeLabel })
           }
@@ -90,9 +40,7 @@ const Diagram = ({ dataKey = "", flow = [] }) => {
             state.refAreaLeft &&
             setState({ ...state, refAreaRight: e.activeLabel })
           }
-          onMouseUp={zoom}
         >
-          <CartesianGrid />
           <XAxis
             dataKey="name"
             domain={[state.left, state.right]}
@@ -100,6 +48,7 @@ const Diagram = ({ dataKey = "", flow = [] }) => {
           />
           <YAxis domain={[state.bottom, state.top]} type="number" yAxisId="1" />
           <Tooltip />
+          <Legend />
           <Line
             yAxisId="1"
             type="linear"
@@ -108,14 +57,8 @@ const Diagram = ({ dataKey = "", flow = [] }) => {
             dot={false}
             animationDuration={500}
           />
-          {state.refAreaLeft && state.refAreaRight ? (
-            <ReferenceArea
-              yAxisId="1"
-              x1={state.refAreaLeft}
-              x2={state.refAreaRight}
-              strokeOpacity={0.3}
-            />
-          ) : null}
+
+          <Brush />
         </LineChart>
       </ResponsiveContainer>
     </div>

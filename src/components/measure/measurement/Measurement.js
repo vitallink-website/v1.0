@@ -31,7 +31,7 @@ function Measurement() {
         <Row>
           <Col>
             <Link to="/Measure/Measurement/BloodGlucose">
-              <Button className="measure-btn"> Blood Glucose</Button>
+              <Button className="measure-btn" disabled> Blood Glucose</Button>
             </Link>
           </Col>
           <Col>
@@ -43,12 +43,12 @@ function Measurement() {
         <Row>
           <Col>
             <Link to="/Measure/Measurement/Temperature">
-              <Button className="measure-btn">Temperature</Button>
+              <Button className="measure-btn" disabled>Temperature</Button>
             </Link>
           </Col>
           <Col>
             <Link to="/Measure/Measurement/GalvanicSkinResponse">
-              <Button className="measure-btn">Galvanic Skin Response</Button>
+              <Button className="measure-btn" disabled>Galvanic Skin Response</Button>
             </Link>
           </Col>
         </Row>

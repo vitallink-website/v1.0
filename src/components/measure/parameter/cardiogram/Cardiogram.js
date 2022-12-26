@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Row, Col, Button } from "react-bootstrap";
+import { Row, Col, Button, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { DeviceContext } from "../../../../App";
 import Diagram from "../../../Diagram/Diagram";
@@ -9,18 +9,17 @@ function Cardiogram() {
 
   const [data, setData] = useState({
     ppg: [],
-    ecg: [],
+    ecg: [...new Array(200).fill(0)],
     force: [],
   });
 
   const [heartBeat, setHeartBeat] = useState(0);
+  const [show, setShow] = useState(false);
 
   const [startSecond, setStart] = useState();
   const [active, setActive] = useState(false);
 
-  const ppgs = [];
-  const ecgs = [];
-  const forces = [];
+  const ecgs = [...new Array(200).fill(0)];
 
   useEffect(() => {
     bluetooth.sendCommand(0x02, hanldeCallback);
@@ -28,31 +27,42 @@ function Cardiogram() {
   }, [bluetooth]);
 
   const hanldeCallback = ({ ppg, ecg, force }) => {
-    ppgs.push(ppg);
     ecgs.push(ecg);
-    forces.push(force);
-    setData({ ppg: ppgs, ecg: ecgs, force: forces });
+    if (ecgs.length > 1000) {
+      setActive(false);
+      stopInput(ecgs);
+    }
+    if (ecgs.length > 400) {
+      setData({ ecg: ecgs.slice(400) });
+    }
+    if ([398, 399, 400, 401, 402, 403, 404].includes(ecgs.length)) {
+      setActive(true);
+    }
   };
 
   const startInput = () => {
     bluetooth.start();
     setStart(performance.now());
   };
-  const stopInput = () => {
+
+  const stopInput = (ecgs) => {
     bluetooth.stop();
     const duration = performance.now() - startSecond;
-    console.log(Math.round(duration / 1000), duration);
-    console.log(data);
     // eslint-disable-next-line no-undef
-    const heartBeat = HeartBeat(data.ecg, Math.round(duration / 1000));
+    const heartBeat = HeartBeat(
+      ecgs.slice(200, 1000),
+      Math.round(duration / 1000)
+    );
     setHeartBeat(heartBeat);
   };
-    console.log("🚀 ~ file: Cardiogram.js:50 ~ stopInput ~ heartBeat", heartBeat)
 
   const autoStart = () => {
-    !active ? startInput() : stopInput();
-    setActive(!active);
+    startInput();
+    closeModal();
   };
+
+  const closeModal = () => setShow(false);
+  const openModal = () => setShow(true);
 
   return (
     <div className="measure-section">
@@ -66,21 +76,27 @@ function Cardiogram() {
           </h5>
         </Col>
         <Col sm={2}>
-          <Button onClick={autoStart}>{!active ? "Start" : "Stop"}</Button>
+          <Button onClick={openModal}>Start</Button>
         </Col>
-      </Row>
-      <Row>
-        <h1> {heartBeat}</h1>
       </Row>
       <Row>
         <Diagram
           dataKey={"ecg"}
           flow={
-            active
-              ? data.ecg.slice(data.ecg.length - 200, data.ecg.length)
-              : data.ecg
+            data.ecg.length > 200
+              ? active
+                ? data.ecg.slice(data.ecg.length - 200, data.ecg.length)
+                : data.ecg
+              : [new Array(200).fill(0)]
           }
         />
+      </Row>
+      <Row className="measure-button-row">
+        <Col>
+          <h5 style={{ color: "black" }}>
+            Heartbeat: {Number(heartBeat).toFixed(2)} (bpm)
+          </h5>
+        </Col>
       </Row>
       <Row className="measure-button-row">
         <Col>
@@ -89,27 +105,43 @@ function Cardiogram() {
           </Link>
         </Col>
         <Col>
-          <Link to="/">
-            <Button> Output</Button>
-          </Link>
+          <Button>Abnormality Detection</Button>
+        </Col>
+        <Col>
+          <Button
+            onClick={() => {
+              setData({
+                ppg: [],
+                ecg: [],
+                force: [],
+              });
+            }}
+          >
+            output
+          </Button>
         </Col>
         <Col>
           <Link to="/">
-            <Button
-              onClick={() => {
-                setData({
-                  ppg: [],
-                  ecg: [],
-                  force: [],
-                });
-              }}
-            >
-              {" "}
-              Save
-            </Button>
+            <Button>Save</Button>
           </Link>
         </Col>
       </Row>
+      <Modal show={show} onHide={closeModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>How to start recording...</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Put your hand on the device, after calibration it start its process
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={closeModal}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={autoStart}>
+            Let`s go!
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

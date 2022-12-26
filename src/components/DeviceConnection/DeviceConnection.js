@@ -18,6 +18,9 @@ function DeviceConnection() {
       <Button onClick={bluetooth.connect} disabled={bluetooth.isConnected}>
         {bluetooth.isConnected ? "Paired!" : "Pair"}
       </Button>
+      {bluetooth.isConnected && (
+        <Button onClick={bluetooth.disconnect}>Disconnect the device</Button>
+      )}
     </div>
   );
 }
