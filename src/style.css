@@ -18,6 +18,10 @@ button:focus {
   box-shadow: none !important;
 }
 
+a{
+  text-decoration: none !important;
+}
+
 /* --------- */
 /*  Preloader */
 /* --------- */
@@ -875,5 +879,5 @@ Particle {
 }
 
 .user-dropdown-link{
-  padding: 10px 40px !important;
+  padding: 10px 10px !important;
 }

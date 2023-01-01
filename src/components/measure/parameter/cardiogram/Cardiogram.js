@@ -3,9 +3,17 @@ import { Row, Col, Button, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { DeviceContext } from "../../../../App";
 import Diagram from "../../../Diagram/Diagram";
+import { RWebShare } from "react-web-share";
+import { useIndexedDB } from "react-indexed-db";
+import { UserContext } from "../../../../App";
+import userEvent from "@testing-library/user-event";
 
 function Cardiogram() {
   const bluetooth = useContext(DeviceContext);
+
+  const UserInfo = useContext(UserContext);
+  const { add } = useIndexedDB("cardiogramData");
+  const [user, setUser] = useState([]);  
 
   const [data, setData] = useState({
     ppg: [],
@@ -49,11 +57,31 @@ function Cardiogram() {
     bluetooth.stop();
     const duration = performance.now() - startSecond;
     // eslint-disable-next-line no-undef
-    const heartBeat = HeartBeat(
-      ecgs.slice(200, 1000),
-      Math.round(duration / 1000)
+    // const heartBeat = HeartBeat(
+    //   ecgs.slice(200, 1000),
+    //   Math.round(duration / 1000)
+    // );
+    // setHeartBeat(heartBeat);
+
+    const date = new Date();
+    const showTime = date.getFullYear() + ' ' + date.getMonth() + ' ' + date.getDate()
+        + ' '  +  date.getHours() 
+        + ':' + date.getMinutes() 
+        + ":" + date.getSeconds();
+
+    add({
+      userId: UserInfo.id,
+      ecgData: ecgs,
+      date : showTime, 
+      heartBeat: heartBeat
+    }).then(
+      (event) => {
+        console.log("cardiogramData added: ", event);
+      },
+      (error) => {
+        console.log(error);
+      }
     );
-    setHeartBeat(heartBeat);
   };
 
   const autoStart = () => {
@@ -108,17 +136,26 @@ function Cardiogram() {
           <Button>Abnormality Detection</Button>
         </Col>
         <Col>
-          <Button
-            onClick={() => {
-              setData({
-                ppg: [],
-                ecg: [],
-                force: [],
-              });
+          <RWebShare
+            data={{
+              text: "Web Share - GfG",
+              url: "http://localhost:3000",
+              title: "GfG",
             }}
+            onClick={() => console.log("shared successfully!")}
           >
-            output
-          </Button>
+            <Button
+              onClick={() => {
+                setData({
+                  ppg: [],
+                  ecg: [],
+                  force: [],
+                });
+              }}
+            >
+              output
+            </Button>
+          </RWebShare>
         </Col>
         <Col>
           <Link to="/">
