@@ -39,19 +39,14 @@ function CreateUser() {
     return errors;
   }
 
+
+
   const handleSubmit = (event) => {
     event.preventDefault();
     let err = Validator();
     setErrors(err);
+    let id;
     if (!Object.keys(err).length > 0) {
-      console.log("here");
-      UserInfo.SetAllInfo({
-        name,
-        weight,
-        height,
-        date,
-        gender,
-      });
       add({
         name: name,
         weight: weight,
@@ -61,18 +56,27 @@ function CreateUser() {
       }).then(
         (event) => {
           console.log("Data added: ", event);
+          id = event;
+          UserInfo.SetAllInfo({
+            id,
+            name,
+            weight,
+            height,
+            date,
+            gender,
+          });
         },
         (error) => {
           console.log(error);
         }
-      );
+        );
+      
     }
     setName("");
     setDate("");
     setWeight("");
     setHeight("");
     setGender("");
-
     history("/");
   };
 

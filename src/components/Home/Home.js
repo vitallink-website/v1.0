@@ -1,4 +1,3 @@
-// import { Container, Row, Col, Button} from "react-bootstrap";
 import Particle from "../Particle";
 import { Row, Col, Button, Dropdown, DropdownButton } from "react-bootstrap";
 import React from "react";
@@ -8,7 +7,8 @@ import { useIndexedDB } from "react-indexed-db";
 import { useState, useEffect, useContext } from "react";
 import { UserContext } from "../../App";
 
-function Home() {
+
+function Home({isConnected, isUserSelected }) {
   const UserInfo = useContext(UserContext);
 
   const { getAll } = useIndexedDB("users");
@@ -21,8 +21,9 @@ function Home() {
   }, []);
 
   const handleChange = (user) => {
-    console.log("🚀 ~ file: Home.js:24 ~ handleChange ~ user", user)
+    console.log("🚀 ~ file: Home.js:24 ~ handleChange ~ user", user);
     UserInfo.setIsUserSelected(true);
+    UserInfo.setId(user.id);
     UserInfo.setUsername(user.name);
     UserInfo.setDate(user.date);
     UserInfo.setWeight(user.weight);
@@ -49,18 +50,31 @@ function Home() {
             <DropdownButton className="user-dropdown-btn" title="Select User">
               {users.map((user) => (
                 <Dropdown.Item
+                  key = {user.id}
                   className="user-dropdown-link"
                   href=""
                   onClick={() => handleChange(user)}
+                  disabled={!isConnected}
                 >
                   {user.name}
                 </Dropdown.Item>
               ))}
               <Dropdown.Divider />
-              <Dropdown.Item className="user-dropdown-link">
+              <Dropdown.Item
+                className="user-dropdown-link"
+                disabled={!isConnected}
+              >
                 <Link to="/CreateUser">Create User</Link>
               </Dropdown.Item>
             </DropdownButton>
+            {isUserSelected ? (
+              <></>
+            ) : (
+              <h4 style={{ fontFamily: "cursive", paddingTop: "50px" }}>
+                {" "}
+                Please first connect your device, then select an user{" "}
+              </h4>
+            )}
           </Col>
         </Row>
       </div>

@@ -29,7 +29,7 @@ import BPCalibrationProcess from "./components/measure/parameter/bloodPressure/B
 import BPEstimate from "./components/measure/parameter/bloodPressure/BPEstimate";
 import ParameterHistory from "./components/measure/history/parameterHistory/ParameterHistory";
 import { initDB } from "react-indexed-db";
-import { DBConfig } from "./components/DBConfig/DBConfig";
+import { DBUser  } from "./components/DBConfig/DBConfig";
 import Protected from "./components/PrivateRoute";
 import { useSignalFeed } from "./utilities/bluetooth";
 import UserInfo from "./utilities/UserInfo";
@@ -37,7 +37,8 @@ import UserInfo from "./utilities/UserInfo";
 export const DeviceContext = createContext({});
 export const UserContext = createContext({});
 
-initDB(DBConfig);
+initDB(DBUser);
+
 function App() {
   const {
     device,
@@ -75,6 +76,8 @@ function App() {
 
 
   const {
+    id,
+    setId,
     isUserSelected,
     setIsUserSelected,
     username,
@@ -85,12 +88,15 @@ function App() {
     setGender,
     SetAllInfo
   } = UserInfo();
+  
   return (
     <div className="first-class">
       <Router>
         <DeviceContext.Provider value={bluetooth}>
           <UserContext.Provider
             value={{
+              id,
+              setId,
               isUserSelected,
               setIsUserSelected,
               username,
@@ -187,7 +193,7 @@ function App() {
                     </Protected>
                   }
                 />
-                <Route path="/" element={<Home />} />
+                <Route path="/" element={<Home isConnected={isConnected} isUserSelected={isUserSelected}/>} />
               </Routes>
               <Footer />
             </div>
