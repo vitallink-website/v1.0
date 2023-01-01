@@ -13,7 +13,7 @@ function Cardiogram() {
 
   const UserInfo = useContext(UserContext);
   const { add } = useIndexedDB("cardiogramData");
-  const [user, setUser] = useState([]);  
+  const [user, setUser] = useState([]);
 
   const [data, setData] = useState({
     ppg: [],
@@ -25,7 +25,7 @@ function Cardiogram() {
   const [show, setShow] = useState(false);
 
   const [startSecond, setStart] = useState();
-  const [active, setActive] = useState(false);
+  const [active, setActive] = useState(null);
 
   const ecgs = [...new Array(200).fill(0)];
 
@@ -34,17 +34,21 @@ function Cardiogram() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bluetooth]);
 
+  useEffect(() => {
+    if (active === false) stopInput(ecgs);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active]);
+  
   const hanldeCallback = ({ ppg, ecg, force }) => {
     ecgs.push(ecg);
-    if (ecgs.length > 1000) {
-      setActive(false);
-      stopInput(ecgs);
-    }
     if (ecgs.length > 400) {
       setData({ ecg: ecgs.slice(400) });
     }
     if ([398, 399, 400, 401, 402, 403, 404].includes(ecgs.length)) {
       setActive(true);
+      setTimeout(() => {
+        setActive(false);
+      }, [10000]);
     }
   };
 
@@ -57,23 +61,31 @@ function Cardiogram() {
     bluetooth.stop();
     const duration = performance.now() - startSecond;
     // eslint-disable-next-line no-undef
-    // const heartBeat = HeartBeat(
-    //   ecgs.slice(200, 1000),
-    //   Math.round(duration / 1000)
-    // );
-    // setHeartBeat(heartBeat);
+    const heartBeat = HeartBeat(
+      ecgs.slice(200, 1000),
+      Math.round(duration / 1000)
+    );
+    setHeartBeat(heartBeat);
 
     const date = new Date();
-    const showTime = date.getFullYear() + ' ' + date.getMonth() + ' ' + date.getDate()
-        + ' '  +  date.getHours() 
-        + ':' + date.getMinutes() 
-        + ":" + date.getSeconds();
+    const showTime =
+      date.getFullYear() +
+      " " +
+      date.getMonth() +
+      " " +
+      date.getDate() +
+      " " +
+      date.getHours() +
+      ":" +
+      date.getMinutes() +
+      ":" +
+      date.getSeconds();
 
     add({
       userId: UserInfo.id,
       ecgData: ecgs,
-      date : showTime, 
-      heartBeat: heartBeat
+      date: showTime,
+      heartBeat: heartBeat,
     }).then(
       (event) => {
         console.log("cardiogramData added: ", event);
