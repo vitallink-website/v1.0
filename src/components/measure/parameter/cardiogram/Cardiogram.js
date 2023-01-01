@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Row, Col, Button, Modal } from "react-bootstrap";
+import { Row, Col, Button, Modal, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { DeviceContext } from "../../../../App";
+import { DeviceContext, UserContext } from "../../../../App";
 import Diagram from "../../../Diagram/Diagram";
 import { RWebShare } from "react-web-share";
 import { useIndexedDB } from "react-indexed-db";
-import { UserContext } from "../../../../App";
 import userEvent from "@testing-library/user-event";
+import { useRef } from "react";
 
 function Cardiogram() {
   const bluetooth = useContext(DeviceContext);
@@ -14,12 +14,15 @@ function Cardiogram() {
   const UserInfo = useContext(UserContext);
   const { add } = useIndexedDB("cardiogramData");
   const [user, setUser] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const [data, setData] = useState({
     ppg: [],
     ecg: [...new Array(200).fill(0)],
     force: [],
   });
+  const timer1 = useRef(null);
+  const timer2 = useRef(null);
 
   const [heartBeat, setHeartBeat] = useState(0);
   const [show, setShow] = useState(false);
@@ -33,12 +36,19 @@ function Cardiogram() {
     bluetooth.sendCommand(0x02, hanldeCallback);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bluetooth]);
+  useEffect(() => {
+    // Clear the interval when the component unmounts
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+    };
+  }, []);
 
   useEffect(() => {
     if (active === false) stopInput(ecgs);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active]);
-  
+
   const hanldeCallback = ({ ppg, ecg, force }) => {
     ecgs.push(ecg);
     if (ecgs.length > 400) {
@@ -46,9 +56,9 @@ function Cardiogram() {
     }
     if ([398, 399, 400, 401, 402, 403, 404].includes(ecgs.length)) {
       setActive(true);
-      setTimeout(() => {
+      timer1.current = setTimeout(() => {
         setActive(false);
-      }, [10000]);
+      }, 10000);
     }
   };
 
@@ -97,8 +107,12 @@ function Cardiogram() {
   };
 
   const autoStart = () => {
+    setLoading(true);
     startInput();
-    closeModal();
+    timer2.current = setTimeout(() => {
+      closeModal();
+      setLoading(false);
+    }, 2000);
   };
 
   const closeModal = () => setShow(false);
@@ -179,9 +193,16 @@ function Cardiogram() {
         <Modal.Header closeButton>
           <Modal.Title>How to start recording...</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          Put your hand on the device, after calibration it start its process
-        </Modal.Body>
+        {loading ? (
+          <Modal.Body style={{ display: "flex", alignItems: "center" }}>
+            Please Hold your finger until plotting starts!{" "}
+            <Spinner animation="border" />
+          </Modal.Body>
+        ) : (
+          <Modal.Body>
+            Put your hand on the device, after calibration it start its process
+          </Modal.Body>
+        )}
         <Modal.Footer>
           <Button variant="secondary" onClick={closeModal}>
             Close

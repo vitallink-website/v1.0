@@ -5,7 +5,6 @@ import {
   Line,
   LineChart,
   ResponsiveContainer,
-  Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
@@ -47,7 +46,6 @@ const Diagram = ({ dataKey = "", flow = [] }) => {
             type="number"
           />
           <YAxis domain={[state.bottom, state.top]} type="number" yAxisId="1" />
-          <Tooltip />
           <Legend />
           <Line
             yAxisId="1"
