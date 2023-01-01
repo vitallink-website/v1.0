@@ -20,11 +20,11 @@
     <div id="root"></div>
     <script>
       function createObject(object, variableName) {
-        let execString = variableName + " = object";
-        eval(execString);
+        let execString = variableName + " = object"
+        eval(execString)
       }
     </script>
-    <py-config type="json" src="/py.config.json"></py-config>
-    <py-script src="/processor.py"></py-script>
+    <py-config type="json" src="%PUBLIC_URL%/py.config.json"></py-config>
+    <py-script src="%PUBLIC_URL%/processor.py"></py-script>
   </body>
 </html>
