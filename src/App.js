@@ -157,8 +157,8 @@ function App() {
                   path="/Measure/Measurement/Cardiogram"
                   element={
                     <Protected
-                      isSignedIn={isConnected}
-                      isUserSelected={isUserSelected}
+                      isSignedIn={true}
+                      isUserSelected={true}
                     >
                       <Cardiogram />
                     </Protected>
@@ -188,12 +188,12 @@ function App() {
                 <Route
                   path="/Measure"
                   element={
-                    <Protected isSignedIn={isConnected} isUserSelected={isUserSelected}>
+                    <Protected isSignedIn={true} isUserSelected={true}>
                       <Measure />
                     </Protected>
                   }
                 />
-                <Route path="/" element={<Home isConnected={isConnected} isUserSelected={isUserSelected}/>} />
+                <Route path="/" element={<Home isConnected={true} isUserSelected={true}/>} />
               </Routes>
               <Footer />
             </div>

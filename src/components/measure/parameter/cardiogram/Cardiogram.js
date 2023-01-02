@@ -1,19 +1,16 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { Row, Col, Button, Modal, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { DeviceContext, UserContext } from "../../../../App";
 import Diagram from "../../../Diagram/Diagram";
 import { RWebShare } from "react-web-share";
 import { useIndexedDB } from "react-indexed-db";
-import userEvent from "@testing-library/user-event";
-import { useRef } from "react";
 
 function Cardiogram() {
   const bluetooth = useContext(DeviceContext);
 
   const UserInfo = useContext(UserContext);
   const { add } = useIndexedDB("cardiogramData");
-  const [user, setUser] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [data, setData] = useState({
@@ -35,33 +32,47 @@ function Cardiogram() {
   async function shareData() {
     console.log(data.ecg);
     const date = new Date();
-    const showTime1 = date.getFullYear() + '/' + date.getMonth() + '/' + date.getDate()
-        + '-'  +  date.getHours() 
-        + ':' + date.getMinutes() 
-        + ":" + date.getSeconds();
-    const showTime2 = date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate()
-        + '-'  +  date.getHours() 
-        + '-' + date.getMinutes();
-    const fileName = showTime2 + '-CardiogramData.txt';
+    const showTime1 =
+      date.getFullYear() +
+      "/" +
+      date.getMonth() +
+      "/" +
+      date.getDate() +
+      "-" +
+      date.getHours() +
+      ":" +
+      date.getMinutes() +
+      ":" +
+      date.getSeconds();
+    const showTime2 =
+      date.getFullYear() +
+      "-" +
+      date.getMonth() +
+      "-" +
+      date.getDate() +
+      "-" +
+      date.getHours() +
+      "-" +
+      date.getMinutes();
+    const fileName = showTime2 + "-CardiogramData.txt";
 
     const json = JSON.stringify(data.ecg);
-    const blob = new Blob([json], { type: 'text/plain;charset=utf-8' })
-    const file = new Blob([blob], {type: 'text/plain'});
-    const image = new File([file], fileName, { type: file.type })
+    const blob = new Blob([json], { type: "text/plain;charset=utf-8" });
+    const file = new Blob([blob], { type: "text/plain" });
+    const image = new File([file], fileName, { type: file.type });
 
-  
     // Check if the device is able to share these files then open share dialog
     if (navigator.canShare && navigator.canShare({ files: [image] })) {
       try {
         await navigator.share({
-          files: [image],         // Array of files to share
-          title: showTime1 + ' CardiogramData' // Share dialog title
-        })
+          files: [image], // Array of files to share
+          title: showTime1 + " CardiogramData", // Share dialog title
+        });
       } catch (error) {
-        console.log('Sharing failed!', error)
+        console.log("Sharing failed!", error);
       }
     } else {
-      console.log('This device does not support sharing files.')
+      console.log("This device does not support sharing files.");
     }
   }
 
@@ -89,9 +100,10 @@ function Cardiogram() {
     }
     if ([398, 399, 400, 401, 402, 403, 404].includes(ecgs.length)) {
       setActive(true);
-      timer1.current = setTimeout(() => {
-        setActive(false);
-      }, 10000);
+      if (!timer1.current)
+        timer1.current = setTimeout(() => {
+          setActive(false);
+        }, 10000);
     }
   };
 
@@ -203,11 +215,7 @@ function Cardiogram() {
             }}
             onClick={() => console.log("shared successfully!")}
           >
-            <Button
-              onClick={() => shareData() }
-            >
-              output
-            </Button>
+            <Button onClick={() => shareData()}>output</Button>
           </RWebShare>
         </Col>
         <Col>
