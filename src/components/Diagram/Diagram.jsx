@@ -8,6 +8,9 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import * as saveSvgAsPng from "https://cdn.skypack.dev/save-svg-as-png@1.4.17";
+import { jsPDF } from "https://cdn.skypack.dev/jspdf@2.3.1";
+import { Button } from "react-bootstrap";
 
 const Diagram = ({ dataKey = "", flow = [] }) => {
   const steam = [...flow].map((item, id) => {
@@ -17,35 +20,33 @@ const Diagram = ({ dataKey = "", flow = [] }) => {
       impression: 0,
     };
   });
-  const [state, setState] = React.useState({
-    left: "dataMin",
-    right: "dataMax",
-    refAreaLeft: "",
-    refAreaRight: "",
-    top: "dataMax+10",
-    bottom: "dataMin-10",
-    animation: true,
-  });
+
+  function downloadSVGAsPNG(e) {
+    const svg = document.querySelector(".recharts-surface");
+    const filename = "myfilename.png";
+    saveSvgAsPng.saveSvgAsPng(svg, filename);
+  }
+  function downloadPDFAsPNG(e) {
+    const element = document.querySelector(".recharts-surface");
+    const filename = "myfilename.pdf";
+
+    saveSvgAsPng.svgAsPngUri(element).then((dataUrl) => {
+      console.log(dataUrl);
+      const doc = new jsPDF();
+      doc.addImage(dataUrl, "png", 0, 10, 200, 90).save(filename);
+    });
+  }
 
   return (
     <div className="highlight-bar-charts" style={{ userSelect: "none" }}>
       <ResponsiveContainer height={400} width={"100%"}>
-        <LineChart
-          data={steam}
-          onMouseDown={(e) =>
-            setState({ ...state, refAreaLeft: e.activeLabel })
-          }
-          onMouseMove={(e) =>
-            state.refAreaLeft &&
-            setState({ ...state, refAreaRight: e.activeLabel })
-          }
-        >
-          <XAxis
-            dataKey="name"
-            domain={[state.left, state.right]}
+        <LineChart data={steam}>
+          <XAxis dataKey="name" domain={["dataMin", "dataMax"]} type="number" />
+          <YAxis
+            domain={["dataMax-10", "dataMax+10"]}
             type="number"
+            yAxisId="1"
           />
-          <YAxis domain={[state.bottom, state.top]} type="number" yAxisId="1" />
           <Legend />
           <Line
             yAxisId="1"
@@ -59,6 +60,8 @@ const Diagram = ({ dataKey = "", flow = [] }) => {
           <Brush />
         </LineChart>
       </ResponsiveContainer>
+      <Button onClick={downloadSVGAsPNG}>download PNG</Button>
+      <Button onClick={downloadPDFAsPNG}>download PDF</Button>
     </div>
   );
 };
