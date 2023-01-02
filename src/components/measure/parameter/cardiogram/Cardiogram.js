@@ -32,6 +32,39 @@ function Cardiogram() {
 
   const ecgs = [...new Array(200).fill(0)];
 
+  async function shareData() {
+    console.log(data.ecg);
+    const date = new Date();
+    const showTime1 = date.getFullYear() + '/' + date.getMonth() + '/' + date.getDate()
+        + '-'  +  date.getHours() 
+        + ':' + date.getMinutes() 
+        + ":" + date.getSeconds();
+    const showTime2 = date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate()
+        + '-'  +  date.getHours() 
+        + '-' + date.getMinutes();
+    const fileName = showTime2 + '-CardiogramData.txt';
+
+    const json = JSON.stringify(data.ecg);
+    const blob = new Blob([json], { type: 'text/plain;charset=utf-8' })
+    const file = new Blob([blob], {type: 'text/plain'});
+    const image = new File([file], fileName, { type: file.type })
+
+  
+    // Check if the device is able to share these files then open share dialog
+    if (navigator.canShare && navigator.canShare({ files: [image] })) {
+      try {
+        await navigator.share({
+          files: [image],         // Array of files to share
+          title: showTime1 + ' CardiogramData' // Share dialog title
+        })
+      } catch (error) {
+        console.log('Sharing failed!', error)
+      }
+    } else {
+      console.log('This device does not support sharing files.')
+    }
+  }
+
   useEffect(() => {
     bluetooth.sendCommand(0x02, hanldeCallback);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -171,13 +204,7 @@ function Cardiogram() {
             onClick={() => console.log("shared successfully!")}
           >
             <Button
-              onClick={() => {
-                setData({
-                  ppg: [],
-                  ecg: [],
-                  force: [],
-                });
-              }}
+              onClick={() => shareData() }
             >
               output
             </Button>
