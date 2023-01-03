@@ -89,7 +89,7 @@ function Cardiogram() {
   }, []);
 
   useEffect(() => {
-    if (active === false) stopInput(ecgs);
+    if (active === false) stopInput();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active]);
 
@@ -103,7 +103,7 @@ function Cardiogram() {
       if (!timer1.current)
         timer1.current = setTimeout(() => {
           setActive(false);
-        }, 10000);
+        }, 12000);
     }
   };
 
@@ -112,14 +112,16 @@ function Cardiogram() {
     setStart(performance.now());
   };
 
-  const stopInput = (ecgs) => {
+  const stopInput = () => {
     bluetooth.stop();
     const duration = performance.now() - startSecond;
+    console.log(data.ecg, duration);
     // eslint-disable-next-line no-undef
-    const heartBeat = HeartBeat(
-      ecgs.slice(200, 1000),
+    const heartBeat = HeartBeat_ECG(
+      data.ecg.slice(400, 1200),
       Math.round(duration / 1000)
     );
+    console.log(heartBeat);
     setHeartBeat(heartBeat);
 
     const date = new Date();
@@ -157,7 +159,7 @@ function Cardiogram() {
     timer2.current = setTimeout(() => {
       closeModal();
       setLoading(false);
-    }, 2000);
+    }, 4000);
   };
 
   const closeModal = () => setShow(false);
@@ -207,16 +209,7 @@ function Cardiogram() {
           <Button>Abnormality Detection</Button>
         </Col>
         <Col>
-          <RWebShare
-            data={{
-              text: "Web Share - GfG",
-              url: "http://localhost:3000",
-              title: "GfG",
-            }}
-            onClick={() => console.log("shared successfully!")}
-          >
-            <Button onClick={() => shareData()}>output</Button>
-          </RWebShare>
+          <Button onClick={() => shareData()}>output</Button>
         </Col>
         <Col>
           <Link to="/">
