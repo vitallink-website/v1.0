@@ -8,8 +8,8 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import * as saveSvgAsPng from "https://cdn.skypack.dev/save-svg-as-png@1.4.17";
-import { jsPDF } from "https://cdn.skypack.dev/jspdf@2.3.1";
+import * as saveSvgAsPng from "save-svg-as-png";
+import { jsPDF } from "jspdf";
 import { Button } from "react-bootstrap";
 
 const Diagram = ({ dataKey = "", flow = [] }) => {
