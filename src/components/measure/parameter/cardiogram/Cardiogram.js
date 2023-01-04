@@ -3,8 +3,8 @@ import { Row, Col, Button, Modal, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { DeviceContext, UserContext } from "../../../../App";
 import Diagram from "../../../Diagram/Diagram";
-import { RWebShare } from "react-web-share";
 import { useIndexedDB } from "react-indexed-db";
+import { shareData } from "../../share/Share";
 
 function Cardiogram() {
   const bluetooth = useContext(DeviceContext);
@@ -28,53 +28,6 @@ function Cardiogram() {
   const [active, setActive] = useState(null);
 
   const ecgs = [...new Array(200).fill(0)];
-
-  async function shareData() {
-    console.log(data.ecg);
-    const date = new Date();
-    const showTime1 =
-      date.getFullYear() +
-      "/" +
-      date.getMonth() +
-      "/" +
-      date.getDate() +
-      "-" +
-      date.getHours() +
-      ":" +
-      date.getMinutes() +
-      ":" +
-      date.getSeconds();
-    const showTime2 =
-      date.getFullYear() +
-      "-" +
-      date.getMonth() +
-      "-" +
-      date.getDate() +
-      "-" +
-      date.getHours() +
-      "-" +
-      date.getMinutes();
-    const fileName = showTime2 + "-CardiogramData.txt";
-
-    const json = JSON.stringify(data.ecg);
-    const blob = new Blob([json], { type: "text/plain;charset=utf-8" });
-    const file = new Blob([blob], { type: "text/plain" });
-    const image = new File([file], fileName, { type: file.type });
-
-    // Check if the device is able to share these files then open share dialog
-    if (navigator.canShare && navigator.canShare({ files: [image] })) {
-      try {
-        await navigator.share({
-          files: [image], // Array of files to share
-          title: showTime1 + " CardiogramData", // Share dialog title
-        });
-      } catch (error) {
-        console.log("Sharing failed!", error);
-      }
-    } else {
-      console.log("This device does not support sharing files.");
-    }
-  }
 
   useEffect(() => {
     bluetooth.sendCommand(0x02, hanldeCallback);
@@ -117,7 +70,7 @@ function Cardiogram() {
     const duration = performance.now() - startSecond;
     console.log(data.ecg, duration);
     // eslint-disable-next-line no-undef
-    const heartBeat = HeartBeat_ECG(
+    const heartBeat = HeartBeat(
       data.ecg.slice(400, 1200),
       Math.round(duration / 1000)
     );
@@ -209,7 +162,7 @@ function Cardiogram() {
           <Button>Abnormality Detection</Button>
         </Col>
         <Col>
-          <Button onClick={() => shareData()}>output</Button>
+          <Button onClick={() => shareData(data.ecg)}>output</Button>
         </Col>
         <Col>
           <Link to="/">
