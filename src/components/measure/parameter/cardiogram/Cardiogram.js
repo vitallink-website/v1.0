@@ -3,7 +3,6 @@ import { Row, Col, Button, Modal, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { DeviceContext, UserContext } from "../../../../App";
 import Diagram from "../../../Diagram/Diagram";
-import { RWebShare } from "react-web-share";
 import { useIndexedDB } from "react-indexed-db";
 
 function Cardiogram() {
