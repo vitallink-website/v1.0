@@ -1,23 +1,59 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Row, Col, Button, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { DeviceContext } from "../../../../App";
+import { useIndexedDB } from "react-indexed-db";
+import { DeviceContext, UserContext } from "../../../../App";
 import Diagram from "../../../Diagram/Diagram";
 
 function BPWithoutCalibration() {
   const bluetooth = useContext(DeviceContext);
-
+  
   const [data, setData] = useState({
     ppg: [...new Array(200).fill(0)],
     ecg: [],
     force: [...new Array(200).fill(0)],
   });
-
+  
   const [show, setShow] = useState(false);
   const [active, setActive] = useState(false);
-
+  
   const ppgs = [...new Array(200).fill(0)];
   const forces = [...new Array(200).fill(0)];
+  
+  const UserInfo = useContext(UserContext);
+  const { add } = useIndexedDB("oximetryData");
+
+  const addToDB = () => {
+    const date = new Date();
+    const showTime =
+      date.getFullYear() +
+      " " +
+      date.getMonth() +
+      " " +
+      date.getDate() +
+      " " +
+      date.getHours() +
+      ":" +
+      date.getMinutes() +
+      ":" +
+      date.getSeconds();
+
+    add({
+      userId: UserInfo.id,
+      ppgData: ppgs,
+      forceData: forces,
+      date: showTime,
+      SYS: 0,
+      DIA: 0
+    }).then(
+      (event) => {
+        console.log("BP added: ", event);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
 
   useEffect(() => {
     bluetooth.sendCommand(0x05, hanldeCallback);
@@ -45,6 +81,8 @@ function BPWithoutCalibration() {
 
   const stopInput = () => {
     bluetooth.stop();
+    addToDB();
+
   };
 
   const autoStart = () => {

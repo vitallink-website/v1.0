@@ -46,6 +46,38 @@ function Cardiogram() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active]);
 
+  const addToDB = (heartBeat) => {
+    const date = new Date();
+    const showTime =
+      date.getFullYear() +
+      " " +
+      date.getMonth() +
+      " " +
+      date.getDate() +
+      " " +
+      date.getHours() +
+      ":" +
+      date.getMinutes() +
+      ":" +
+      date.getSeconds();
+
+    add({
+      userId: UserInfo.id,
+      ecgData: ecgs,
+      date: showTime,
+      heartBeat: heartBeat,
+      PRRRInterval: 0,
+      QRSDuration: 0
+    }).then(
+      (event) => {
+        console.log("cardiogramData added: ", event);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
   const hanldeCallback = ({ ppg, ecg, force }) => {
     ecgs.push(ecg);
     if (ecgs.length > 400) {
@@ -76,34 +108,7 @@ function Cardiogram() {
     );
     console.log(heartBeat);
     setHeartBeat(heartBeat);
-
-    const date = new Date();
-    const showTime =
-      date.getFullYear() +
-      " " +
-      date.getMonth() +
-      " " +
-      date.getDate() +
-      " " +
-      date.getHours() +
-      ":" +
-      date.getMinutes() +
-      ":" +
-      date.getSeconds();
-
-    add({
-      userId: UserInfo.id,
-      ecgData: ecgs,
-      date: showTime,
-      heartBeat: heartBeat,
-    }).then(
-      (event) => {
-        console.log("cardiogramData added: ", event);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    addToDB(heartBeat);
   };
 
   const autoStart = () => {

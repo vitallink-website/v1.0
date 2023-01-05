@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Row, Col, Button, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { DeviceContext } from "../../../../App";
 import Diagram from "../../../Diagram/Diagram";
+import { useIndexedDB } from "react-indexed-db";
+import { DeviceContext, UserContext } from "../../../../App";
 
 const Oximetry = () => {
   const bluetooth = useContext(DeviceContext);
@@ -17,6 +18,40 @@ const Oximetry = () => {
   const [active, setActive] = useState(false);
 
   const ppgs = [...new Array(200).fill(0)];
+
+  const UserInfo = useContext(UserContext);
+  const { add } = useIndexedDB("oximetryData");
+
+  const addToDB = () => {
+    const date = new Date();
+    const showTime =
+      date.getFullYear() +
+      " " +
+      date.getMonth() +
+      " " +
+      date.getDate() +
+      " " +
+      date.getHours() +
+      ":" +
+      date.getMinutes() +
+      ":" +
+      date.getSeconds();
+
+    add({
+      userId: UserInfo.id,
+      ppgData: ppgs,
+      date: showTime,
+      heartBeat: 0,
+      SPO2: 0
+    }).then(
+      (event) => {
+        console.log("oximetryData added: ", event);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
 
   useEffect(() => {
     bluetooth.sendCommand(0x01, hanldeCallback);
@@ -43,6 +78,7 @@ const Oximetry = () => {
 
   const stopInput = () => {
     bluetooth.stop();
+    addToDB();
   };
 
   const autoStart = () => {
