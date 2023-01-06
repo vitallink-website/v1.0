@@ -167,7 +167,7 @@ function Cardiogram() {
           <Button>Abnormality Detection</Button>
         </Col>
         <Col>
-          <Button onClick={() => shareData(data.ecg)}>output</Button>
+          <Button onClick={() => shareData()}>output</Button>
         </Col>
         <Col>
           <Link to="/">

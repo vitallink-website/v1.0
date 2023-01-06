@@ -26,22 +26,19 @@ export function shareData(data) {
       date.getMinutes();
 
     const svg = document.querySelector(".recharts-surface");
-    const fileName = showTime2 + "-CardiogramData.png";
-    saveSvgAsPng.saveSvgAsPng(svg, fileName);
-    console.log(svg);
-
-    saveSvgAsPng.svgAsPngUri(svg).then(async(dataUrl) => {
-        var file = new Blob([dataUrl],  { type: "image/png" });
-        console.log(file);
-        const image = new File([file], fileName, { type: file.type });
-        console.log(image);
     
-        // Check if the device is able to share these files then open share dialog
+    const fileName = showTime2 + "-CardiogramData.png";
+
+    saveSvgAsPng.svgAsPngUri(svg, {scale: 2.0, backgroundColor : "white",width: "1500", height : "800", top: "-100", "left" : "25"}).then(async(dataUrl) => {
+        const file = await (await fetch(dataUrl)).blob();
+
+        const image = new File([file], fileName, { type: file.type });    
         if (navigator.canShare && navigator.canShare({ files: [image] })) {
           try {
             await navigator.share({
-              files: [image], // Array of files to share
-              title: showTime1 + " CardiogramData", // Share dialog title
+              files: [image], 
+              text: "Heartbeat is 80",
+              title: showTime1 + " CardiogramData", 
             });
           } catch (error) {
             console.log("Sharing failed!", error);
@@ -50,10 +47,4 @@ export function shareData(data) {
           console.log("This device does not support sharing files.");
         }
     });
-    // console.log(file);
-
-    // const json = JSON.stringify(data);
-    // const file = new Blob([svg],  { type: "image/png" });
-    // const blob = new Blob([json], { type: "text/plain;charset=utf-8" });
-    //const file = new Blob([blob], { type: "text/plain" });
   }
