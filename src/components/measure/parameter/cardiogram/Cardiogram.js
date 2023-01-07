@@ -102,11 +102,13 @@ function Cardiogram() {
     const duration = performance.now() - startSecond;
     console.log(data.ecg, duration);
     // eslint-disable-next-line no-undef
-    const heartBeat = HeartBeat(
-      data.ecg.slice(400, 1200),
-      Math.round(duration / 1000)
+    const heartBeat = HeartBeat_ECG(
+      data.ecg.slice(300, 1200),
+      // Math.round(duration / 1000)
+      60
     );
     console.log(heartBeat);
+    console.log("duration: ", duration/1000);
     setHeartBeat(heartBeat);
     addToDB(heartBeat);
   };

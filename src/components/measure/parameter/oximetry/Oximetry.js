@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { Row, Col, Button, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Diagram from "../../../Diagram/Diagram";
@@ -8,11 +8,16 @@ import { DeviceContext, UserContext } from "../../../../App";
 const Oximetry = () => {
   const bluetooth = useContext(DeviceContext);
 
+  const [heartBeat, setHeartBeat] = useState(0);
+  const [startSecond, setStart] = useState();
+
   const [data, setData] = useState({
     ppg: [...new Array(200).fill(0)],
     ecg: [],
     force: [],
   });
+  const timer1 = useRef(null);
+  const timer2 = useRef(null);
 
   const [show, setShow] = useState(false);
   const [active, setActive] = useState(false);
@@ -57,6 +62,13 @@ const Oximetry = () => {
     bluetooth.sendCommand(0x01, hanldeCallback);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bluetooth]);
+  useEffect(() => {
+    // Clear the interval when the component unmounts
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+    };
+  }, []);
 
   const hanldeCallback = ({ ppg, ecg, force }) => {
     ppgs.push(ppg);
@@ -69,16 +81,35 @@ const Oximetry = () => {
     }
     if ([398, 399, 400, 401, 402, 403, 404].includes(ppgs.length)) {
       setActive(true);
+      if (!timer1.current)
+        timer1.current = setTimeout(() => {
+          setActive(false);
+        }, 12000);
     }
   };
 
   const startInput = () => {
+    setStart(performance.now());
+    console.log("start second ",startSecond);
+
     bluetooth.start();
   };
 
   const stopInput = () => {
     bluetooth.stop();
-    addToDB();
+    console.log(startSecond);
+    const duration = performance.now() - startSecond;
+    console.log(duration);
+    console.log(ppgs);
+    // eslint-disable-next-line no-undef
+    const heartBeat = HeartBeat_PPG(
+      ppgs.slice(300, 1200),
+      // Math.round(duration / 1000)
+      60
+    );
+    console.log(heartBeat);
+    setHeartBeat(heartBeat);
+    // addToDB();
   };
 
   const autoStart = () => {
@@ -119,7 +150,7 @@ const Oximetry = () => {
       <Row className="mt-5">
         <Col>
           <h5 style={{ color: "black" }}>
-            Heart Rate: {Number(0.0).toFixed(2)} (bpm)
+            Heart Rate: {Number(heartBeat).toFixed(2)} (bpm)
           </h5>
         </Col>
         <Col>

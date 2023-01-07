@@ -629,7 +629,7 @@ a{
   padding-bottom: 30px !important;
   min-height: 100vh;
   background-image: var(--section-background-color) !important;
-  color: white !important;
+  color: rgb(0, 0, 0) !important;
 }
 
 .register-section {
