@@ -7,6 +7,7 @@ const WriteCharistristicUUID = "e505ffd3-ecd5-4365-b57d-70202ab71692";
 export const useSignalFeed = () => {
   const [device, setDevice] = useState();
   const [service, setService] = useState();
+  const [loading, setLoading] = useState(false);
   const [read_charastirctic, setCharastircticR] = useState();
   const [write_charastirctic, setCharastircticW] = useState();
 
@@ -32,10 +33,11 @@ export const useSignalFeed = () => {
 
   const connect = () => {
     console.log("connect");
+    setLoading(true);
     navigator.bluetooth
       .requestDevice({
         optionalServices: [ServiceUUID],
-        filters: [{ name: "ECG-PPG-Server" }],
+        // filters: [{ name: "ECG-PPG-Server" }], //todo remove it later
       })
       .then((device) => {
         setDevice(device);
@@ -51,7 +53,8 @@ export const useSignalFeed = () => {
             });
           });
         });
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   const sendCommand = async (command, callBack) => {
@@ -76,6 +79,7 @@ export const useSignalFeed = () => {
     connect,
     disconnect,
     sendCommand,
+    loading
   };
 };
 
