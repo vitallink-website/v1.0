@@ -56,7 +56,7 @@ const Diagram = ({ dataKey = "", flow = [] }) => {
             animationDuration={500}
           />
 
-          <Brush />
+          {steam.length > 200 && <Brush />}
         </LineChart>
       </ResponsiveContainer>
       <Button onClick={downloadSVGAsPNG}>download PNG</Button>

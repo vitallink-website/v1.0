@@ -1,53 +1,58 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
-import { Row, Col, Button, Modal } from "react-bootstrap";
+import { Row, Col, Button, Modal, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Diagram from "../../../Diagram/Diagram";
 import { useIndexedDB } from "react-indexed-db";
 import { DeviceContext, UserContext } from "../../../../App";
+import { GetCurrectDateTime } from "../../../../utilities/time";
 
 const Oximetry = () => {
   const bluetooth = useContext(DeviceContext);
+  const UserInfo = useContext(UserContext);
+
+  const { add } = useIndexedDB("oximetryData");
+  const [loading, setLoading] = useState(false);
+
+  const [data, setData] = useState({
+    ppg: [...new Array(200).fill(0)],
+  });
+
+  const timer1 = useRef(null);
+  const timer2 = useRef(null);
 
   const [heartBeat, setHeartBeat] = useState(0);
   const [startSecond, setStart] = useState();
 
-  const [data, setData] = useState({
-    ppg: [...new Array(200).fill(0)],
-    ecg: [],
-    force: [],
-  });
-  const timer1 = useRef(null);
-  const timer2 = useRef(null);
-
   const [show, setShow] = useState(false);
+
   const [active, setActive] = useState(false);
 
   const ppgs = [...new Array(200).fill(0)];
 
-  const UserInfo = useContext(UserContext);
-  const { add } = useIndexedDB("oximetryData");
+  useEffect(() => {
+    bluetooth.sendCommand(0x01, hanldeCallback);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bluetooth]);
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (active === false) stopInput();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active]);
 
   const addToDB = () => {
-    const date = new Date();
-    const showTime =
-      date.getFullYear() +
-      " " +
-      date.getMonth() +
-      " " +
-      date.getDate() +
-      " " +
-      date.getHours() +
-      ":" +
-      date.getMinutes() +
-      ":" +
-      date.getSeconds();
-
     add({
       userId: UserInfo.id,
       ppgData: ppgs,
-      date: showTime,
-      heartBeat: 0,
-      SPO2: 0
+      date: GetCurrectDateTime(),
+      heartBeat: heartBeat,
+      SPO2: 0,
     }).then(
       (event) => {
         console.log("oximetryData added: ", event);
@@ -56,43 +61,26 @@ const Oximetry = () => {
         console.log(error);
       }
     );
-  }
-
-  useEffect(() => {
-    bluetooth.sendCommand(0x01, hanldeCallback);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bluetooth]);
-  useEffect(() => {
-    // Clear the interval when the component unmounts
-    return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-    };
-  }, []);
+  };
 
   const hanldeCallback = ({ ppg, ecg, force }) => {
     ppgs.push(ppg);
-    if (ppgs.length > 1000) {
-      setActive(false);
-      stopInput(ppgs);
-    }
     if (ppgs.length > 400) {
       setData({ ppg: ppgs.slice(400) });
     }
-    if ([398, 399, 400, 401, 402, 403, 404].includes(ppgs.length)) {
+    if ([399, 400, 401].includes(ppgs.length)) {
       setActive(true);
       if (!timer1.current)
         timer1.current = setTimeout(() => {
           setActive(false);
-        }, 12000);
+        }, 32000);
     }
   };
 
   const startInput = () => {
-    setStart(performance.now());
-    console.log("start second ",startSecond);
-
+    console.log("start second ", startSecond);
     bluetooth.start();
+    setStart(performance.now());
   };
 
   const stopInput = () => {
@@ -102,19 +90,19 @@ const Oximetry = () => {
     console.log(duration);
     console.log(ppgs);
     // eslint-disable-next-line no-undef
-    const heartBeat = HeartBeat_PPG(
-      ppgs.slice(300, 1200),
-      // Math.round(duration / 1000)
-      60
-    );
+    const heartBeat = HeartBeat_PPG(ppgs.slice(300, 1200), 30);
     console.log(heartBeat);
     setHeartBeat(heartBeat);
-    // addToDB();
+    addToDB();
   };
 
   const autoStart = () => {
+    setLoading(true);
     startInput();
-    closeModal();
+    timer2.current = setTimeout(() => {
+      closeModal();
+      setLoading(false);
+    }, 4000);
   };
 
   const closeModal = () => setShow(false);
@@ -191,9 +179,16 @@ const Oximetry = () => {
         <Modal.Header closeButton>
           <Modal.Title>How to start recording...</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          Put your hand on the device, after calibration it start its process
-        </Modal.Body>
+        {loading ? (
+          <Modal.Body style={{ display: "flex", alignItems: "center" }}>
+            Please Hold your finger until plotting starts!
+            <Spinner animation="border" />
+          </Modal.Body>
+        ) : (
+          <Modal.Body>
+            Put your hand on the device, after calibration it start its process
+          </Modal.Body>
+        )}
         <Modal.Footer>
           <Button variant="secondary" onClick={closeModal}>
             Close

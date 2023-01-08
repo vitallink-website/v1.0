@@ -5,26 +5,27 @@ import { DeviceContext, UserContext } from "../../../../App";
 import Diagram from "../../../Diagram/Diagram";
 import { useIndexedDB } from "react-indexed-db";
 import { shareData } from "../../share/Share";
+import { GetCurrectDateTime } from "../../../../utilities/time";
 
 function Cardiogram() {
   const bluetooth = useContext(DeviceContext);
-
   const UserInfo = useContext(UserContext);
+
   const { add } = useIndexedDB("cardiogramData");
   const [loading, setLoading] = useState(false);
 
   const [data, setData] = useState({
-    ppg: [],
     ecg: [...new Array(200).fill(0)],
-    force: [],
   });
+
   const timer1 = useRef(null);
   const timer2 = useRef(null);
 
-  const [heartBeat, setHeartBeat] = useState(0);
+  const [heartBeat, setHeartBeat] = useState(0);  
+  const [startSecond, setStart] = useState();
+
   const [show, setShow] = useState(false);
 
-  const [startSecond, setStart] = useState();
   const [active, setActive] = useState(null);
 
   const ecgs = [...new Array(200).fill(0)];
@@ -33,8 +34,8 @@ function Cardiogram() {
     bluetooth.sendCommand(0x02, hanldeCallback);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bluetooth]);
+
   useEffect(() => {
-    // Clear the interval when the component unmounts
     return () => {
       clearTimeout(timer1);
       clearTimeout(timer2);
@@ -47,27 +48,13 @@ function Cardiogram() {
   }, [active]);
 
   const addToDB = (heartBeat) => {
-    const date = new Date();
-    const showTime =
-      date.getFullYear() +
-      " " +
-      date.getMonth() +
-      " " +
-      date.getDate() +
-      " " +
-      date.getHours() +
-      ":" +
-      date.getMinutes() +
-      ":" +
-      date.getSeconds();
-
     add({
       userId: UserInfo.id,
       ecgData: ecgs,
-      date: showTime,
+      date: GetCurrectDateTime(),
       heartBeat: heartBeat,
       PRRRInterval: 0,
-      QRSDuration: 0
+      QRSDuration: 0,
     }).then(
       (event) => {
         console.log("cardiogramData added: ", event);
@@ -76,19 +63,19 @@ function Cardiogram() {
         console.log(error);
       }
     );
-  }
+  };
 
   const hanldeCallback = ({ ppg, ecg, force }) => {
     ecgs.push(ecg);
     if (ecgs.length > 400) {
       setData({ ecg: ecgs.slice(400) });
     }
-    if ([398, 399, 400, 401, 402, 403, 404].includes(ecgs.length)) {
+    if ([399, 400, 401].includes(ecgs.length)) {
       setActive(true);
       if (!timer1.current)
         timer1.current = setTimeout(() => {
           setActive(false);
-        }, 12000);
+        }, 32000);
     }
   };
 
@@ -102,13 +89,8 @@ function Cardiogram() {
     const duration = performance.now() - startSecond;
     console.log(data.ecg, duration);
     // eslint-disable-next-line no-undef
-    const heartBeat = HeartBeat_ECG(
-      data.ecg.slice(300, 1200),
-      // Math.round(duration / 1000)
-      60
-    );
+    const heartBeat = HeartBeat_ECG(data.ecg.slice(400), 30);
     console.log(heartBeat);
-    console.log("duration: ", duration/1000);
     setHeartBeat(heartBeat);
     addToDB(heartBeat);
   };
@@ -183,7 +165,7 @@ function Cardiogram() {
         </Modal.Header>
         {loading ? (
           <Modal.Body style={{ display: "flex", alignItems: "center" }}>
-            Please Hold your finger until plotting starts!{" "}
+            Please Hold your finger until plotting starts!
             <Spinner animation="border" />
           </Modal.Body>
         ) : (

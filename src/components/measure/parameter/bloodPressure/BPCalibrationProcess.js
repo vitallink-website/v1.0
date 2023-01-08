@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import Diagram from "../../../Diagram/Diagram";
 import { DeviceContext } from "../../../../App";
 
+// todo
+// sync with cardiogram
 function BPCalibrationProcess() {
   const bluetooth = useContext(DeviceContext);
 
