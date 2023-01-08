@@ -8,11 +8,12 @@ function Register() {
   const [registerationCode, setRegisterationCode] = useState("");
 
   function checkRegisterationCode() {
-    console.log("check" + registerationCode);
+    console.log("check " + registerationCode);
     setDeviceRegistered(true);
     if (registerationCode > 100000000) {
       localStorage.setItem("AUTH", "true");
       setDeviceCheck(true);
+      setRegisterationCode(null);
     } else setDeviceCheck(false);
   }
 
@@ -24,8 +25,8 @@ function Register() {
           <Form.Group>
             <Form.Label>Enter the serial number</Form.Label>
             <Form.Control
-              maxLength={10}
-              type="input"
+              min={100000000}
+              type="number"
               placeholder="serial number"
               className="register-input"
               value={registerationCode}
@@ -35,13 +36,9 @@ function Register() {
           <Button type="button" onClick={() => checkRegisterationCode()}>
             Confirm
           </Button>
-          <br />
-          <br />
-          <br />
-          {deviceRegistered ? (
+          {deviceRegistered && (
             deviceCheck ? (
               <h3 style={{ color: "green" }}>
-                {" "}
                 “Device Name” is Registered <AiOutlineCheck />
               </h3>
             ) : (
@@ -49,8 +46,6 @@ function Register() {
                 Registration Failed <AiOutlineClose />{" "}
               </h3>
             )
-          ) : (
-            <></>
           )}
         </Form>
       </Container>
