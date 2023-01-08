@@ -38,6 +38,7 @@ export const useSignalFeed = () => {
       .requestDevice({
         optionalServices: [ServiceUUID],
         // filters: [{ name: "ECG-PPG-Server" }], //todo remove it later
+        acceptAllDevices:true
       })
       .then((device) => {
         setDevice(device);

@@ -31,7 +31,6 @@ const Diagram = ({ dataKey = "", flow = [] }) => {
     const filename = "myfilename.pdf";
 
     saveSvgAsPng.svgAsPngUri(element).then((dataUrl) => {
-      console.log(dataUrl);
       const doc = new jsPDF();
       doc.addImage(dataUrl, "png", 0, 10, 200, 90).save(filename);
     });

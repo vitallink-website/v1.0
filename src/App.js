@@ -1,4 +1,4 @@
-import React, { createContext, useMemo } from "react";
+import React, { createContext, useEffect, useMemo, useState } from "react";
 import Navbar from "./components/Navbar";
 import Home from "./components/Home/Home";
 import Footer from "./components/Footer";
@@ -42,30 +42,27 @@ initDB(DBUser);
 function App() {
   const { isConnected, ...rest } = useSignalFeed();
 
-  const bluetooth = useMemo(
-    () => ({
+  const bluetooth = useMemo(() => {
+    return {
       ...rest,
       isConnected,
-    }),
-    [rest, isConnected]
-  );
+    };
+  }, [isConnected, rest]);
 
   const { isUserSelected, ...user } = UserInfo();
 
-  const registery = { isUserSelected, isSignedIn: isConnected };
+  const registery = {
+    isUserSelected: isUserSelected,
+    isSignedIn: true,
+  };
 
   return (
     <div className="first-class">
       <Router>
         <DeviceContext.Provider value={bluetooth}>
-          <UserContext.Provider
-            value={{
-              isUserSelected,
-              ...user,
-            }}
-          >
+          <UserContext.Provider value={{ isUserSelected, ...user }}>
             <div className="App">
-              <Navbar username={rest.username} />
+              <Navbar username={user.username} />
               <Routes>
                 <Route path="/About" element={<About />} />
                 <Route path="/Register" element={<Register />} />

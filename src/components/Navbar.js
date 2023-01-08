@@ -5,12 +5,12 @@ import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 // import logo from "../Assets/logo.png";
 import { Link } from "react-router-dom";
-import { AiOutlineHome, AiOutlineUser, AiOutlineLogin ,} from "react-icons/ai";
+import { AiOutlineHome, AiOutlineUser, AiOutlineLogin } from "react-icons/ai";
 import { BsPersonCircle } from "react-icons/bs";
 import { CiStethoscope } from "react-icons/ci";
 import { DeviceContext } from "../App";
 
-function NavBar({username}) {
+function NavBar({ username }) {
   const [expand, updateExpanded] = useState(false);
   const [navColour, updateNavbar] = useState(false);
 
@@ -88,7 +88,8 @@ function NavBar({username}) {
 
           <Nav>
             <Nav.Item className="nav-user-name">
-              <BsPersonCircle /> <h4 style = {{fontFamily: "cursive"}} > {username} </h4>
+              <BsPersonCircle />{" "}
+              <h4 style={{ fontFamily: "cursive" }}> {username} </h4>
             </Nav.Item>
           </Nav>
 
