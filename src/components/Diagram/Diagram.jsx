@@ -45,11 +45,6 @@ const Diagram = ({ dataKey = "", flow = [] }) => {
             dataKey="name"
             domain={["dataMin", "dataMax"]}
             type="number"
-            label={{
-              value: "random text",
-              position: "Bottom",
-              offset: 50,
-            }}
           />
           <YAxis
             domain={["dataMax-10", "dataMax+10"]}
