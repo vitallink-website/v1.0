@@ -38,7 +38,7 @@ export const useSignalFeed = () => {
       .requestDevice({
         optionalServices: [ServiceUUID],
         // filters: [{ name: "ECG-PPG-Server" }], //todo remove it later
-        acceptAllDevices:true
+        acceptAllDevices: true,
       })
       .then((device) => {
         setDevice(device);
@@ -64,10 +64,16 @@ export const useSignalFeed = () => {
 
     read_charastirctic.oncharacteristicvaluechanged = (data) => {
       const ppg = data.srcElement.value.getUint16(0, true);
+      // const red = data.srcElement.value.getUint16(2, true);
       const ecg = data.srcElement.value.getInt16(4, true);
       const force = Bytes2Float16(data.srcElement.value.getUint16(6, true));
 
-      callBack({ ppg, ecg, force });
+      callBack({
+        ppg,
+        ecg,
+        force,
+        // , red
+      });
     };
   };
 
@@ -80,7 +86,7 @@ export const useSignalFeed = () => {
     connect,
     disconnect,
     sendCommand,
-    loading
+    loading,
   };
 };
 

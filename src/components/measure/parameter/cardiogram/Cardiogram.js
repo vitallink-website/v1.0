@@ -20,6 +20,7 @@ function Cardiogram() {
 
   const timer1 = useRef(null);
   const timer2 = useRef(null);
+  // const timer3 = useRef(null);
 
   const [heartBeat, setHeartBeat] = useState(0);  
   const [startSecond, setStart] = useState();
@@ -70,6 +71,11 @@ function Cardiogram() {
     if (ecgs.length > 400) {
       setData({ ecg: ecgs.slice(400) });
     }
+    /**
+     * 
+     * const timer1.current = setTimeout(()=>{setActive(true);},3000);
+     * const timer3.current = setTimeout(()=>{setActive(false);},33000)
+     */
     if ([399, 400, 401].includes(ecgs.length)) {
       setActive(true);
       if (!timer1.current)
