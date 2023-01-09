@@ -23,7 +23,8 @@ function BPWithoutCalibration() {
   const forces = [...new Array(200).fill(0)];
   
   const UserInfo = useContext(UserContext);
-  const { add } = useIndexedDB("oximetryData");
+  
+  const { add } = useIndexedDB("BPData");
 
   const addToDB = () => {
     const date = new Date();

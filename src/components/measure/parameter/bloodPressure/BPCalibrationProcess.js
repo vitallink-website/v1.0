@@ -2,7 +2,9 @@ import React, { useContext, useEffect, useState } from "react";
 import { Row, Col, Button, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Diagram from "../../../Diagram/Diagram";
-import { DeviceContext } from "../../../../App";
+import { useIndexedDB } from "react-indexed-db";
+import { DeviceContext, UserContext } from "../../../../App";
+
 
 // todo
 // sync with cardiogram
@@ -15,11 +17,46 @@ function BPCalibrationProcess() {
     force: [],
   });
 
+  const UserInfo = useContext(UserContext);
+  const { add } = useIndexedDB("BPData");
+
   const [show, setShow] = useState(false);
   const [active, setActive] = useState(false);
 
   const ppgs = [...new Array(200).fill(0)];
   const ecgs = [...new Array(200).fill(0)];
+
+  const addToDB = () => {
+    const date = new Date();
+    const showTime =
+      date.getFullYear() +
+      " " +
+      date.getMonth() +
+      " " +
+      date.getDate() +
+      " " +
+      date.getHours() +
+      ":" +
+      date.getMinutes() +
+      ":" +
+      date.getSeconds();
+
+    add({
+      userId: UserInfo.id,
+      ppgData: ppgs,
+      forceData: 0,
+      date: showTime,
+      SYS: 0,
+      DIA: 0
+    }).then(
+      (event) => {
+        console.log("BP added: ", event);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
 
   useEffect(() => {
     bluetooth.sendCommand(0x03, hanldeCallback);
@@ -48,6 +85,7 @@ function BPCalibrationProcess() {
 
   const stopInput = () => {
     bluetooth.stop();
+    addToDB();
   };
 
   const autoStart = () => {

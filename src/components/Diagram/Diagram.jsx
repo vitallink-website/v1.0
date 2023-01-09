@@ -40,7 +40,16 @@ const Diagram = ({ dataKey = "", flow = [] }) => {
     <div className="highlight-bar-charts" style={{ userSelect: "none" }}>
       <ResponsiveContainer height={400} width={"100%"}>
         <LineChart data={steam}>
-          <XAxis dataKey="name" domain={["dataMin", "dataMax"]} type="number" />
+          <XAxis
+            dataKey="name"
+            domain={["dataMin", "dataMax"]}
+            type="number"
+            label={{
+              value: "random text",
+              position: "Bottom",
+              offset: 50,
+            }}
+          />
           <YAxis
             domain={["dataMax-10", "dataMax+10"]}
             type="number"

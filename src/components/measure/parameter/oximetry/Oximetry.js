@@ -21,6 +21,8 @@ const Oximetry = () => {
   const timer2 = useRef(null);
 
   const [heartBeat, setHeartBeat] = useState(0);
+  const [SPO2, setSPO2] = useState(0);
+  const [qualityIndex, setQualityIndex] = useState(0);
   const [startSecond, setStart] = useState();
 
   const [show, setShow] = useState(false);
@@ -79,6 +81,8 @@ const Oximetry = () => {
 
   const startInput = () => {
     console.log("start second ", startSecond);
+    setStart(performance.now());
+    console.log("start second ",startSecond);
     bluetooth.start();
     setStart(performance.now());
   };
@@ -90,10 +94,23 @@ const Oximetry = () => {
     console.log(duration);
     console.log(ppgs);
     // eslint-disable-next-line no-undef
-    const heartBeat = HeartBeat_PPG(ppgs.slice(300, 1200), 30);
+    const heartBeat = HeartBeat_PPG(
+      ppgs.slice(300, 1200),
+      // Math.round(duration / 1000)
+      60
+    );
+
+    // eslint-disable-next-line no-undef
+    const SPO2 = SpO2_estimation();
+    
+    // eslint-disable-next-line no-undef
+    const Quality_index = Quality_PPG();
+
     console.log(heartBeat);
     setHeartBeat(heartBeat);
-    addToDB();
+    setSPO2(SPO2);
+    setQualityIndex(Quality_index);
+    // addToDB();
   };
 
   const autoStart = () => {
@@ -142,11 +159,11 @@ const Oximetry = () => {
           </h5>
         </Col>
         <Col>
-          <h5 style={{ color: "black" }}>SpO2: {Number(0.0).toFixed(2)} (%)</h5>
+          <h5 style={{ color: "black" }}>SpO2: {Number(SPO2).toFixed(2)} (%)</h5>
         </Col>
         <Col>
           <h5 style={{ color: "black" }}>
-            Quality Index: {Number(0.0).toFixed(2)} (%)
+            Quality Index: {Number(qualityIndex).toFixed(2)} (%)
           </h5>
         </Col>
       </Row>

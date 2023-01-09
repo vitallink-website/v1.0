@@ -91,6 +91,7 @@ function Cardiogram() {
     // eslint-disable-next-line no-undef
     const heartBeat = HeartBeat_ECG(data.ecg.slice(400), 30);
     console.log(heartBeat);
+    console.log("duration: ", duration / 1000);
     setHeartBeat(heartBeat);
     addToDB(heartBeat);
   };
@@ -151,7 +152,9 @@ function Cardiogram() {
           <Button>Abnormality Detection</Button>
         </Col>
         <Col>
-          <Button onClick={() => shareData()}>output</Button>
+          <Button onClick={() => shareData("Heart beat: " + heartBeat)}>
+            output
+          </Button>
         </Col>
         <Col>
           <Link to="/">
