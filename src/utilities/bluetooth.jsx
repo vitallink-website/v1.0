@@ -7,6 +7,7 @@ const WriteCharistristicUUID = "e505ffd3-ecd5-4365-b57d-70202ab71692";
 export const useSignalFeed = () => {
   const [device, setDevice] = useState();
   const [service, setService] = useState();
+  const [loading, setLoading] = useState(false);
   const [read_charastirctic, setCharastircticR] = useState();
   const [write_charastirctic, setCharastircticW] = useState();
 
@@ -32,10 +33,12 @@ export const useSignalFeed = () => {
 
   const connect = () => {
     console.log("connect");
+    setLoading(true);
     navigator.bluetooth
       .requestDevice({
         optionalServices: [ServiceUUID],
-        filters: [{ name: "ECG-PPG-Server" }],
+        // filters: [{ name: "ECG-PPG-Server" }], //todo remove it later
+        acceptAllDevices: true,
       })
       .then((device) => {
         setDevice(device);
@@ -51,7 +54,8 @@ export const useSignalFeed = () => {
             });
           });
         });
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   const sendCommand = async (command, callBack) => {
@@ -60,10 +64,16 @@ export const useSignalFeed = () => {
 
     read_charastirctic.oncharacteristicvaluechanged = (data) => {
       const ppg = data.srcElement.value.getUint16(0, true);
+      // const red = data.srcElement.value.getUint16(2, true);
       const ecg = data.srcElement.value.getInt16(4, true);
       const force = Bytes2Float16(data.srcElement.value.getUint16(6, true));
 
-      callBack({ ppg, ecg, force });
+      callBack({
+        ppg,
+        ecg,
+        force,
+        // , red
+      });
     };
   };
 
@@ -76,6 +86,7 @@ export const useSignalFeed = () => {
     connect,
     disconnect,
     sendCommand,
+    loading,
   };
 };
 

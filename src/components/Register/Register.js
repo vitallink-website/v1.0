@@ -1,18 +1,22 @@
 import { Container, Form, Button } from "react-bootstrap";
 import { AiOutlineCheck, AiOutlineClose } from "react-icons/ai";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
-  const [deviceRegistered, setDeviceRegistered] = useState(0);
-  const [deviceCheck, setDeviceCheck] = useState(0);
+  const [deviceRegistered, setDeviceRegistered] = useState();
+  const [deviceCheck, setDeviceCheck] = useState();
   const [registerationCode, setRegisterationCode] = useState("");
 
+  const router = useNavigate();
+
   function checkRegisterationCode() {
-    console.log("check" + registerationCode);
     setDeviceRegistered(true);
     if (registerationCode > 100000000) {
       localStorage.setItem("AUTH", "true");
       setDeviceCheck(true);
+      setRegisterationCode(null);
+      router("/DeviceConnection");
     } else setDeviceCheck(false);
   }
 
@@ -24,8 +28,8 @@ function Register() {
           <Form.Group>
             <Form.Label>Enter the serial number</Form.Label>
             <Form.Control
-              maxLength={10}
-              type="input"
+              min={100000000}
+              type="number"
               placeholder="serial number"
               className="register-input"
               value={registerationCode}
@@ -35,23 +39,16 @@ function Register() {
           <Button type="button" onClick={() => checkRegisterationCode()}>
             Confirm
           </Button>
-          <br />
-          <br />
-          <br />
-          {deviceRegistered ? (
-            deviceCheck ? (
+          {deviceRegistered &&
+            (deviceCheck ? (
               <h3 style={{ color: "green" }}>
-                {" "}
                 “Device Name” is Registered <AiOutlineCheck />
               </h3>
             ) : (
               <h3 style={{ color: "red" }}>
-                Registration Failed <AiOutlineClose />{" "}
+                Registration Failed <AiOutlineClose />
               </h3>
-            )
-          ) : (
-            <></>
-          )}
+            ))}
         </Form>
       </Container>
     </div>

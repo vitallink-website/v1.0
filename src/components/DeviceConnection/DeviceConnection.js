@@ -1,20 +1,14 @@
 import React, { useContext } from "react";
 import { Button } from "react-bootstrap";
-// import SyncLoader from "react-spinners/SyncLoader";
 import { DeviceContext } from "../../App";
+import Spinner from "react-bootstrap/esm/Spinner";
 
 function DeviceConnection() {
   const bluetooth = useContext(DeviceContext);
-
   return (
     <div className="register-section">
       <h1 style={{ marginBottom: "50px" }}>Device Connection</h1>
-      {/* <SyncLoader
-        color={"#fff"}
-        size={15}
-        style={{ display: bluetooth.isConnected ? "block" : "none" }}
-      />
-      <br /> */}
+      {bluetooth.loading && <Spinner />}
       <Button onClick={bluetooth.connect} disabled={bluetooth.isConnected}>
         {bluetooth.isConnected ? "Paired!" : "Pair"}
       </Button>

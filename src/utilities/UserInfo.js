@@ -1,10 +1,10 @@
-import React from "react";
 import { useState } from "react";
 
 export const UserInfo = () => {
   const [id, setId] = useState(-1);
   const [isUserSelected, setIsUserSelected] = useState(false);
   const [username, setUsername] = useState("");
+  console.log("🚀 ~ file: UserInfo.js:7 ~ UserInfo ~ username", username)
   const [date, setDate] = useState("");
   const [weight, setWeight] = useState("");
   const [height, setHeight] = useState("");
@@ -12,7 +12,6 @@ export const UserInfo = () => {
 
   const SetAllInfo = (user) => {
     setIsUserSelected(true);
-    console.log("Second: ", user.id);
     setId(user.id);
     setUsername(user.name);
     setDate(user.date);
@@ -32,7 +31,11 @@ export const UserInfo = () => {
     setWeight,
     setHeight,
     setGender,
-    SetAllInfo
+    SetAllInfo,
+    date,
+    weight,
+    height,
+    gender,
   };
 };
 

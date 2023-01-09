@@ -29,7 +29,7 @@ import BPCalibrationProcess from "./components/measure/parameter/bloodPressure/B
 import BPEstimate from "./components/measure/parameter/bloodPressure/BPEstimate";
 import ParameterHistory from "./components/measure/history/parameterHistory/ParameterHistory";
 import { initDB } from "react-indexed-db";
-import { DBUser  } from "./components/DBConfig/DBConfig";
+import { DBUser } from "./components/DBConfig/DBConfig";
 import Protected from "./components/PrivateRoute";
 import { useSignalFeed } from "./utilities/bluetooth";
 import UserInfo from "./utilities/UserInfo";
@@ -40,76 +40,29 @@ export const UserContext = createContext({});
 initDB(DBUser);
 
 function App() {
-  const {
-    device,
-    stop,
-    start,
-    isConnected,
-    channelConnected,
-    connect,
-    disconnect,
-    sendCommand,
-  } = useSignalFeed();
+  const { isConnected, ...rest } = useSignalFeed();
 
-  const bluetooth = useMemo(
-    () => ({
-      device,
-      stop,
-      start,
+  const bluetooth = useMemo(() => {
+    return {
+      ...rest,
       isConnected,
-      channelConnected,
-      connect,
-      disconnect,
-      sendCommand,
-    }),
-    [
-      channelConnected,
-      connect,
-      device,
-      disconnect,
-      isConnected,
-      sendCommand,
-      start,
-      stop,
-    ]
-  );
+    };
+  }, [isConnected, rest]);
 
+  const { isUserSelected, ...user } = UserInfo();
 
-  const {
-    id,
-    setId,
-    isUserSelected,
-    setIsUserSelected,
-    username,
-    setUsername,
-    setDate,
-    setWeight,
-    setHeight,
-    setGender,
-    SetAllInfo
-  } = UserInfo();
-  
+  const registery = {
+    isUserSelected: isUserSelected,
+    isSignedIn: true,
+  };
+
   return (
     <div className="first-class">
       <Router>
         <DeviceContext.Provider value={bluetooth}>
-          <UserContext.Provider
-            value={{
-              id,
-              setId,
-              isUserSelected,
-              setIsUserSelected,
-              username,
-              setUsername,
-              setDate,
-              setWeight,
-              setHeight,
-              setGender,
-              SetAllInfo
-            }}
-          >
+          <UserContext.Provider value={{ isUserSelected, ...user }}>
             <div className="App">
-              <Navbar username={username} />
+              <Navbar username={user.username} />
               <Routes>
                 <Route path="/About" element={<About />} />
                 <Route path="/Register" element={<Register />} />
@@ -156,10 +109,7 @@ function App() {
                 <Route
                   path="/Measure/Measurement/Cardiogram"
                   element={
-                    <Protected
-                      isSignedIn={true}
-                      isUserSelected={true}
-                    >
+                    <Protected {...registery}>
                       <Cardiogram />
                     </Protected>
                   }
@@ -188,12 +138,12 @@ function App() {
                 <Route
                   path="/Measure"
                   element={
-                    <Protected isSignedIn={true} isUserSelected={true}>
+                    <Protected {...registery}>
                       <Measure />
                     </Protected>
                   }
                 />
-                <Route path="/" element={<Home isConnected={true} isUserSelected={true}/>} />
+                <Route path="/" element={<Home {...registery} />} />
               </Routes>
               <Footer />
             </div>

@@ -5,79 +5,61 @@ import { UserContext } from "../../App";
 import { useNavigate } from "react-router-dom";
 
 function CreateUser() {
-  const [name, setName] = useState("");
-  const [date, setDate] = useState("");
-  const [weight, setWeight] = useState("");
-  const [height, setHeight] = useState("");
-  const [gender, setGender] = useState("");
+  const [form, setForm] = useState({
+    name: "",
+    dob: null,
+    weight: 50,
+    height: 160,
+    gender: null,
+  });
   const [errors, setErrors] = useState({});
-  const { add } = useIndexedDB("users");
 
+  const { add } = useIndexedDB("users");
   const UserInfo = useContext(UserContext);
   const history = useNavigate();
-  const handleSelectedChanges = (event) => {
-    setGender(event.target.value);
-  };
 
   function Validator() {
     let errors = {};
-    if (!name.trim()) {
+    if (!form.name.trim()) {
       errors.userName = "Please enter your name";
     }
-    if (!weight) {
+    if (!form.weight) {
       errors.weight = "Please enter your weight";
     }
-    if (!height) {
+    if (!form.height || form.height < 50) {
       errors.height = "Please enter your height";
     }
-    if (!date.trim()) {
+    if (!form.dob) {
       errors.dob = "Please select your Date of Birth";
     }
-    if (!gender.trim()) {
+    if (!form.gender) {
       errors.gender = "Please select your gender";
     }
     return errors;
   }
 
-
-
   const handleSubmit = (event) => {
     event.preventDefault();
     let err = Validator();
-    setErrors(err);
+    setErrors(Validator());
     let id;
-    if (!Object.keys(err).length > 0) {
-      add({
-        name: name,
-        weight: weight,
-        height: height,
-        dob: date,
-        gender: gender,
-      }).then(
+    if (Object.keys(err).length === 0) {
+      add(form).then(
         (event) => {
           console.log("Data added: ", event);
           id = event;
           UserInfo.SetAllInfo({
             id,
-            name,
-            weight,
-            height,
-            date,
-            gender,
+            ...form,
+            date: form.dob,
           });
+          history("/");
         },
         (error) => {
           console.log(error);
         }
-        );
-      
+      );
     }
-    setName("");
-    setDate("");
-    setWeight("");
-    setHeight("");
-    setGender("");
-    history("/");
   };
 
   return (
@@ -88,21 +70,19 @@ function CreateUser() {
           <Form.Group className="create-user-input">
             <Form.Label>Name</Form.Label>
             <Form.Control
-              type="name"
               placeholder="Enter your name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
             />
             <span className="text-danger">{errors.userName}</span>
           </Form.Group>
-
           <Form.Group className="create-user-input">
             <Form.Label>Date of Birth</Form.Label>
             <Form.Control
               type="date"
-              value={date}
+              value={form.dob}
               placeholder="date"
-              onChange={(e) => setDate(e.target.value)}
+              onChange={(e) => setForm({ ...form, dob: e.target.value })}
             />
             <span className="text-danger">{errors.dob}</span>
           </Form.Group>
@@ -110,39 +90,34 @@ function CreateUser() {
           <Form.Group className="create-user-input">
             <Form.Label>Weight (kg) </Form.Label>
             <Form.Control
-              type="data"
-              value={weight}
+              value={form.weight}
               placeholder="Weight"
-              onChange={(e) => setWeight(e.target.value)}
+              onChange={(e) => setForm({ ...form, weight: e.target.value })}
             />
             <span className="text-danger">{errors.weight}</span>
           </Form.Group>
-
           <Form.Group className="create-user-input">
             <Form.Label>Height (Cm) </Form.Label>
             <Form.Control
-              type="data"
-              value={height}
+              type="number"
+              value={form.height}
               placeholder="Height"
-              onChange={(e) => setHeight(e.target.value)}
+              onChange={(e) => setForm({ ...form, height: e.target.value })}
             />
             <span className="text-danger">{errors.height}</span>
           </Form.Group>
-
           <Form.Group className="create-user-input">
             <Form.Label>Gender </Form.Label>
             <Form.Select
-              defaultValue="Choose..."
-              value={gender}
-              onChange={handleSelectedChanges}
+              value={form.gender}
+              onChange={(e) => setForm({ ...form, gender: e.target.value })}
             >
-              <option>Choose...</option>
-              <option>Male</option>
-              <option>Female</option>
+              <option value={null}>Choose...</option>
+              <option value={false}>Male</option>
+              <option value={true}>Female</option>
             </Form.Select>
             <span className="text-danger">{errors.gender}</span>
           </Form.Group>
-
           <Button variant="primary" type="submit" onClick={handleSubmit}>
             Submit
           </Button>

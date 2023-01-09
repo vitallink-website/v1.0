@@ -6,6 +6,8 @@ import { useIndexedDB } from "react-indexed-db";
 import { DeviceContext, UserContext } from "../../../../App";
 
 
+// todo
+// sync with cardiogram
 function BPCalibrationProcess() {
   const bluetooth = useContext(DeviceContext);
 
