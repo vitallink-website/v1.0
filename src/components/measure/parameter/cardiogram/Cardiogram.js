@@ -67,7 +67,7 @@ function Cardiogram() {
       date: showTime,
       heartBeat: heartBeat,
       PRRRInterval: 0,
-      QRSDuration: 0
+      QRSDuration: 0,
     }).then(
       (event) => {
         console.log("cardiogramData added: ", event);
@@ -76,7 +76,7 @@ function Cardiogram() {
         console.log(error);
       }
     );
-  }
+  };
 
   const hanldeCallback = ({ ppg, ecg, force }) => {
     ecgs.push(ecg);
@@ -108,7 +108,7 @@ function Cardiogram() {
       60
     );
     console.log(heartBeat);
-    console.log("duration: ", duration/1000);
+    console.log("duration: ", duration / 1000);
     setHeartBeat(heartBeat);
     addToDB(heartBeat);
   };
@@ -169,7 +169,9 @@ function Cardiogram() {
           <Button>Abnormality Detection</Button>
         </Col>
         <Col>
-          <Button onClick={() => shareData()}>output</Button>
+          <Button onClick={() => shareData("Heart beat: " + heartBeat)}>
+            output
+          </Button>
         </Col>
         <Col>
           <Link to="/">

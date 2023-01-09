@@ -175,26 +175,190 @@ def ECG_signal_processing(ECG, fs):
   Quality_index = Quality_ECG(ECG_filtered, fs, t)
   return HeartRate, PR_RR, QRS_duration, Quality_index, P, Q, R, S, T
 
+
+  ########################################### ppg
 def HeartBeat_PPG(PPG, fs):
-    print("hi")
-    H = 20;
-    dt = 1 / fs
-    t = np.linspace(0, len(PPG)/fs, len(PPG), endpoint = True)
-    PPG_filtered = filter(PPG, H, fs, 10, 'low')
-    x = PPG_filtered
-    y = x - min(x)
-    i, _ = find_peaks(-y, distance = 10)
-    j = y[i]
-    n = np.arange(len(x))
-    baseline = np.interp(n,i,j)
-    z = y - baseline
-    thr_ind = np.floor(fs / 3); 
-    thr_amp = (4 * np.mean(z) + max(z)) / 5;
-    peaks_ind, _ = find_peaks(z, distance = thr_ind, height = thr_amp);
-    period = np.mean(peaks_ind[1:] - peaks_ind[:-1]) / fs;
-    HR = 60 / period;
-    print('HeartRate:', HR) 
-    return HR
+  H = 20
+  PPG_filtered = filter(PPG, H, fs, 10, 'low')
+  x = PPG_filtered
+  y = x - min(x)
+  i, _ = find_peaks(-y, distance = 10)
+  j = y[i]
+  n = np.arange(len(x))
+  baseline = np.interp(n,i,j)
+  z = y - baseline
+  thr_ind = np.floor(fs / 3); 
+  thr_amp = (4 * np.mean(z) + max(z)) / 5;
+  peaks_ind, _ = find_peaks(z, distance = thr_ind, height = thr_amp);
+  period = np.mean(peaks_ind[1:] - peaks_ind[:-1]) / fs;
+  HR = 60 / period;
+  return HR
+
+def remove_baseline(x):
+  y = x - min(x)
+  i, _ = find_peaks(-y, distance = 10)
+  j = y[i]
+  n = np.arange(len(x))
+  baseline = np.interp(n,i,j)
+  z = y - baseline
+  return z, baseline
+
+def AC_DC_calc(x):
+  z, baseline = remove_baseline(x)
+  AC = np.sqrt(np.sum(z**2))
+  DC = np.mean(baseline) + min(x)
+  return AC, DC
+
+def SpO2_estimation(IR, Red, fs):
+  AC_Red, DC_Red = AC_DC_calc(Red)
+  AC_IR, DC_IR = AC_DC_calc(IR)
+  R = (AC_Red/DC_Red) / (AC_IR/DC_IR)
+  SpO2 = 110 - 28*R
+  if SpO2 > 100:
+    SpO2 = 99.
+  return SpO2
+
+def Quality_PPG(PPG, fs, t):
+  PPG_rb, _ = remove_baseline(PPG)
+  num = int(np.floor(len(t)/(fs/3)))
+  rms = []
+  for i in range(num):
+    sig = PPG_rb[i*int(np.floor(fs/3)):(i+1)*int(np.floor(fs/3))]
+    rms.append(np.sqrt(np.sum(sig**2)/(fs/3)))
+  rms.sort()
+  Q = np.mean(rms[:int(num/3)]) / np.mean(rms[2*int(num/3):]) 
+  Quality_index = 100 - 1e4**Q / 2
+  if Quality_index <= 30: Quality_index = 30
+  return Quality_index
+
+
+def PPG_signal_processing(IR, Red, fs):
+  dt = 1 / fs
+  t = np.linspace(0, len(IR)/fs, len(IR), endpoint = True)
+  HeartRate = HeartBeat_PPG(IR, fs)
+  SpO2 = SpO2_estimation(IR, Red, fs)
+  Quality_index = Quality_PPG(IR, fs, t)
+  return HeartRate, SpO2, Quality_index
+
+###################################################3
+
+def Quality_PPG_Adapter(ECG_data, sample_duration):
+    array = np.asarray(ECG_data.to_py())
+    # fs = len(array) / sample_duration
+    print(sample_duration)
+    try :
+      return Quality_PPG(array, sample_duration)
+    except: 
+      return -1
+
+createObject(create_proxy(Quality_PPG_Adapter), "Quality_PPG") #quality index
+
+def SpO2_estimation_Adapter(ECG_data, sample_duration):
+    array = np.asarray(ECG_data.to_py())
+    # fs = len(array) / sample_duration
+    print(sample_duration)
+    try :
+      return SpO2_estimation(array, sample_duration)
+    except: 
+      return -1
+
+createObject(create_proxy(SpO2_estimation_Adapter), "SpO2_estimation")
+
+def HeartBeatPPG_Adapter(ECG_data, sample_duration):
+    array = np.asarray(ECG_data.to_py())
+    # fs = len(array) / sample_duration
+    print(sample_duration)
+    try :
+      return HeartBeat_PPG(array, sample_duration)
+    except: 
+      return -1
+
+createObject(create_proxy(HeartBeatPPG_Adapter), "HeartBeat_PPG") #heart beat
+
+  ########################################### end of ppg
+
+def BP_estimation(PPG, Force, fs):
+  t = np.linspace(0, len(PPG)/fs, len(PPG), endpoint = True)
+  g_len = 5
+  N = int(np.floor(t[-1]) - g_len + 1)
+  # Removing Baseline ----------------------------------------------------------
+  H = 10;
+  x = filter(PPG, H, fs, 10, 'low')
+  x = PPG
+  y = x - np.min(x)
+  i, _ = find_peaks(-y, distance = 10)
+  j = y[i]
+  n = np.arange(len(x))
+  baseline = np.interp(n,i,j)
+  z = y - baseline
+
+  # Applied Pressure line ------------------------------------------------------
+  ind0 = np.max(np.where(Force <= 0.01))
+  Force[:ind0] = 0
+  AP = np.linspace(0, np.max(Force), len(Force)-ind0, endpoint = True)
+
+  # PPG Signal Sampling --------------------------------------------------------
+  n_samples = np.arange(g_len/2, np.floor(t[-1])-g_len/2+1, 1)
+  samples = []
+  for i in range(N):
+    sig = z[int(np.floor(fs*i)):int(np.floor((i+g_len)*fs))]
+    rms = np.sqrt(np.sum(sig**2))
+    samples.append(rms*2)
+
+  # Interpolation --------------------------------------------------------------
+  PPG_ip = pchip_interpolate(n_samples, samples, t)
+  PPG_ip = PPG_ip[ind0:]
+  t = t[ind0:]
+
+  # A1, A2, and B1 -------------------------------------------------------------
+  A2 = PPG_ip[0]
+  k = np.argmax(PPG_ip)
+  B1 = AP[k]
+  A1 = PPG_ip[k]
+
+  Diastolic = 0; Mean = 0; Systolic = 0
+  # B2, B3 ---------------------------------------------------------------------
+  AP40 = np.max(np.where(AP < 40))
+  if ~((PPG_ip[-1] > 0.5*A1) or (PPG_ip[AP40] > 0.95*A1) or (A1 < A2) or (B1 < 40)):
+    B2, B3 = B2_B3_estimation(AP, PPG_ip, k, A1, A2, B1)
+    if (B2<100) and (B3<100):
+      # BV estimation --------------------------------------------------------------
+      BV = np.zeros(len(AP))
+      BV[:k] = A2 + (A1-A2)*np.exp(-1/2*((AP[:k]-B1)/B2)**2)
+      BV[k:] = A1 * np.exp(-1/2*((AP[k:]-B1)/B3)**2)
+      plt.plot(AP , BV, 'r',AP, PPG_ip, 'b')
+      # BP estimation --------------------------------------------------------------
+      Diastolic = 0.65*B1 - 1.54*A2/A1*B2 + 26.2
+      Mean = 0.68*B1 - 1.53*A2/A1*B2 + 38.8
+      Systolic = 2.5*Mean - 1.5*Diastolic
+    else: print('Try Again!')
+  else: print('Try Again!')
+  return Diastolic, Systolic
+  
+
+def B2_B3_estimation(x, y, k, A1, A2, B1):
+  f = []; g = []
+  for i in np.arange(1,len(x)):
+    error = (A2 + (A1-A2)*np.exp(-1/2 * ((x[:k]-B1)/x[i])**2)) - y[:k]
+    f.append(sum(error**2))
+    error = A1*np.exp(-1/2 * ((x[k:]-B1)/x[i])**2) - y[k:]
+    g.append(sum(error**2))
+  B2_ind = np.argmin(f) + 1
+  B2 = x[B2_ind]
+  B3_ind = np.argmin(g) + 1
+  B3 = x[B3_ind]
+  return B2, B3
+
+
+def BloodPressure_Adapter(PPG_data, BPData, sample_duration):
+    array = np.asarray(PPG_data.to_py())
+    # fs = len(array) / sample_duration
+    try :
+      return BP_estimation(array, sample_duration)
+    except: 
+      return -1
+
+createObject(create_proxy(BloodPressure_Adapter), "BloodPressure")
 
 def HeartBeatECG_Adapter(ECG_data, sample_duration):
     array = np.asarray(ECG_data.to_py())
@@ -206,14 +370,3 @@ def HeartBeatECG_Adapter(ECG_data, sample_duration):
 
 createObject(create_proxy(HeartBeatECG_Adapter), "HeartBeat_ECG")
 
-
-def HeartBeatPPG_Adapter(ECG_data, sample_duration):
-    array = np.asarray(ECG_data.to_py())
-    # fs = len(array) / sample_duration
-    print(sample_duration)
-    try :
-      return HeartBeat_PPG(array, sample_duration)
-    except: 
-      return -1
-
-createObject(create_proxy(HeartBeatPPG_Adapter), "HeartBeat_PPG")

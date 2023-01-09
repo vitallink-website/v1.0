@@ -1,6 +1,6 @@
-import * as saveSvgAsPng from "https://cdn.skypack.dev/save-svg-as-png@1.4.17";
+import * as saveSvgAsPng from "save-svg-as-png";
 
-export function shareData(data) {
+export function shareData(text) {
     const date = new Date();
     const showTime1 =
       date.getFullYear() +
@@ -26,6 +26,16 @@ export function shareData(data) {
       date.getMinutes();
 
     const svg = document.querySelector(".recharts-surface");
+    var svgNS = "http://www.w3.org/2000/svg";
+    var newText = document.createElementNS(svgNS,"text");
+    newText.setAttributeNS(null,"x",600);     
+    newText.setAttributeNS(null,"y",450); 
+    newText.setAttributeNS(null,"font-size","32");
+
+    var textNode = document.createTextNode(text);
+    newText.appendChild(textNode);
+    svg.appendChild(newText);
+
     
     const fileName = showTime2 + "-CardiogramData.png";
 
