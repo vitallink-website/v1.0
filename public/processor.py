@@ -266,10 +266,10 @@ createObject(create_proxy(SpO2_estimation_Adapter), "SpO2_estimation")
 
 def HeartBeatPPG_Adapter(ECG_data, sample_duration):
     array = np.asarray(ECG_data.to_py())
-    # fs = len(array) / sample_duration
+    fs = len(array) / sample_duration
     print(sample_duration)
     try :
-      return HeartBeat_PPG(array, sample_duration)
+      return HeartBeat_PPG(array, fs)
     except: 
       return -1
 
@@ -362,9 +362,9 @@ createObject(create_proxy(BloodPressure_Adapter), "BloodPressure")
 
 def HeartBeatECG_Adapter(ECG_data, sample_duration):
     array = np.asarray(ECG_data.to_py())
-    # fs = len(array) / sample_duration
+    fs = len(array) / sample_duration
     try :
-      return HeartBeat_ECG(array, sample_duration)
+      return HeartBeat_ECG(array, fs)
     except: 
       return -1
 

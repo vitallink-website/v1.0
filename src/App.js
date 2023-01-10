@@ -53,7 +53,7 @@ function App() {
 
   const registery = {
     isUserSelected: isUserSelected,
-    isSignedIn: true,
+    isSignedIn: isConnected ,
   };
 
   return (
