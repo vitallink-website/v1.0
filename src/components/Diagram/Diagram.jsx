@@ -15,8 +15,8 @@ import { Button } from "react-bootstrap";
 const Diagram = ({ dataKey = "", flow = [] }) => {
   const steam = [...flow].map((item, id) => {
     return {
-      name: id,
-      [dataKey]: item,
+      name: item?.id ?? id,
+      [dataKey]: item?.value ?? item,
       impression: 0,
     };
   });
@@ -40,11 +40,7 @@ const Diagram = ({ dataKey = "", flow = [] }) => {
     <div className="highlight-bar-charts" style={{ userSelect: "none" }}>
       <ResponsiveContainer height={400} width={"100%"}>
         <LineChart data={steam}>
-          <XAxis
-            dataKey="name"
-            domain={["dataMin", "dataMax"]}
-            type="number"
-          />
+          <XAxis dataKey="name" domain={["dataMin", "dataMax"]} type="number" />
           <YAxis
             domain={["dataMax-10", "dataMax+10"]}
             type="number"

@@ -8,7 +8,11 @@ function ParameterHistory() {
       <Container>
         <Row className="time-history-row">
           <Col>
-            <Row>Heart Rate</Row>
+            <Row
+              style={{ maxWidth: "10em", color: "black", textAlign: "left" }}
+            >
+              <Link to="/Measure/History/ParameterHistory/ecg">Heart Rate</Link>
+            </Row>
             <Row style={{ fontSize: "0.8rem" }}>(beat per minute)</Row>
           </Col>
           <Col>
