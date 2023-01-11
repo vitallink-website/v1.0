@@ -24,6 +24,8 @@ export const useSignalFeed = () => {
 
   const start = async () => {
     console.log("start");
+    Data.splice(0, Data.length);
+
     setDuration(performance.now());
     read_charastirctic.startNotifications();
   };
@@ -34,7 +36,6 @@ export const useSignalFeed = () => {
     setTs(time);
     setDuration(0);
     setFs(Data.length / Math.floor(time / 1000));
-    Data.splice(0, Data.length);
 
     read_charastirctic.stopNotifications();
   };
