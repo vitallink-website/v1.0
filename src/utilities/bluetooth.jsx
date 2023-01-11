@@ -10,7 +10,10 @@ export const useSignalFeed = () => {
   const [loading, setLoading] = useState(false);
   const [read_charastirctic, setCharastircticR] = useState();
   const [write_charastirctic, setCharastircticW] = useState();
-
+  const [fs, setFs] = useState(0);
+  const [ts, setTs] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const Data = [];
   const disconnect = () => {
     console.log("disconnect");
 
@@ -21,15 +24,21 @@ export const useSignalFeed = () => {
 
   const start = async () => {
     console.log("start");
-
+    setDuration(performance.now());
     read_charastirctic.startNotifications();
   };
 
   const stop = async () => {
     console.log("stop");
-
+    const time = performance.now() - duration;
+    setTs(time);
+    setDuration(0);
+    setFs(Data.length / Math.floor(time / 1000));
     read_charastirctic.stopNotifications();
   };
+
+  const GetFrequency = () => fs;
+  const GetTime = () => ts;
 
   const connect = () => {
     console.log("connect");
@@ -67,7 +76,7 @@ export const useSignalFeed = () => {
       // const red = data.srcElement.value.getUint16(2, true);
       const ecg = data.srcElement.value.getInt16(4, true);
       const force = Bytes2Float16(data.srcElement.value.getUint16(6, true));
-
+      Data.push(data);
       callBack({
         ppg,
         ecg,
@@ -87,6 +96,8 @@ export const useSignalFeed = () => {
     disconnect,
     sendCommand,
     loading,
+    GetFrequency,
+    GetTime,
   };
 };
 

@@ -78,7 +78,7 @@ function App() {
                 />
                 <Route
                   userRegistered
-                  path="/Measure/History/ParameterHistory/:type"
+                  path="/Measure/History/ParameterHistory/:type/:data"
                   element={<ParameterDiagram />}
                 />
                 <Route
