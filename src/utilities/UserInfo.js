@@ -4,7 +4,6 @@ export const UserInfo = () => {
   const [id, setId] = useState(-1);
   const [isUserSelected, setIsUserSelected] = useState(false);
   const [username, setUsername] = useState("");
-  console.log("🚀 ~ file: UserInfo.js:7 ~ UserInfo ~ username", username)
   const [date, setDate] = useState("");
   const [weight, setWeight] = useState("");
   const [height, setHeight] = useState("");

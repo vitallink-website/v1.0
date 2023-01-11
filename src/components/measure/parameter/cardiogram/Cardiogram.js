@@ -24,7 +24,7 @@ function Cardiogram() {
 
   const [startSecond, setStart] = useState();
 
-  const [heartBeat, setHeartBeat] = useState(67);
+  const [heartBeat, setHeartBeat] = useState(0);
   const [show, setShow] = useState(false);
 
   const [active, setActive] = useState(null);
@@ -72,7 +72,7 @@ function Cardiogram() {
       setData({ ecg: ecgs.slice(400) });
     }
     /**
-     * 
+     *
      * const timer1.current = setTimeout(()=>{setActive(true);},3000);
      * const timer3.current = setTimeout(()=>{setActive(false);},33000)
      */
@@ -95,9 +95,9 @@ function Cardiogram() {
     const duration = performance.now() - startSecond;
     console.log(data.ecg, duration);
     // eslint-disable-next-line no-undef
-    const heartBeat = HeartBeat_ECG(data.ecg.slice(400), 30);
+    const heartBeat = HeartBeat_ECG(data.ecg.slice(400), duration / 1000 - 4);
     console.log(heartBeat);
-    console.log("duration: ", duration / 1000);
+    console.log("duration: ");
     setHeartBeat(heartBeat);
     addToDB(heartBeat);
   };
@@ -133,10 +133,10 @@ function Cardiogram() {
         <Diagram
           dataKey={"ecg"}
           flow={
-            FakeData.length > 200
+            data.ecg.length > 200
               ? active
-                ? FakeData.slice(FakeData.length - 200, FakeData.length)
-                : FakeData
+                ? data.ecg.slice(data.ecg.length - 200, data.ecg.length)
+                : data.ecg
               : [new Array(200).fill(0)]
           }
         />

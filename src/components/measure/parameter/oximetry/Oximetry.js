@@ -75,14 +75,14 @@ const Oximetry = () => {
       if (!timer1.current)
         timer1.current = setTimeout(() => {
           setActive(false);
-        }, 32000);
+        }, 35000);
     }
   };
 
   const startInput = () => {
     console.log("start second ", startSecond);
     setStart(performance.now());
-    console.log("start second ",startSecond);
+    console.log("start second ", startSecond);
     bluetooth.start();
     setStart(performance.now());
   };
@@ -93,23 +93,24 @@ const Oximetry = () => {
     const duration = performance.now() - startSecond;
     console.log(duration);
     console.log(ppgs);
+    const fs = ppgs.length / duration / 1000;
+    const secondOfCalibraion = 400 / fs;
     // eslint-disable-next-line no-undef
     const heartBeat = HeartBeat_PPG(
-      ppgs.slice(300, 1200),
-      // Math.round(duration / 1000)
-      60
+      ppgs.slice(400),
+      Math.round(duration / 1000) - secondOfCalibraion
     );
 
     // eslint-disable-next-line no-undef
-    const SPO2 = SpO2_estimation();
-    
-    // eslint-disable-next-line no-undef
-    const Quality_index = Quality_PPG();
+    // const SPO2 = SpO2_estimation();
+
+    // // eslint-disable-next-line no-undef
+    // const Quality_index = Quality_PPG();
 
     console.log(heartBeat);
     setHeartBeat(heartBeat);
-    setSPO2(SPO2);
-    setQualityIndex(Quality_index);
+    // setSPO2(SPO2);
+    // setQualityIndex(Quality_index);
     // addToDB();
   };
 
@@ -159,7 +160,9 @@ const Oximetry = () => {
           </h5>
         </Col>
         <Col>
-          <h5 style={{ color: "black" }}>SpO2: {Number(SPO2).toFixed(2)} (%)</h5>
+          <h5 style={{ color: "black" }}>
+            SpO2: {Number(SPO2).toFixed(2)} (%)
+          </h5>
         </Col>
         <Col>
           <h5 style={{ color: "black" }}>
