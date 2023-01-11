@@ -23,12 +23,12 @@ const Diagram = ({ dataKey = "", flow = [] }) => {
 
   function downloadSVGAsPNG(e) {
     const svg = document.querySelector(".recharts-surface");
-    const filename = "myfilename.png";
+    const filename = dataKey + ".png";
     saveSvgAsPng.saveSvgAsPng(svg, filename);
   }
   function downloadPDFAsPNG(e) {
     const element = document.querySelector(".recharts-surface");
-    const filename = "myfilename.pdf";
+    const filename = dataKey + ".pdf";
 
     saveSvgAsPng.svgAsPngUri(element).then((dataUrl) => {
       const doc = new jsPDF();
@@ -39,7 +39,16 @@ const Diagram = ({ dataKey = "", flow = [] }) => {
   return (
     <div className="highlight-bar-charts" style={{ userSelect: "none" }}>
       <ResponsiveContainer height={400} width={"100%"}>
-        <LineChart data={steam}>
+        <LineChart
+          data={
+            steam.length > 2500
+              ? steam.slice(
+                  Math.ceil(steam.length / 2) - 500,
+                  Math.ceil(steam.length / 2) + 500
+                )
+              : steam
+          }
+        >
           <XAxis dataKey="name" domain={["dataMin", "dataMax"]} type="number" />
           <YAxis
             domain={["dataMax-10", "dataMax+10"]}
@@ -56,7 +65,7 @@ const Diagram = ({ dataKey = "", flow = [] }) => {
             animationDuration={500}
           />
 
-          {steam.length > 200 && <Brush />}
+          {steam.length > 500 && <Brush />}
         </LineChart>
       </ResponsiveContainer>
       <Button onClick={downloadSVGAsPNG}>download PNG</Button>
