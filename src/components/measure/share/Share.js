@@ -1,60 +1,55 @@
 import * as saveSvgAsPng from "save-svg-as-png";
+import { GetCurrectDateTime } from "../../../utilities/time";
+import { GetCurrectDateTimeForFileName } from "../../../utilities/time";
 
-export function shareData(text) {
-    const date = new Date();
-    const showTime1 =
-      date.getFullYear() +
-      "/" +
-      date.getMonth() +
-      "/" +
-      date.getDate() +
-      "-" +
-      date.getHours() +
-      ":" +
-      date.getMinutes() +
-      ":" +
-      date.getSeconds();
-    const showTime2 =
-      date.getFullYear() +
-      "-" +
-      date.getMonth() +
-      "-" +
-      date.getDate() +
-      "-" +
-      date.getHours() +
-      "-" +
-      date.getMinutes();
+export function shareData(dataName, texts) {
+  const date = new Date();
+  const showTime1 = GetCurrectDateTime();
+  const showTime2 = GetCurrectDateTimeForFileName();
 
-    const svg = document.querySelector(".recharts-surface");
-    var svgNS = "http://www.w3.org/2000/svg";
-    var newText = document.createElementNS(svgNS,"text");
-    newText.setAttributeNS(null,"x",600);     
-    newText.setAttributeNS(null,"y",450); 
-    newText.setAttributeNS(null,"font-size","32");
+  const svg = document.querySelector(".recharts-surface");
+  var svgNS = "http://www.w3.org/2000/svg";
+  var newText = document.createElementNS(svgNS, "text");
+  newText.setAttributeNS(null, "x", 60);
+  newText.setAttributeNS(null, "y", 450);
+  newText.setAttributeNS(null, "font-size", "28");
+  newText.setAttributeNS(null, "font-family", "cursive");
+  texts.map((text) => {
+    var tspan = document.createElement('tspan') 		
+    tspan.setAttribute('x','60');
+    tspan.setAttribute('dy','2em');
+    tspan.textContent = text;
+    newText.appendChild(tspan)
+    // newText.appendChild(document.createTextNode(text));    
+  });
+  svg.appendChild(newText);
 
-    var textNode = document.createTextNode(text);
-    newText.appendChild(textNode);
-    svg.appendChild(newText);
+  const fileName = showTime2 + "-" + dataName + ".png";
 
-    
-    const fileName = showTime2 + "-CardiogramData.png";
+  saveSvgAsPng
+    .svgAsPngUri(svg, {
+      scale: 2.0,
+      backgroundColor: "white",
+      width: "1500",
+      height: "800",
+      top: "-100",
+      left: "25",
+    })
+    .then(async (dataUrl) => {
+      const file = await (await fetch(dataUrl)).blob();
 
-    saveSvgAsPng.svgAsPngUri(svg, {scale: 2.0, backgroundColor : "white",width: "1500", height : "800", top: "-100", "left" : "25"}).then(async(dataUrl) => {
-        const file = await (await fetch(dataUrl)).blob();
-
-        const image = new File([file], fileName, { type: file.type });    
-        if (navigator.canShare && navigator.canShare({ files: [image] })) {
-          try {
-            await navigator.share({
-              files: [image], 
-              text: "Heartbeat is 80",
-              title: showTime1 + " CardiogramData", 
-            });
-          } catch (error) {
-            console.log("Sharing failed!", error);
-          }
-        } else {
-          console.log("This device does not support sharing files.");
+      const image = new File([file], fileName, { type: file.type });
+      if (navigator.canShare && navigator.canShare({ files: [image] })) {
+        try {
+          await navigator.share({
+            files: [image],
+            title: showTime1 + " " + dataName,
+          });
+        } catch (error) {
+          console.log("Sharing failed!", error);
         }
+      } else {
+        console.log("This device does not support sharing files.");
+      }
     });
-  }
+}

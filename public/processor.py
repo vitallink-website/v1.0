@@ -267,7 +267,7 @@ createObject(create_proxy(SpO2_estimation_Adapter), "SpO2_estimation")
 def HeartBeatPPG_Adapter(ECG_data, sample_duration):
     array = np.asarray(ECG_data.to_py())
     fs = len(array) / sample_duration
-    print(sample_duration)
+    print(fs)
     try :
       return HeartBeat_PPG(array, fs)
     except: 

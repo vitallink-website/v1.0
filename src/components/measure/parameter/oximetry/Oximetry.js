@@ -5,6 +5,7 @@ import Diagram from "../../../Diagram/Diagram";
 import { useIndexedDB } from "react-indexed-db";
 import { DeviceContext, UserContext } from "../../../../App";
 import { GetCurrectDateTime } from "../../../../utilities/time";
+import { shareData } from "../../share/Share";
 
 const Oximetry = () => {
   const bluetooth = useContext(DeviceContext);
@@ -89,15 +90,16 @@ const Oximetry = () => {
 
   const stopInput = () => {
     bluetooth.stop();
-    console.log(startSecond);
     const duration = performance.now() - startSecond;
     console.log(duration);
-    console.log(ppgs);
-    const fs = ppgs.length / duration / 1000;
+    console.log(data.ppg);
+    const fs = data.ppg.length / (duration / 1000);
+    console.log("fs" + fs);
     const secondOfCalibraion = 400 / fs;
+    console.log(secondOfCalibraion);
     // eslint-disable-next-line no-undef
     const heartBeat = HeartBeat_PPG(
-      ppgs.slice(400),
+      data.ppg.slice(400),
       Math.round(duration / 1000) - secondOfCalibraion
     );
 
@@ -179,11 +181,11 @@ const Oximetry = () => {
         <Col>
           <Button
             onClick={() => {
-              setData({
-                ppg: [],
-                ecg: [],
-                force: [],
-              });
+              shareData("OximetryData", [
+                "Heart beat: " + Number(heartBeat).toFixed(2),
+                "SPO2: " + Number(SPO2).toFixed(2),
+                "Quality index: " + Number(qualityIndex).toFixed(2),
+              ]);
             }}
           >
             Output
