@@ -92,14 +92,11 @@ function Cardiogram() {
 
   const stopInput = () => {
     bluetooth.stop();
-    const duration = performance.now() - startSecond;
-    console.log(data.ecg, duration);
     // eslint-disable-next-line no-undef
-    const heartBeat = HeartBeat_ECG(data.ecg.slice(400), duration / 1000 - 4);
+    const heartBeat = HeartBeat_ECG(data.ecg.slice(400), bluetooth.GetFrequency());
     console.log(heartBeat);
-    console.log("duration: ");
     setHeartBeat(heartBeat);
-    addToDB(heartBeat);
+    // addToDB(heartBeat);
   };
 
   const autoStart = () => {
@@ -139,6 +136,7 @@ function Cardiogram() {
                 : data.ecg
               : [new Array(200).fill(0)]
           }
+          texts = {["Heart beat: " + heartBeat]}
         />
       </Row>
       <Row className="measure-button-row">

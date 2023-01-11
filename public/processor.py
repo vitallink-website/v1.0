@@ -242,32 +242,26 @@ def PPG_signal_processing(IR, Red, fs):
 
 ###################################################3
 
-def Quality_PPG_Adapter(ECG_data, sample_duration):
+def Quality_PPG_Adapter(ECG_data, fs):
     array = np.asarray(ECG_data.to_py())
-    # fs = len(array) / sample_duration
-    print(sample_duration)
     try :
-      return Quality_PPG(array, sample_duration)
+      return Quality_PPG(array, fs)
     except: 
       return -1
 
 createObject(create_proxy(Quality_PPG_Adapter), "Quality_PPG") #quality index
 
-def SpO2_estimation_Adapter(ECG_data, sample_duration):
+def SpO2_estimation_Adapter(ECG_data, fs):
     array = np.asarray(ECG_data.to_py())
-    # fs = len(array) / sample_duration
-    print(sample_duration)
     try :
-      return SpO2_estimation(array, sample_duration)
+      return SpO2_estimation(array, fs)
     except: 
       return -1
 
 createObject(create_proxy(SpO2_estimation_Adapter), "SpO2_estimation")
 
-def HeartBeatPPG_Adapter(ECG_data, sample_duration):
+def HeartBeatPPG_Adapter(ECG_data, fs):
     array = np.asarray(ECG_data.to_py())
-    fs = len(array) / sample_duration
-    print(fs)
     try :
       return HeartBeat_PPG(array, fs)
     except: 
@@ -350,19 +344,17 @@ def B2_B3_estimation(x, y, k, A1, A2, B1):
   return B2, B3
 
 
-def BloodPressure_Adapter(PPG_data, BPData, sample_duration):
+def BloodPressure_Adapter(PPG_data, BPData, fs):
     array = np.asarray(PPG_data.to_py())
-    # fs = len(array) / sample_duration
     try :
-      return BP_estimation(array, sample_duration)
+      return BP_estimation(array, fs)
     except: 
       return -1
 
 createObject(create_proxy(BloodPressure_Adapter), "BloodPressure")
 
-def HeartBeatECG_Adapter(ECG_data, sample_duration):
+def HeartBeatECG_Adapter(ECG_data, fs):
     array = np.asarray(ECG_data.to_py())
-    fs = len(array) / sample_duration
     try :
       return HeartBeat_ECG(array, fs)
     except: 

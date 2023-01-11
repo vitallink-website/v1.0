@@ -3,7 +3,6 @@ import { GetCurrectDateTime } from "../../../utilities/time";
 import { GetCurrectDateTimeForFileName } from "../../../utilities/time";
 
 export function shareData(dataName, texts) {
-  const date = new Date();
   const showTime1 = GetCurrectDateTime();
   const showTime2 = GetCurrectDateTimeForFileName();
 
@@ -20,7 +19,6 @@ export function shareData(dataName, texts) {
     tspan.setAttribute('dy','2em');
     tspan.textContent = text;
     newText.appendChild(tspan)
-    // newText.appendChild(document.createTextNode(text));    
   });
   svg.appendChild(newText);
 

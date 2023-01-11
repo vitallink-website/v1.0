@@ -90,17 +90,10 @@ const Oximetry = () => {
 
   const stopInput = () => {
     bluetooth.stop();
-    const duration = performance.now() - startSecond;
-    console.log(duration);
-    console.log(data.ppg);
-    const fs = data.ppg.length / (duration / 1000);
-    console.log("fs" + fs);
-    const secondOfCalibraion = 400 / fs;
-    console.log(secondOfCalibraion);
     // eslint-disable-next-line no-undef
     const heartBeat = HeartBeat_PPG(
       data.ppg.slice(400),
-      Math.round(duration / 1000) - secondOfCalibraion
+      bluetooth.GetFrequency()
     );
 
     // eslint-disable-next-line no-undef
@@ -151,8 +144,12 @@ const Oximetry = () => {
               ? active
                 ? data.ppg.slice(data.ppg.length - 200, data.ppg.length)
                 : data.ppg
-              : [new Array(200).fill(0)]
-          }
+              : [new Array(200).fill(0)]}
+          texts = {[
+            "Heart beat: " + Number(heartBeat).toFixed(2),
+            "SPO2: " + Number(SPO2).toFixed(2),
+            "Quality index: " + Number(qualityIndex).toFixed(2),
+          ]}
         />
       </Row>
       <Row className="mt-5">
