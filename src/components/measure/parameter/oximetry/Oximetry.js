@@ -95,6 +95,7 @@ const Oximetry = () => {
       data.ppg.slice(400),
       bluetooth.GetFrequency()
     );
+      console.log("🚀 ~ file: Oximetry.js:96 ~ stopInput ~ data.ppg.slice(400)", data.ppg.slice(400))
 
     // eslint-disable-next-line no-undef
     // const SPO2 = SpO2_estimation();
