@@ -1,27 +1,32 @@
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { Link, useParams } from "react-router-dom";
-import Diagram from "../../../Diagram/Diagram";
-import { useEffect, useState } from "react";
+import HistoryDiagram from "../../../Diagram/HistoryDiagram";
+import { useEffect, useState, useContext } from "react";
+import { useIndexedDB } from "react-indexed-db";
+import { UserContext } from "../../../../App";
 
 const ParameterDiagram = () => {
   const { type, data } = useParams();
-  const [flow, setFlow] = useState([]);
 
+  const [flow, setFlow] = useState([]);
+  const UserInfo = useContext(UserContext);
+  
+  const { getAll } = useIndexedDB(type);
   useEffect(() => {
-    // type is the name of database
-    // data is a key in table
-    // type is the name of table
-    // get table in here
-    // map all data to  { id: "time" , value: caculated value(for example ECGheartbeat)}
-    // eg: const temp = data.map(row => ({id: new Date(row.date),value:row.heartbeat}))
-    // then set it in the flow : setFlow(temp)
-    setFlow([]);
+    console.log("in parameter diagram" + UserInfo.id);
+    getAll().then(dataFromDB => {
+      const result = dataFromDB.filter(temp => temp.userId === UserInfo.id);
+      let tempFlow = [];
+      result.map((res) => tempFlow.push({'date' : String(res['date']), 'value': res[data]}));
+      setFlow(tempFlow);
+    });
+
   }, []);
 
   return (
     <Container className="history-section">
       <Row>
-        <Diagram dataKey={data} flow={flow} />
+        <HistoryDiagram dataKey={data} flow={flow} texts = "" />
       </Row>
       <Row>
         <Col>

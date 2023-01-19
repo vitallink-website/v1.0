@@ -1,5 +1,6 @@
 import React from 'react'
 import { Row, Col, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 function TimeHistory() {
   return (
@@ -78,7 +79,9 @@ function TimeHistory() {
       </Row>
       <Row>
         <Col>
-            <Button size = 'sm' href = "/Measure/History" > Back </Button>
+            <Link to="/Measure/History">
+              <Button size="sm"> Back</Button>
+            </Link>
         </Col>
       </Row>
     </div>

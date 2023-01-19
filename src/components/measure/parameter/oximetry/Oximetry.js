@@ -49,10 +49,10 @@ const Oximetry = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active]);
 
-  const addToDB = () => {
+  const addToDB = (heartBeat) => {
     add({
       userId: UserInfo.id,
-      ppgData: ppgs,
+      ppgData: data.ppg,
       date: GetCurrectDateTime(),
       heartBeat: heartBeat,
       SPO2: 0,
@@ -81,9 +81,6 @@ const Oximetry = () => {
   };
 
   const startInput = () => {
-    console.log("start second ", startSecond);
-    setStart(performance.now());
-    console.log("start second ", startSecond);
     bluetooth.start();
     setStart(performance.now());
   };
@@ -93,8 +90,10 @@ const Oximetry = () => {
     // eslint-disable-next-line no-undef
     const heartBeat = HeartBeat_PPG(
       data.ppg.slice(400),
-      bluetooth.GetFrequency()
+      60
+      // bluetooth.GetFrequency()
     );
+    console.log(data.ppg);
 
     // eslint-disable-next-line no-undef
     // const SPO2 = SpO2_estimation();
@@ -106,7 +105,7 @@ const Oximetry = () => {
     setHeartBeat(heartBeat);
     // setSPO2(SPO2);
     // setQualityIndex(Quality_index);
-    // addToDB();
+    addToDB(Number(heartBeat).toFixed(2));
   };
 
   const autoStart = () => {

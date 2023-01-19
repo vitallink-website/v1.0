@@ -21,10 +21,10 @@ function Cardiogram() {
   const timer1 = useRef(null);
   const timer2 = useRef(null);
   // const timer3 = useRef(null);
+  const [heartBeat, setHeartBeat] = useState(0);
 
   const [startSecond, setStart] = useState();
-
-  const [heartBeat, setHeartBeat] = useState(0);
+  
   const [show, setShow] = useState(false);
 
   const [active, setActive] = useState(null);
@@ -51,7 +51,7 @@ function Cardiogram() {
   const addToDB = (heartBeat) => {
     add({
       userId: UserInfo.id,
-      ecgData: ecgs,
+      ecgData: data.ecg,
       date: GetCurrectDateTime(),
       heartBeat: heartBeat,
       PRRRInterval: 0,
@@ -81,7 +81,7 @@ function Cardiogram() {
       if (!timer1.current)
         timer1.current = setTimeout(() => {
           setActive(false);
-        }, 32000);
+        }, 35000);
     }
   };
 
@@ -93,10 +93,16 @@ function Cardiogram() {
   const stopInput = () => {
     bluetooth.stop();
     // eslint-disable-next-line no-undef
-    const heartBeat = HeartBeat_ECG(data.ecg.slice(400), bluetooth.GetFrequency());
+    const heartBeat = HeartBeat_ECG(
+      data.ecg.slice(400),
+      60
+      // bluetooth.GetFrequency()
+    );
+    console.log(data.ecg);
+
     console.log(heartBeat);
     setHeartBeat(heartBeat);
-    // addToDB(heartBeat);
+    addToDB(Number(heartBeat).toFixed(2));
   };
 
   const autoStart = () => {
@@ -136,7 +142,7 @@ function Cardiogram() {
                 : data.ecg
               : [new Array(200).fill(0)]
           }
-          texts = {["Heart beat: " + heartBeat]}
+          texts={["Heart beat: " + heartBeat]}
         />
       </Row>
       <Row className="measure-button-row">
@@ -156,7 +162,11 @@ function Cardiogram() {
           <Button>Abnormality Detection</Button>
         </Col>
         <Col>
-          <Button onClick={() => shareData("CardiogramData", ["Heart beat: " + heartBeat])}>
+          <Button
+            onClick={() =>
+              shareData("CardiogramData", ["Heart beat: " + heartBeat])
+            }
+          >
             output
           </Button>
         </Col>
