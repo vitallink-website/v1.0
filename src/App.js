@@ -34,6 +34,7 @@ import Protected from "./components/PrivateRoute";
 import { useSignalFeed } from "./utilities/bluetooth";
 import UserInfo from "./utilities/UserInfo";
 import ParameterDiagram from "./components/measure/history/parameterHistory/ParameterDiagram";
+import TimeDiagram from "./components/measure/history/timeHistory/TimeDiagram";
 
 export const DeviceContext = createContext({});
 export const UserContext = createContext({});
@@ -75,6 +76,11 @@ function App() {
                 <Route
                   path="/Measure/History/TimeHistory"
                   element={<TimeHistory />}
+                />
+                <Route
+                  userRegistered
+                  path="/Measure/History/TimeHistory/:data"
+                  element={<TimeDiagram />}
                 />
                 <Route
                   userRegistered

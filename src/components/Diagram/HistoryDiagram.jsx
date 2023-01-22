@@ -15,10 +15,12 @@ import { jsPDF } from "jspdf";
 import { Button } from "react-bootstrap";
 
 const HistoryDiagram = ({ dataKey = "", flow = [], texts = "" }) => {
-  console.log(flow);
+  console.log(dataKey, flow);
   const steam = [...flow].map((item, id) => {
+    console.log(item, id);
     return {
       name: item?.id ?? id,
+      date: item?.date ?? item,
       [dataKey]: item?.value ?? item,
       impression: 0,
     };
@@ -90,7 +92,7 @@ const HistoryDiagram = ({ dataKey = "", flow = [], texts = "" }) => {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Line dataKey={dataKey} stroke="#8884d8" animationDuration={500} />
+          <Line dataKey= {dataKey} stroke="#8884d8" animationDuration={500} />
           {steam.length > 500 && <Brush />}
         </LineChart>
       </ResponsiveContainer>

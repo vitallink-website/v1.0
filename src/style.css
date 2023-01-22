@@ -632,6 +632,11 @@ a{
   color: rgb(0, 0, 0) !important;
 }
 
+.time-history-title{
+  margin-bottom : "50px" !important;
+  padding-left: "50px" !important;
+}
+
 .register-section {
   position: relative !important;
   padding-top: 150px !important;
