@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import Diagram from "../../../Diagram/Diagram";
 import { useIndexedDB } from "react-indexed-db";
 import { DeviceContext, UserContext } from "../../../../App";
-import { GetCurrectDateTime } from "../../../../utilities/time";
+import { GetCurrentDateTime } from "../../../../utilities/time";
 import { shareData } from "../../share/Share";
 
 const Oximetry = () => {
@@ -53,7 +53,7 @@ const Oximetry = () => {
     add({
       userId: UserInfo.id,
       ppgData: data.ppg,
-      date: GetCurrectDateTime(),
+      date: GetCurrentDateTime(),
       heartBeat: heartBeat,
       SPO2: 0,
     }).then(

@@ -8,26 +8,32 @@ function ParameterHistory() {
       <Container>
         <Row className="time-history-row">
           <Col>
-            <Row
-              style={{ maxWidth: "10em", color: "black", textAlign: "left" }}
-            >
-              <Link to="/Measure/History/ParameterHistory/oximetryData/heartBeat">Heart Rate(ppg)</Link>
+            <Row style={{ textAlign: "left" }}>
+              <Link to="/Measure/History/ParameterHistory/oximetryData/heartBeat">
+                Heart Rate(ppg)
+              </Link>
             </Row>
-            <Row style={{ fontSize: "0.8rem" }}>(beat per minute)</Row>
+            <Row style={{ paddingLeft: "1.5rem", fontSize: "0.8rem" }}>
+              (beat per minute)
+            </Row>
           </Col>
           <Col>
             <Row>PR/RR Interval </Row>
-            <Row style={{ fontSize: "0.8rem" }}>(msec)</Row>
+            <Row style={{ paddingLeft: "1.5rem", fontSize: "0.8rem" }}>
+              (msec)
+            </Row>
           </Col>
         </Row>
         <Row className="time-history-row">
           <Col>
-            <Row
-              style={{ maxWidth: "10em", color: "black", textAlign: "left" }}
-            >
-              <Link to="/Measure/History/ParameterHistory/cardiogramData/heartBeat">Heart Rate(ecg)</Link>
+            <Row style={{ textAlign: "left" }}>
+              <Link to="/Measure/History/ParameterHistory/cardiogramData/heartBeat">
+                Heart Rate(ecg)
+              </Link>
             </Row>
-            <Row style={{ fontSize: "0.8rem" }}>(beat per minute)</Row>
+            <Row style={{ paddingLeft: "1.5rem", fontSize: "0.8rem" }}>
+              (beat per minute)
+            </Row>
           </Col>
         </Row>
         <Row className="time-history-row">
@@ -51,8 +57,14 @@ function ParameterHistory() {
         </Row>
         <Row className="time-history-row">
           <Col>
-            <Row>SpO2</Row>
-            <Row style={{ fontSize: "0.8rem" }}>((%))</Row>
+            <Row style={{ textAlign: "left", paddingLeft: "0" }}>
+              <Link to="/Measure/History/ParameterHistory/oximetryData/SPO2">
+                SpO2
+              </Link>
+            </Row>
+            <Row style={{ fontSize: "0.8rem", paddingLeft: "1.5rem" }}>
+              ((%))
+            </Row>
           </Col>
           <Col>
             <Row>Temperature</Row>
@@ -61,8 +73,12 @@ function ParameterHistory() {
         </Row>
         <Row className="time-history-row">
           <Col>
-            <Row>Sys/DIA</Row>
-            <Row style={{ fontSize: "0.8rem" }}>(mmHg)</Row>
+            <Row style={{ textAlign: "left", paddingLeft: "0" }}>
+              <Link to="/Measure/History/ParameterHistory/BPData/SYS-DIA">
+                SYS/DIA
+              </Link>
+            </Row>
+            <Row style={{ fontSize: "0.8rem", paddingLeft: "1.5rem" }}>(mmHg)</Row>
           </Col>
           <Col>
             <Row>GSR</Row>

@@ -1,113 +1,168 @@
 import React, { useState, useContext, useEffect } from "react";
-import {
-  Row,
-  Col,
-  Button,
-  Form,
-  Dropdown,
-  DropdownButton,
-  Accordion,
-} from "react-bootstrap";
+import { Row, Col, Button, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useIndexedDB } from "react-indexed-db";
 import { UserContext } from "../../../../App";
-import showTimeData from "./ShowTimeData";
+import { isEqualDays } from "../../../../utilities/time";
 
 function TimeHistory() {
-  const [isInterval, setIsInterval] = useState(false);
+  const [ecgHeartBeat, setEcgHeartBeat] = useState(0);
+  const [SPO2, setSPO2] = useState(0);
+  const [ppgHeartBeat, setPpgHeartBeat] = useState(0);
+  const [SYS_DIA, setSYS_DIA] = useState([]);
 
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
 
-  const [cardiogramData, setCardiogramData] = useState("");
-  const [oximetryData, setOximetryData] = useState("");
-  const [timeData, setTimeData] = useState([]);
+  const [selectedDate, setSelectedDate] = useState("");
+
+  const [cardiogramData, setCardiogramData] = useState([]);
+  const [oximetryData, setOximetryData] = useState([]);
+  const [BPData, setBPData] = useState([]);
 
   const UserInfo = useContext(UserContext);
   const { getAll: getAllCData } = useIndexedDB("cardiogramData");
   const { getAll: getAllOData } = useIndexedDB("oximetryData");
+  const { getAll: getAllBPData } = useIndexedDB("BPData");
 
   useEffect(() => {
     getAllCData().then((dataFromDB) => {
-      setCardiogramData(dataFromDB);
+      const result = dataFromDB.filter((temp) => temp.userId === UserInfo.id);
+      setCardiogramData(result);
     });
   }, []);
 
   useEffect(() => {
     getAllOData().then((dataFromDB) => {
-      setCardiogramData(dataFromDB);
+      const result = dataFromDB.filter((temp) => temp.userId === UserInfo.id);
+      setOximetryData(result);
+    });
+  }, []);
+
+  useEffect(() => {
+    getAllBPData().then((dataFromDB) => {
+      const result = dataFromDB.filter((temp) => temp.userId === UserInfo.id);
+      setBPData(result);
     });
   }, []);
 
   function retrieveDate() {
+    cardiogramData.map((cData) => {
+      const historyDate = cData["date"];
+      if (isEqualDays(selectedDate, historyDate))
+        setEcgHeartBeat(cData["heartBeat"]);
+    });
 
-    const d = cardiogramData[0]['date'];
-    console.log(d);
-    const d2 = new Date(cardiogramData[0]['date']);
-    console.log(d2.getDate());
-    setTimeData(cardiogramData);
-  }
+    oximetryData.map((oData) => {
+      const historyDate = oData["date"];
+      if (isEqualDays(selectedDate, historyDate))
+        setPpgHeartBeat(oData["heartBeat"]);
+      setSPO2(oData["SPO2"]);
+    });
 
-  function reverseData() {
-    setIsInterval(!isInterval);
+    BPData.map((bData) => {
+      const historyDate = bData["date"];
+      if (isEqualDays(selectedDate, historyDate))
+          setSYS_DIA(bData["SYS_DIA"]);
+    });
   }
 
   return (
     <div className="history-section">
       <h1 style={{ marginBottom: "50px" }}>Time History</h1>
-      <Row style={{ marginBottom: "50px" }}>
-        <Col xs={{ span: 2, offset: 1 }} style={{ marginTop: "35px" }}>
-          <Form.Check
-            id="switchEnabled"
-            type="switch"
-            checked={isInterval}
-            onChange={reverseData}
-            label="Interval"
-          />
-        </Col>
-        <Col xs={{ span: 3 }}>
+      <Row>
+        <Col xs={{ span: 2, offset: 1 }}>
           <Form.Group controlId="dob">
             <Form.Label>Select Start Date</Form.Label>
             <Form.Control
               type="date"
               name="dob"
               placeholder="Date of Birth"
-              onChange={(e) => setStartDate(e.target.value)}
+              onChange={(e) => setSelectedDate(e.target.value)}
             />
           </Form.Group>
-        </Col>
-        <Col xs={{ span: 3 }}>
-          <Form.Group controlId="dob" className="e-disabled">
-            <Form.Label>Select End Date</Form.Label>
-            <Form.Control
-              type="date"
-              name="dob"
-              disabled={isInterval ? false : true}
-              placeholder="Date of Birth"
-              onChange={(e) => setEndDate(e.target.value)}
-            />
-          </Form.Group>
-        </Col>
-        <Col xs={{ span: 1 }}>
           <Button
             variant="primary"
             type="submit"
-            className="sm"
+            size="sm"
             onClick={retrieveDate}
           >
             Submit
           </Button>
         </Col>
+        <Col xs={{ span: 6, offset: 1 }}>
+          <Row className="time-history-row">
+            <Col>
+              <Row>Heart Rate(ppg): {ppgHeartBeat ? ppgHeartBeat : ""}</Row>
+              <Row style={{ fontSize: "0.8rem" }}>(beat per minute)</Row>
+            </Col>
+            <Col>
+              <Row>Heart Rate(ecg): {ecgHeartBeat ? ecgHeartBeat : ""}</Row>
+              <Row style={{ fontSize: "0.8rem" }}>(beat per minute)</Row>
+            </Col>
+          </Row>
+          <Row className="time-history-row">
+            <Col>
+              <Row>Blood Glucose</Row>
+              <Row style={{ fontSize: "0.8rem" }}>(mg/dL)</Row>
+            </Col>
+            <Col>
+              <Row>PR/RR Interval </Row>
+              <Row style={{ fontSize: "0.8rem" }}>(msec)</Row>
+            </Col>
+          </Row>
+          <Row className="time-history-row">
+            <Col>
+              <Row>Respiration Rate</Row>
+              <Row style={{ fontSize: "0.8rem" }}>(breath per minute)</Row>
+            </Col>
+            <Col>
+              <Row>QRS Duration</Row>
+              <Row style={{ fontSize: "0.8rem" }}>(msec)</Row>
+            </Col>
+          </Row>
+          <Row className="time-history-row">
+            <Col>
+              <Row>SpO2: {SPO2 ? SPO2 : ""}</Row>
+              <Row style={{ fontSize: "0.8rem" }}>(%)</Row>
+            </Col>
+            <Col>
+              <Row>HR Variation</Row>
+            </Col>
+          </Row>
+          <Row className="time-history-row">
+            <Col>
+              <Row>Sys/DIA</Row>
+              <Row style={{ fontSize: "0.8rem" }}>(mmHg)</Row>
+            </Col>
+            <Col>
+              <Row>Temperature</Row>
+              <Row style={{ fontSize: "0.8rem" }}>(‘C)</Row>
+            </Col>
+          </Row>
+          <Row className="time-history-row">
+            <Col>
+              <Row>Lung Abnormality</Row>
+            </Col>
+            <Col>
+              <Row>GSR</Row>
+              <Row style={{ fontSize: "0.8rem" }}>(Siemens)</Row>
+            </Col>
+          </Row>
+          <Row className="time-history-row">
+            <Col>
+              <Row>Heart Abnormality</Row>
+            </Col>
+            <Col>
+              <Row>Arrythmia Type</Row>
+            </Col>
+          </Row>
+        </Col>
+        <Col xs={3}></Col>
       </Row>
       <Row>
-        <Col xs={{ span: 6, offset: 3 }}>
-          <Accordion defaultActiveKey="0">
-            {timeData.map((data) => (
-              <Accordion.Item key={data.id} eventKey={String(data.id)}>
-                {showTimeData(data)}
-              </Accordion.Item>
-            ))}
-          </Accordion>
+        <Col>
+          <Link to="/Measure/History">
+            <Button size="sm"> Back</Button>
+          </Link>
         </Col>
       </Row>
     </div>

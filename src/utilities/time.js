@@ -5,11 +5,16 @@ function convertStringToDate(date){
   return [parseInt(days[0]), parseInt(days[1])-1, parseInt(days[2]), parseInt(hours[0]), parseInt(hours[1]), parseInt(hours[2])];
 }
 
-export const sortArrayBasedOnTime = (dates) => {
-
+export const isEqualDays = (date1, date2) => {
+  const time1 = convertStringToDate(date1);
+  const time2 = convertStringToDate(date2);
+  if(time1[0] === time2[0] && time1[1] === time2[1] && time1[2] === time2[2])
+    return true;
+  else
+    return false;
 }
 
-export const GetCurrectDateTime = () => {
+export const GetCurrentDateTime = () => {
   const date = new Date();
   const showTime =
     date.getFullYear() +
@@ -26,7 +31,7 @@ export const GetCurrectDateTime = () => {
   return showTime;
 };
 
-export const GetCurrectDateTimeForFileName = () => {
+export const GetCurrentDateTimeForFileName = () => {
   const date = new Date();
   const showTime =
     date.getFullYear() +

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useIndexedDB } from "react-indexed-db";
 import { DeviceContext, UserContext } from "../../../../App";
 import Diagram from "../../../Diagram/Diagram";
+import { GetCurrentDateTime } from "../../../../utilities/time";
 
 // todo
 // sync with cardiogram
@@ -18,6 +19,9 @@ function BPWithoutCalibration() {
   
   const [show, setShow] = useState(false);
   const [active, setActive] = useState(false);
+
+  const [SYS_DIA, setSYS_DIA] = useState(0);
+  const [qualityIndex, setQualityIndex] = useState(0);
   
   const ppgs = [...new Array(200).fill(0)];
   const forces = [...new Array(200).fill(0)];
@@ -27,27 +31,14 @@ function BPWithoutCalibration() {
   const { add } = useIndexedDB("BPData");
 
   const addToDB = () => {
-    const date = new Date();
-    const showTime =
-      date.getFullYear() +
-      " " +
-      date.getMonth() +
-      " " +
-      date.getDate() +
-      " " +
-      date.getHours() +
-      ":" +
-      date.getMinutes() +
-      ":" +
-      date.getSeconds();
+    const showTime = GetCurrentDateTime();
 
     add({
       userId: UserInfo.id,
       ppgData: ppgs,
       forceData: forces,
       date: showTime,
-      SYS: 0,
-      DIA: 0
+      SYS_DIA: 0
     }).then(
       (event) => {
         console.log("BP added: ", event);
@@ -84,6 +75,10 @@ function BPWithoutCalibration() {
 
   const stopInput = () => {
     bluetooth.stop();
+
+    // eslint-disable-next-line no-undef
+    // const SYS_DIA = BloodPressure()
+    // 
     addToDB();
 
   };

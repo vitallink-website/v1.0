@@ -5,7 +5,7 @@ import { DeviceContext, UserContext } from "../../../../App";
 import Diagram from "../../../Diagram/Diagram";
 import { useIndexedDB } from "react-indexed-db";
 import { shareData } from "../../share/Share";
-import { GetCurrectDateTime } from "../../../../utilities/time";
+import { GetCurrentDateTime } from "../../../../utilities/time";
 
 function Cardiogram() {
   const bluetooth = useContext(DeviceContext);
@@ -24,6 +24,7 @@ function Cardiogram() {
 
   const [startSecond, setStart] = useState();
 
+  const [qualityIndex, setQualityIndex] = useState(0);
   const [heartBeat, setHeartBeat] = useState(0);
   const [show, setShow] = useState(false);
 
@@ -52,7 +53,7 @@ function Cardiogram() {
     add({
       userId: UserInfo.id,
       ecgData: data.ecg,
-      date: GetCurrectDateTime(),
+      date: GetCurrentDateTime(),
       heartBeat: heartBeat,
       PRRRInterval: 0,
       QRSDuration: 0,
@@ -93,6 +94,10 @@ function Cardiogram() {
       // bluetooth.GetFrequency()
     );
     console.log(data.ecg);
+
+    // // eslint-disable-next-line no-undef
+    // const Quality_index = Quality_ECG(data.ecg.slice(400), fs);
+    // setQualityIndex(Quality_index);
 
     console.log(heartBeat);
     setHeartBeat(heartBeat);

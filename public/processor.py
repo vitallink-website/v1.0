@@ -242,8 +242,8 @@ def PPG_signal_processing(IR, Red, fs):
 
 ###################################################3
 
-def Quality_PPG_Adapter(ECG_data, fs):
-    array = np.asarray(ECG_data.to_py())
+def Quality_PPG_Adapter(PPG_data, fs):
+    array = np.asarray(PPG_data.to_py())
     try :
       return Quality_PPG(array, fs)
     except: 
@@ -327,7 +327,7 @@ def BP_estimation(PPG, Force, fs):
       Systolic = 2.5*Mean - 1.5*Diastolic
     else: print('Try Again!')
   else: print('Try Again!')
-  return Diastolic, Systolic
+  return [Diastolic, Systolic]
   
 
 def B2_B3_estimation(x, y, k, A1, A2, B1):
@@ -361,4 +361,14 @@ def HeartBeatECG_Adapter(ECG_data, fs):
       return -1
 
 createObject(create_proxy(HeartBeatECG_Adapter), "HeartBeat_ECG")
+
+def Quality_ECG_Adapter(ECG_data, fs):
+    array = np.asarray(ECG_data.to_py())
+    t = np.linspace(0, len(array)/fs, len(array), endpoint = True)
+    try :
+      return Quality_ECG(array, fs, t)
+    except: 
+      return -1
+
+createObject(create_proxy(Quality_ECG_Adapter), "Quality_ECG")
 

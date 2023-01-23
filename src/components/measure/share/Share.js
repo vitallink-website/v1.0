@@ -1,10 +1,10 @@
 import * as saveSvgAsPng from "save-svg-as-png";
-import { GetCurrectDateTime } from "../../../utilities/time";
-import { GetCurrectDateTimeForFileName } from "../../../utilities/time";
+import { GetCurrentDateTime } from "../../../utilities/time";
+import { GetCurrentDateTimeForFileName } from "../../../utilities/time";
 
 export function shareData(dataName, texts) {
-  const showTime1 = GetCurrectDateTime();
-  const showTime2 = GetCurrectDateTimeForFileName();
+  const showTime1 = GetCurrentDateTime();
+  const showTime2 = GetCurrentDateTimeForFileName();
 
   const svg = document.querySelector(".recharts-surface");
   var svgNS = "http://www.w3.org/2000/svg";

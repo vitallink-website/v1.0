@@ -33,8 +33,7 @@ export const DBUser = {
         { name: "ppgData", keypath: "ppgData", options: { unique: false } },
         { name: "forceData", keypath: "forceData", options: { unique: false } },
         { name: "date", keypath: "date", options: { unique: false } },
-        { name: "SYS", keypath: "SYS", options: { unique: false } },
-        { name: "DIA", keypath: "DIA", options: { unique: false } }
+        { name: "SYS_DIA", keypath: "SYS_DIA", options: { unique: false } },
       ],
     },
     {
