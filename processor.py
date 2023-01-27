@@ -242,32 +242,26 @@ def PPG_signal_processing(IR, Red, fs):
 
 ###################################################3
 
-def Quality_PPG_Adapter(ECG_data, sample_duration):
-    array = np.asarray(ECG_data.to_py())
-    # fs = len(array) / sample_duration
-    print(sample_duration)
+def Quality_PPG_Adapter(PPG_data, fs):
+    array = np.asarray(PPG_data.to_py())
     try :
-      return Quality_PPG(array, sample_duration)
+      return Quality_PPG(array, fs)
     except: 
       return -1
 
 createObject(create_proxy(Quality_PPG_Adapter), "Quality_PPG") #quality index
 
-def SpO2_estimation_Adapter(ECG_data, sample_duration):
+def SpO2_estimation_Adapter(ECG_data, fs):
     array = np.asarray(ECG_data.to_py())
-    # fs = len(array) / sample_duration
-    print(sample_duration)
     try :
-      return SpO2_estimation(array, sample_duration)
+      return SpO2_estimation(array, fs)
     except: 
       return -1
 
 createObject(create_proxy(SpO2_estimation_Adapter), "SpO2_estimation")
 
-def HeartBeatPPG_Adapter(ECG_data, sample_duration):
+def HeartBeatPPG_Adapter(ECG_data, fs):
     array = np.asarray(ECG_data.to_py())
-    fs = len(array) / sample_duration
-    print(fs)
     try :
       return HeartBeat_PPG(array, fs)
     except: 
@@ -333,7 +327,7 @@ def BP_estimation(PPG, Force, fs):
       Systolic = 2.5*Mean - 1.5*Diastolic
     else: print('Try Again!')
   else: print('Try Again!')
-  return Diastolic, Systolic
+  return [Diastolic, Systolic]
   
 
 def B2_B3_estimation(x, y, k, A1, A2, B1):
@@ -350,23 +344,31 @@ def B2_B3_estimation(x, y, k, A1, A2, B1):
   return B2, B3
 
 
-def BloodPressure_Adapter(PPG_data, BPData, sample_duration):
+def BloodPressure_Adapter(PPG_data, BPData, fs):
     array = np.asarray(PPG_data.to_py())
-    # fs = len(array) / sample_duration
     try :
-      return BP_estimation(array, sample_duration)
+      return BP_estimation(array, fs)
     except: 
       return -1
 
 createObject(create_proxy(BloodPressure_Adapter), "BloodPressure")
 
-def HeartBeatECG_Adapter(ECG_data, sample_duration):
+def HeartBeatECG_Adapter(ECG_data, fs):
     array = np.asarray(ECG_data.to_py())
-    fs = len(array) / sample_duration
     try :
       return HeartBeat_ECG(array, fs)
     except: 
       return -1
 
 createObject(create_proxy(HeartBeatECG_Adapter), "HeartBeat_ECG")
+
+def Quality_ECG_Adapter(ECG_data, fs):
+    array = np.asarray(ECG_data.to_py())
+    t = np.linspace(0, len(array)/fs, len(array), endpoint = True)
+    try :
+      return Quality_ECG(array, fs, t)
+    except: 
+      return -1
+
+createObject(create_proxy(Quality_ECG_Adapter), "Quality_ECG")
 
