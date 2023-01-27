@@ -10,8 +10,6 @@ export const useSignalFeed = () => {
   const [loading, setLoading] = useState(false);
   const [read_charastirctic, setCharastircticR] = useState();
   const [write_charastirctic, setCharastircticW] = useState();
-  const [fs, setFs] = useState(0);
-  const [ts, setTs] = useState(0);
   const [duration, setDuration] = useState(0);
   const Data = [];
   const disconnect = () => {
@@ -32,20 +30,18 @@ export const useSignalFeed = () => {
 
   const stop = async () => {
     console.log("stop");
-    const time = performance.now() - duration;
-    setTs(time);
     setDuration(0);
-    setFs(Data.length / Math.floor(time / 1000));
-
     read_charastirctic.stopNotifications();
   };
 
-  const GetFrequency = () => fs;
-  const GetTime = () => ts;
+  const GetFrequency = () => {
+    const time = performance.now() - duration;
+    return Data.length / Math.floor(time / 1000);
+  };
+  const GetTime = () => performance.now() - duration;
 
   const connect = () => {
     console.log("connect");
-    setLoading(true);
     navigator.bluetooth
       .requestDevice({
         optionalServices: [ServiceUUID],
@@ -53,6 +49,7 @@ export const useSignalFeed = () => {
         acceptAllDevices: true,
       })
       .then((device) => {
+        setLoading(true);
         setDevice(device);
         device.gatt.connect().then((gatt) => {
           gatt.getPrimaryService(ServiceUUID).then((service) => {
@@ -63,11 +60,11 @@ export const useSignalFeed = () => {
             });
             service.getCharacteristic(ReadCharistristicUUID).then((char) => {
               setCharastircticR(char);
+              setLoading(false);
             });
           });
         });
-      })
-      .finally(() => setLoading(false));
+      });
   };
 
   const sendCommand = async (command, callBack) => {

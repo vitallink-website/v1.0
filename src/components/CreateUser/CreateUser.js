@@ -8,8 +8,8 @@ function CreateUser() {
   const [form, setForm] = useState({
     name: "",
     dob: null,
-    weight: 50,
-    height: 160,
+    weight: null,
+    height: null,
     gender: null,
   });
   const [errors, setErrors] = useState({});

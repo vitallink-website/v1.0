@@ -16,12 +16,12 @@ function Temperature() {
           </Link>
         </Col>
         <Col>
-          <Link to="/">
+          <Link to="#">
             <Button> Output</Button>
           </Link>
         </Col>
         <Col>
-          <Link to="/">
+          <Link to="#">
             <Button> Save</Button>
           </Link>
         </Col>

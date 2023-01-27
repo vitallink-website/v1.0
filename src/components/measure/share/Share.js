@@ -1,24 +1,26 @@
 import * as saveSvgAsPng from "save-svg-as-png";
-import { GetCurrentDateTime } from "../../../utilities/time";
-import { GetCurrentDateTimeForFileName } from "../../../utilities/time";
+import {
+  GetCurrentDateTime,
+  GetCurrentDateTimeForFileName,
+} from "../../../utilities/time";
 
 export function shareData(dataName, texts) {
   const showTime1 = GetCurrentDateTime();
   const showTime2 = GetCurrentDateTimeForFileName();
 
   const svg = document.querySelector(".recharts-surface");
-  var svgNS = "http://www.w3.org/2000/svg";
-  var newText = document.createElementNS(svgNS, "text");
+  let svgNS = "http://www.w3.org/2000/svg";
+  let newText = document.createElementNS(svgNS, "text");
   newText.setAttributeNS(null, "x", 60);
   newText.setAttributeNS(null, "y", 450);
   newText.setAttributeNS(null, "font-size", "28");
   newText.setAttributeNS(null, "font-family", "cursive");
-  texts.map((text) => {
-    var tspan = document.createElement('tspan') 		
-    tspan.setAttribute('x','60');
-    tspan.setAttribute('dy','2em');
+  texts.foreach((text) => {
+    let tspan = document.createElement("tspan");
+    tspan.setAttribute("x", "60");
+    tspan.setAttribute("dy", "2em");
     tspan.textContent = text;
-    newText.appendChild(tspan)
+    newText.appendChild(tspan);
   });
   svg.appendChild(newText);
 

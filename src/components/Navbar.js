@@ -3,7 +3,6 @@ import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
-// import logo from "../Assets/logo.png";
 import { Link } from "react-router-dom";
 import { AiOutlineHome, AiOutlineUser, AiOutlineLogin } from "react-icons/ai";
 import { BsPersonCircle } from "react-icons/bs";
