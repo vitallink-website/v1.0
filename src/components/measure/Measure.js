@@ -3,11 +3,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
 
-
-
-function Measure({username}) {
-  
-
+function Measure({ username }) {
   return (
     <div className="measure-section">
       <Container className="measure">
@@ -26,7 +22,6 @@ function Measure({username}) {
             </Link>
           </Col>
         </Row>
-        
       </Container>
     </div>
   );

@@ -13,13 +13,13 @@ function BloodGlucose() {
 
       <Row>
         <Col>
-          <Link to="/">
-            <Button> Without Calibration</Button>
+          <Link to="#">
+            <Button disabled> Without Calibration</Button>
           </Link>
         </Col>
         <Col>
-          <Link to="/">
-            <Button> With Calibration</Button>
+          <Link to="#">
+            <Button disabled> With Calibration</Button>
           </Link>
         </Col>
       </Row>

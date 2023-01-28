@@ -54,8 +54,8 @@ function App() {
   const { isUserSelected, ...user } = UserInfo();
 
   const registery = {
-    isUserSelected: true,
-    isSignedIn: true,
+    isUserSelected: isUserSelected,
+    isSignedIn: isConnected,
   };
 
   return (

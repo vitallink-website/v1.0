@@ -10,24 +10,24 @@ import { GetCurrentDateTime } from "../../../../utilities/time";
 // sync with cardiogram
 function BPWithoutCalibration() {
   const bluetooth = useContext(DeviceContext);
-  
+
   const [data, setData] = useState({
     ppg: [...new Array(200).fill(0)],
     ecg: [],
     force: [...new Array(200).fill(0)],
   });
-  
+
   const [show, setShow] = useState(false);
   const [active, setActive] = useState(false);
 
   const [SYS_DIA, setSYS_DIA] = useState(0);
   const [qualityIndex, setQualityIndex] = useState(0);
-  
+
   const ppgs = [...new Array(200).fill(0)];
   const forces = [...new Array(200).fill(0)];
-  
+
   const UserInfo = useContext(UserContext);
-  
+
   const { add } = useIndexedDB("BPData");
 
   const addToDB = () => {
@@ -38,7 +38,7 @@ function BPWithoutCalibration() {
       ppgData: ppgs,
       forceData: forces,
       date: showTime,
-      SYS_DIA: 0
+      SYS_DIA: 0,
     }).then(
       (event) => {
         console.log("BP added: ", event);
@@ -47,7 +47,7 @@ function BPWithoutCalibration() {
         console.log(error);
       }
     );
-  }
+  };
 
   useEffect(() => {
     bluetooth.sendCommand(0x05, hanldeCallback);
@@ -78,9 +78,8 @@ function BPWithoutCalibration() {
 
     // eslint-disable-next-line no-undef
     // const SYS_DIA = BloodPressure()
-    // 
+    //
     addToDB();
-
   };
 
   const autoStart = () => {
@@ -106,32 +105,36 @@ function BPWithoutCalibration() {
           </h5>
         </Col>
         <Col sm={2}>
-          <Button onClick={openModal} disabled={data.ppg.length > 200}>Start</Button>
+          <Button onClick={openModal} disabled={data.ppg.length > 100}>
+            Start
+          </Button>
         </Col>
       </Row>
       <Row>
-        <Diagram
-          dataKey={"ppg"}
-          flow={
-            data.ppg.length > 200
-              ? active
-                ? data.ppg.slice(data.ppg.length - 200, data.ppg.length)
-                : data.ppg
-              : [new Array(200).fill(0)]
-          }
-        />
-      </Row>
-      <Row>
-        <Diagram
-          dataKey={"force"}
-          flow={
-            data.force.length > 200
-              ? active
-                ? data.force.slice(data.force.length - 200, data.force.length)
-                : data.force
-              : [new Array(200).fill(0)]
-          }
-        />
+        <Col sm={6}>
+          <Diagram
+            dataKey={"ppg"}
+            flow={
+              data.ppg.length > 100
+                ? active
+                  ? data.ppg.slice(data.ppg.length - 100, data.ppg.length)
+                  : data.ppg
+                : [new Array(100).fill(0)]
+            }
+          />
+        </Col>
+        <Col sm={6}>
+          <Diagram
+            dataKey={"force"}
+            flow={
+              data.force.length > 100
+                ? active
+                  ? data.force.slice(data.force.length - 100, data.force.length)
+                  : data.force
+                : [new Array(100).fill(0)]
+            }
+          />
+        </Col>
       </Row>
       <Row className="measure-button-row">
         <Col>

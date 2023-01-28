@@ -9,7 +9,6 @@ function AbnormalityDetection() {
       <br />
       <h2 className="measure-title">Cardiogram</h2>
       <h2 className="measure-title">Abnormality Detection</h2>
-
       <Row className="measure-button-row">
         <Col>
           <Link to="/Measure/Measurement/Cardiogram">
@@ -17,7 +16,7 @@ function AbnormalityDetection() {
           </Link>
         </Col>
         <Col>
-          <Link to="/">
+          <Link to="#">
             <Button> Save</Button>
           </Link>
         </Col>
