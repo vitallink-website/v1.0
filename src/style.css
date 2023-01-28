@@ -59,6 +59,21 @@ a{
   margin-left: 0px !important;
 }
 
+.pagination {
+  --bs-pagination-padding-x: 2.5rem !important;
+  --bs-pagination-bg: transparent  !important;
+  --bs-pagination-border-color : black !important;
+  --bs-pagination-color: black !important;
+  --bs-pagination-hover-bg: #067ff886 !important;
+  --bs-pagination-hover-border-color:  black !important;
+  --bs-pagination-hover-color:  black !important;
+  --bs-pagination-focus-color: none !important;
+  --bs-pagination-focus-box-shadow: none !important;
+  --bs-pagination-focus-bg: none !important;
+  width: 220px !important;
+  clear:both;
+}
+
 /* --------- */
 /* Navbar Section  */
 /* --------- */

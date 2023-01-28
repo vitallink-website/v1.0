@@ -1,9 +1,11 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Row, Col, Button, Form } from "react-bootstrap";
+import { Row, Col, Button, Pagination } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useIndexedDB } from "react-indexed-db";
 import { UserContext } from "../../../../App";
 import { isEqualDays } from "../../../../utilities/time";
+import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
+import { FaAngleDoubleDown, FaAngleDoubleUp } from "react-icons/fa";
 
 function TimeHistory() {
   const [ecgHeartBeat, setEcgHeartBeat] = useState(0);
@@ -11,8 +13,9 @@ function TimeHistory() {
   const [ppgHeartBeat, setPpgHeartBeat] = useState(0);
   const [SYS_DIA, setSYS_DIA] = useState([]);
 
-
-  const [selectedDate, setSelectedDate] = useState("");
+  //pagination
+  const [dates, setDates] = useState([]);
+  const [currentDate, setCurrentDate] = useState(0);
 
   const [cardiogramData, setCardiogramData] = useState([]);
   const [oximetryData, setOximetryData] = useState([]);
@@ -27,6 +30,9 @@ function TimeHistory() {
     getAllCData().then((dataFromDB) => {
       const result = dataFromDB.filter((temp) => temp.userId === UserInfo.id);
       setCardiogramData(result);
+      const resDate = [];
+      result.map((res) => resDate.push(String(res["date"]).split(" ")[0]));
+      resDate.map((resD) => setDates((dates) => [...dates, resD]));
     });
   }, []);
 
@@ -34,6 +40,9 @@ function TimeHistory() {
     getAllOData().then((dataFromDB) => {
       const result = dataFromDB.filter((temp) => temp.userId === UserInfo.id);
       setOximetryData(result);
+      const resDate = [];
+      result.map((res) => resDate.push(String(res["date"]).split(" ")[0]));
+      resDate.map((resD) => setDates((dates) => [...dates, resD]));
     });
   }, []);
 
@@ -41,28 +50,38 @@ function TimeHistory() {
     getAllBPData().then((dataFromDB) => {
       const result = dataFromDB.filter((temp) => temp.userId === UserInfo.id);
       setBPData(result);
+      const resDate = [];
+      result.map((res) => resDate.push(String(res["date"]).split(" ")[0]));
+      resDate.map((resD) => setDates((dates) => [...dates, resD]));
     });
   }, []);
 
+  useEffect(() => {
+    const uniqueDates = Array.from(new Set(dates));
+    setDates(uniqueDates);
+  }, [dates])
+
   function retrieveDate() {
-    cardiogramData.map((cData) => {
-      const historyDate = cData["date"];
-      if (isEqualDays(selectedDate, historyDate))
-        setEcgHeartBeat(cData["heartBeat"]);
-    });
+    console.log(dates);
+    console.log("hi :)" + currentDate);
+    // cardiogramData.map((cData) => {
+    //   const historyDate = cData["date"];
+    //   if (isEqualDays(dates[currentDate], historyDate))
+    //     setEcgHeartBeat(cData["heartBeat"]);
+    // });
 
-    oximetryData.map((oData) => {
-      const historyDate = oData["date"];
-      if (isEqualDays(selectedDate, historyDate))
-        setPpgHeartBeat(oData["heartBeat"]);
-      setSPO2(oData["SPO2"]);
-    });
+    // oximetryData.map((oData) => {
+    //   const historyDate = oData["date"];
+    //   if (isEqualDays(dates[currentDate], historyDate)) {
+    //     setPpgHeartBeat(oData["heartBeat"]);
+    //     setSPO2(oData["SPO2"]);
+    //   }
+    // });
 
-    BPData.map((bData) => {
-      const historyDate = bData["date"];
-      if (isEqualDays(selectedDate, historyDate))
-          setSYS_DIA(bData["SYS_DIA"]);
-    });
+    // BPData.map((bData) => {
+    //   const historyDate = bData["date"];
+    //   if (isEqualDays(currentDate, historyDate)) setSYS_DIA(bData["SYS_DIA"]);
+    // });
   }
 
   return (
@@ -70,23 +89,43 @@ function TimeHistory() {
       <h1 style={{ marginBottom: "50px" }}>Time History</h1>
       <Row>
         <Col xs={{ span: 2, offset: 1 }}>
-          <Form.Group controlId="dob">
-            <Form.Label>Select Start Date</Form.Label>
-            <Form.Control
-              type="date"
-              name="dob"
-              placeholder="Date of Birth"
-              onChange={(e) => setSelectedDate(e.target.value)}
-            />
-          </Form.Group>
-          <Button
-            variant="primary"
-            type="submit"
-            size="sm"
-            onClick={retrieveDate}
+          <Pagination
+            style={{ display: "inline-block" }}
+            onClick={retrieveDate()}
           >
-            Submit
-          </Button>
+            <Pagination.First onClick={() => setCurrentDate(0)}>
+              <FaAngleDoubleUp />
+            </Pagination.First>
+            <Pagination.Prev
+              onClick={() =>
+                currentDate - 1 >= 0
+                  ? setCurrentDate(currentDate - 1)
+                  : setCurrentDate(currentDate)
+              }
+            >
+              <AiFillCaretUp />
+            </Pagination.Prev>
+            {/* {[...Array(7)].map(function(i){
+                <Pagination.Item onClick={() => setCurrentDate(currentDate)} active = {i==0}>{console.log("hry " + {currentDate} + dates[5])}{dates[currentDate + i]}</Pagination.Item>
+            })} */}
+            <Pagination.Item onClick={() => setCurrentDate(currentDate)} active>{dates[currentDate]}</Pagination.Item>
+            <Pagination.Item onClick={() => setCurrentDate(currentDate)} >{dates[currentDate + 1]}</Pagination.Item>
+            <Pagination.Item onClick={() => setCurrentDate(currentDate)} >{dates[currentDate + 2]}</Pagination.Item>
+            <Pagination.Item onClick={() => setCurrentDate(currentDate)} >{dates[currentDate + 3]}</Pagination.Item>
+            <Pagination.Item onClick={() => setCurrentDate(currentDate)} >{dates[currentDate + 4]}</Pagination.Item>
+            <Pagination.Next
+              onClick={() => {
+                currentDate + 1 < dates.length
+                  ? setCurrentDate(currentDate + 1)
+                  : setCurrentDate(currentDate);
+              }}
+            >
+              <AiFillCaretDown />
+            </Pagination.Next>
+            <Pagination.Last onClick={() => setCurrentDate(dates.length - 1)}>
+              <FaAngleDoubleDown />
+            </Pagination.Last>
+          </Pagination>
         </Col>
         <Col xs={{ span: 6, offset: 1 }}>
           <Row className="time-history-row">
