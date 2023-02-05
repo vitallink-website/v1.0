@@ -4,33 +4,71 @@ import { Link } from "react-router-dom";
 import { UserContext } from "../../../../App";
 import { useIndexedDB } from "react-indexed-db";
 import { shareData } from "../../share/Share";
-import { GetCurrentDateTime } from "../../../../utilities/time";
+import { GetCurrentDateTime, isEqualDays } from "../../../../utilities/time";
 import MeasureBase from "../../../MeasureBase/MeasureBase";
 
 const Oximetry = () => {
   const UserInfo = useContext(UserContext);
 
-  const { add } = useIndexedDB("oximetryData");
+  const { update: updateParameterHistory } = useIndexedDB("oximetryData");
+  const { update: updateTimeHistory } = useIndexedDB("dataTime");
 
   const [heartBeat, setHeartBeat] = useState(0);
   const [SPO2, setSPO2] = useState(0);
   const [qualityIndex, setQualityIndex] = useState(0);
 
-  const addToDB = (data, heartBeat) => {
-    add({
+  const addToDB = (heartBeat, SPO2) => {
+    const currentDate = GetCurrentDateTime();
+    console.log(UserInfo.lastDateMeasured+ " " + currentDate)
+    if(!isEqualDays(currentDate, UserInfo.lastDateMeasured))
+    { UserInfo.parameters = {
+      heartBeatPPG: '',
+      SPO2: '',
+      heartBeatECG: '',
+      QRS_Duration: '',
+      PR_RR_Interval: '',
+      SYS_DIA: ''
+    }
+    UserInfo.setLastDateMeasured(currentDate);
+  }
+    
+    updateParameterHistory({
+      dateAndId: currentDate + ' ' + UserInfo.id,
       userId: UserInfo.id,
-      ppgData: data,
-      date: GetCurrentDateTime(),
-      heartBeat: heartBeat,
-      SPO2: 0,
+      heartBeatPPG: heartBeat,
+      SPO2: SPO2,
     }).then(
       (event) => {
-        console.log("oximetryData added: ", event);
+        console.log("oximetryData updated: ", event);
       },
       (error) => {
         console.log(error);
       }
     );
+
+    updateTimeHistory({
+      dateAndId: currentDate + ' ' + UserInfo.id,
+      parameters: {
+        ...UserInfo.parameters,
+        heartBeatPPG: heartBeat,
+        SPO2: SPO2,
+      },
+    }).then(
+      (event) => {
+        console.log("timeData updated: ", event);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+
+    
+    UserInfo.setParameters({...UserInfo.parameters, 
+      heartBeatPPG: heartBeat,
+      SPO2: SPO2
+    }
+    )
+
   };
 
   const calculateBeatPerMinute = (inputs) => {
@@ -38,16 +76,17 @@ const Oximetry = () => {
     const heartBeat = HeartBeat_PPG(inputs.data, inputs.freq);
 
     // eslint-disable-next-line no-undef
-    // const SPO2 = SpO2_estimation();
+    // const SPO2 = SpO2_estimation(inputs.data, inputs.freq);
 
-    // const Quality_index = Quality_PPG();
+    // eslint-disable-next-line no-undef
+    // const Quality_index = Quality_PPG(inputs.data, inputs.freq);
 
     console.log(heartBeat);
     setHeartBeat(Number(heartBeat).toFixed(2));
     // todo ? do toFixed here
     // setSPO2(SPO2);
     // setQualityIndex(Quality_index);
-    addToDB(Number(heartBeat).toFixed(2));
+    addToDB(Number(heartBeat).toFixed(0), Number(SPO2).toFixed(2));
   };
 
   return (

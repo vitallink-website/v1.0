@@ -8,12 +8,21 @@ export const UserInfo = () => {
   const [weight, setWeight] = useState("");
   const [height, setHeight] = useState("");
   const [gender, setGender] = useState("");
+  const [lastDateMeasured, setLastDateMeasured] = useState('');
+  const [parameters, setParameters] = useState({
+    heartBeatPPG: '',
+    SPO2: '',
+    heartBeatECG: '',
+    QRS_Duration: '',
+    PR_RR_Interval: '',
+    SYS_DIA: ''
+})
 
   const SetAllInfo = (user) => {
     setIsUserSelected(true);
     setId(user.id);
     setUsername(user.name);
-    setDate(user.date);
+    setDate(user.dob);
     setWeight(user.weight);
     setHeight(user.height);
     setGender(user.gender);
@@ -35,6 +44,10 @@ export const UserInfo = () => {
     weight,
     height,
     gender,
+    lastDateMeasured,
+    setLastDateMeasured, 
+    parameters,
+    setParameters,
   };
 };
 

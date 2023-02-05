@@ -73,6 +73,7 @@ export const useSignalFeed = () => {
 
     read_charastirctic.oncharacteristicvaluechanged = (data) => {
       const ppg = data.srcElement.value.getUint16(0, true);
+      // const IR = data.srcElement.value.getUint16(0, true);
       // const red = data.srcElement.value.getUint16(2, true);
       const ecg = data.srcElement.value.getInt16(4, true);
       const force = Bytes2Float16(data.srcElement.value.getUint16(6, true));

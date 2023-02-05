@@ -1,38 +1,31 @@
 export const DBUser = {
   name: "userDB",
-  version: 4,
+  version: 5,
   objectStoresMeta: [
     {
       store: "cardiogramData",
-      storeConfig: { keyPath: "id", autoIncrement: true },
+      storeConfig: { keyPath: "dateAndId", autoIncrement: false },
       storeSchema: [
         { name: "userId", keypath: "userId", options: { unique: false } },
-        { name: "ecgData", keypath: "ecgData", options: { unique: false } },
-        { name: "date", keypath: "date", options: { unique: false } },
-        { name: "heartBeat", keypath: "heartBeat", options: { unique: false } },
-        { name: "PRRRInterval", keypath: "PRRRInterval", options: { unique: false } },
-        { name: "QRSDuration", keypath: "QRSDuration", options: { unique: false } }
+        { name: "heartBeatECG", keypath: "heartBeatECG", options: { unique: false } },
+        { name: "PR_RR_Interval", keypath: "PRRRInterval", options: { unique: false } },
+        { name: "QRS_Duration", keypath: "QRSDuration", options: { unique: false } }
       ],
     },
     {
       store: "oximetryData",
-      storeConfig: { keyPath: "id", autoIncrement: true },
+      storeConfig: { keyPath: "dateAndId", autoIncrement: false },
       storeSchema: [
         { name: "userId", keypath: "userId", options: { unique: false } },
-        { name: "ppgData", keypath: "ppgData", options: { unique: false } },
-        { name: "date", keypath: "date", options: { unique: false } },
-        { name: "heartBeat", keypath: "heartBeat", options: { unique: false } },
+        { name: "heartBeatPPG", keypath: "heartBeatPPG", options: { unique: false } },
         { name: "SPO2", keypath: "SPO2", options: { unique: false } },
       ],
     },
     {
       store: "BPData",
-      storeConfig: { keyPath: "id", autoIncrement: true },
+      storeConfig: { keyPath: "dateAndId", autoIncrement: false },
       storeSchema: [
         { name: "userId", keypath: "userId", options: { unique: false } },
-        { name: "ppgData", keypath: "ppgData", options: { unique: false } },
-        { name: "forceData", keypath: "forceData", options: { unique: false } },
-        { name: "date", keypath: "date", options: { unique: false } },
         { name: "SYS_DIA", keypath: "SYS_DIA", options: { unique: false } },
       ],
     },
@@ -46,6 +39,15 @@ export const DBUser = {
         { name: "dob", keypath: "dob", options: { unique: false } },
         { name: "gender", keypath: "gender", options: { unique: false } },
       ],
+    },
+    {
+      store: "dataTime",
+      storeConfig: { keyPath: "dateAndId", autoIncrement: false},
+      storeSchema: [
+        { name: "parameters", keypath: "parameters", options: { unique: false } },
+      ],
     }
   ],
 };
+
+

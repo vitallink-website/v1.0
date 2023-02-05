@@ -146,7 +146,7 @@ def PQRST(ECG_filtered, fs):
   # plt.show() 
   # ----------------------------------------------------------------------------
 
-  return P, Q, R, S, T 
+  return P.tolist(), Q.tolist(), R.tolist(), S.tolist(), T.tolist()
 
 def Quality_ECG(ECG_filtered, fs, t):
   num = int(np.floor(len(t)/(fs/3)))
@@ -173,7 +173,7 @@ def ECG_signal_processing(ECG, fs):
   t_PQ = (t[P] + t[Q]) / 2
   QRS_duration = np.mean(t_ST - t_PQ)
   Quality_index = Quality_ECG(ECG_filtered, fs, t)
-  return HeartRate, PR_RR, QRS_duration, Quality_index, P, Q, R, S, T
+  return [HeartRate, PR_RR, QRS_duration, Quality_index, P, Q, R, S, T]
 
 
   ########################################### ppg
@@ -353,14 +353,14 @@ def BloodPressure_Adapter(PPG_data, BPData, fs):
 
 createObject(create_proxy(BloodPressure_Adapter), "BloodPressure")
 
-def HeartBeatECG_Adapter(ECG_data, fs):
+def ECG_signal_processing_Adapter(ECG_data, fs):
     array = np.asarray(ECG_data.to_py())
     try :
-      return HeartBeat_ECG(array, fs)
+      return ECG_signal_processing(array, fs)
     except: 
       return -1
 
-createObject(create_proxy(HeartBeatECG_Adapter), "HeartBeat_ECG")
+createObject(create_proxy(ECG_signal_processing_Adapter), "ECG_signal_processing_ECG")
 
 def Quality_ECG_Adapter(ECG_data, fs):
     array = np.asarray(ECG_data.to_py())

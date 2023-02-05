@@ -44,14 +44,14 @@ function CreateUser() {
     setErrors(Validator());
     let id;
     if (Object.keys(err).length === 0) {
-      add(form).then(
+      add({...form, lastMeasureDate: ''}).then(
         (event) => {
           console.log("Data added: ", event);
           id = event;
           UserInfo.SetAllInfo({
             id,
             ...form,
-            date: form.dob,
+            date: form.dob
           });
           history("/");
         },
