@@ -69,22 +69,24 @@ function MeasureBase({ name, command, action, texts, title, children }) {
   const openModal = () => setShow(true);
 
   const getStreamOfData = () => {
-    if (data.length > 200) {
+    if (data.length > 201) {
       if (active === 1) {
-        return data.slice(data.length - 200, data.length);
+        return data.slice(data.length - 201, data.length);
       }
       if (active === -1) return data;
     }
-    return [...new Array(200).fill(0)];
+    return [...new Array(201).fill(0)];
   };
 
   return (
     <div className="measure-section">
       <br />
       <br />
-      <Row>
-        <Col xs={10}>{title(openModal)}</Col>
-        <Col xs={2}>
+      <Row className="align-items-center">
+        <Col xs={12} sm={10}>
+          {title(openModal)}
+        </Col>
+        <Col xs={12} sm={2}>
           <Form>
             <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>Sample Time</Form.Label>

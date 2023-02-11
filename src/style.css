@@ -18,7 +18,7 @@ button:focus {
   box-shadow: none !important;
 }
 
-a{
+a {
   text-decoration: none !important;
 }
 
@@ -61,17 +61,17 @@ a{
 
 .pagination {
   --bs-pagination-padding-x: 2.5rem !important;
-  --bs-pagination-bg: transparent  !important;
-  --bs-pagination-border-color : black !important;
+  --bs-pagination-bg: transparent !important;
+  --bs-pagination-border-color: black !important;
   --bs-pagination-color: black !important;
   --bs-pagination-hover-bg: #067ff886 !important;
-  --bs-pagination-hover-border-color:  black !important;
-  --bs-pagination-hover-color:  black !important;
+  --bs-pagination-hover-border-color: black !important;
+  --bs-pagination-hover-color: black !important;
   --bs-pagination-focus-color: none !important;
   --bs-pagination-focus-box-shadow: none !important;
   --bs-pagination-focus-bg: none !important;
   width: 220px !important;
-  clear:both;
+  clear: both;
 }
 
 /* --------- */
@@ -86,8 +86,6 @@ a{
 
 .navbar {
   position: fixed !important;
-  /* transition: all 0.3s ease-out 0s !important; */
-  padding: 1.5rem 1rem !important;
   font-size: 1.2rem !important;
 }
 
@@ -153,9 +151,9 @@ a{
   padding-left: 100px;
 }
 
-.nav-user-name{
+.nav-user-name {
   color: rgb(6, 6, 6);
-  padding-top: 30px;
+  padding-top: 10px;
   padding-left: 240px;
 }
 
@@ -203,7 +201,7 @@ a{
 
 .navbar-nav .nav-item {
   position: relative;
-  margin-left: 20px;
+  margin-left: 5px;
 }
 
 .navbar-nav .nav-item a {
@@ -633,6 +631,9 @@ a{
   position: relative !important;
   padding-top: 110px !important;
   padding-bottom: 30px !important;
+  padding-left: 10px;
+  padding-right: 10px;
+
   min-height: 100vh;
   background-image: var(--section-background-color) !important;
   color: white !important;
@@ -647,8 +648,8 @@ a{
   color: rgb(0, 0, 0) !important;
 }
 
-.time-history-title{
-  margin-bottom : "50px" !important;
+.time-history-title {
+  margin-bottom: "50px" !important;
   padding-left: "50px" !important;
 }
 
@@ -898,6 +899,6 @@ Particle {
   color: hsl(0, 90%, 50%);
 }
 
-.user-dropdown-link{
+.user-dropdown-link {
   padding: 10px 10px !important;
 }

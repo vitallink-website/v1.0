@@ -16,7 +16,7 @@ function Register() {
       localStorage.setItem("AUTH", "true");
       setDeviceCheck(true);
       setRegisterationCode(null);
-      router("/DeviceConnection");
+      router("/");
     } else setDeviceCheck(false);
   }
 
@@ -36,7 +36,11 @@ function Register() {
               onChange={(event) => setRegisterationCode(event.target.value)}
             />
           </Form.Group>
-          <Button type="button" onClick={() => checkRegisterationCode()}>
+          <Button
+            className="mb-5"
+            type="button"
+            onClick={() => checkRegisterationCode()}
+          >
             Confirm
           </Button>
           {deviceRegistered &&

@@ -55,7 +55,7 @@ function App() {
 
   const registery = {
     isUserSelected: isUserSelected,
-    isSignedIn: true,
+    isSignedIn: isConnected,
   };
 
   return (
@@ -75,48 +75,95 @@ function App() {
                 />
                 <Route
                   path="/Measure/History/TimeHistory"
-                  element={<TimeHistory />}
+                  element={
+                    <Protected {...registery}>
+                      <TimeHistory />
+                    </Protected>
+                  }
                 />
                 <Route
                   userRegistered
                   path="/Measure/History/TimeHistory/:data"
-                  element={<TimeDiagram />}
+                  element={
+                    <Protected {...registery}>
+                      <TimeDiagram />
+                    </Protected>
+                  }
                 />
                 <Route
                   userRegistered
                   path="/Measure/History/ParameterHistory/:type/:data"
-                  element={<ParameterDiagram />}
+                  element={
+                    <Protected {...registery}>
+                      <ParameterDiagram />
+                    </Protected>
+                  }
                 />
                 <Route
                   userRegistered
                   path="/Measure/History/ParameterHistory"
-                  element={<ParameterHistory />}
+                  element={
+                    <Protected {...registery}>
+                      <ParameterHistory />
+                    </Protected>
+                  }
                 />
-                <Route path="/Measure/History" element={<History />} />
+                <Route
+                  path="/Measure/History"
+                  element={
+                    <Protected {...registery}>
+                      <History />
+                    </Protected>
+                  }
+                />
                 <Route
                   userRegistered
                   path="/Measure/Measurement/HeartAndLungSound"
-                  element={<HeartAndLungSound />}
+                  element={
+                    <Protected {...registery}>
+                      <HeartAndLungSound />
+                    </Protected>
+                  }
                 />
                 <Route
                   path="/Measure/Measurement/BloodGlucose"
-                  element={<BloodGlucose />}
+                  element={
+                    <Protected {...registery}>
+                      <BloodGlucose />
+                    </Protected>
+                  }
                 />
                 <Route
                   path="/Measure/Measurement/GalvanicSkinResponse"
-                  element={<GalvanicSkinResponse />}
+                  element={
+                    <Protected {...registery}>
+                      <GalvanicSkinResponse />
+                    </Protected>
+                  }
                 />
                 <Route
                   path="/Measure/Measurement/Oximetry"
-                  element={<Oximetry />}
+                  element={
+                    <Protected {...registery}>
+                      <Oximetry />
+                    </Protected>
+                  }
                 />
                 <Route
                   path="/Measure/Measurement/Temperature"
-                  element={<Temperature />}
+                  element={
+                    <Protected {...registery}>
+                      <Temperature />
+                    </Protected>
+                  }
                 />
                 <Route
                   path="/Measure/Measurement/Cardiogram/AbnormalityDetection"
-                  element={<AbnormalityDetection />}
+                  element={
+                    <Protected {...registery}>
+                      <AbnormalityDetection />
+                    </Protected>
+                  }
                 />{" "}
                 <Route
                   path="/Measure/Measurement/Cardiogram"
@@ -128,23 +175,43 @@ function App() {
                 />
                 <Route
                   path="/Measure/Measurement/BloodPressure/BPWithoutCalibration"
-                  element={<BPWithoutCalibration />}
+                  element={
+                    <Protected {...registery}>
+                      <BPWithoutCalibration />
+                    </Protected>
+                  }
                 />
                 <Route
                   path="/Measure/Measurement/BloodPressure/BPWithCalibration"
-                  element={<BPWithCalibration />}
+                  element={
+                    <Protected {...registery}>
+                      <BPWithCalibration />
+                    </Protected>
+                  }
                 />
                 <Route
                   path="/Measure/Measurement/BloodPressure/BPWithCalibration/BPCalibrationProcess"
-                  element={<BPCalibrationProcess />}
+                  element={
+                    <Protected {...registery}>
+                      <BPCalibrationProcess />
+                    </Protected>
+                  }
                 />
                 <Route
                   path="/Measure/Measurement/BloodPressure/BPWithCalibration/BPEstimate"
-                  element={<BPEstimate />}
-                />{" "}
+                  element={
+                    <Protected {...registery}>
+                      <BPEstimate />
+                    </Protected>
+                  }
+                />
                 <Route
                   path="/Measure/Measurement/BloodPressure"
-                  element={<BloodPressure />}
+                  element={
+                    <Protected {...registery}>
+                      <BloodPressure />
+                    </Protected>
+                  }
                 />
                 <Route path="/Measure/Measurement" element={<Measurement />} />
                 <Route
