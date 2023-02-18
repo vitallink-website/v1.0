@@ -1,8 +1,15 @@
-function convertStringToDate(date){
-  date = String(date).split(' ');
-  let days = String(date[0]).split('-');
-  let hours = String(date[1]).split(':');
-  return [parseInt(days[0]), parseInt(days[1]), parseInt(days[2]), parseInt(hours[0]), parseInt(hours[1]), parseInt(hours[2])];
+function convertStringToDate(date) {
+  date = String(date).split(" ");
+  let days = String(date[0]).split("-");
+  let hours = String(date[1]).split(":");
+  return [
+    parseInt(days[0]),
+    parseInt(days[1]),
+    parseInt(days[2]),
+    parseInt(hours[0]),
+    parseInt(hours[1]),
+    parseInt(hours[2]),
+  ];
 }
 
 export const isEqualDays = (savedDate, currentDate) => {
@@ -19,15 +26,8 @@ export const GetCurrentDateTime = () => {
   const date = new Date();
   const showTime =
     date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
-  // " " +
-  // date.getHours() +
-  // ":" +
-  // date.getMinutes() +
-  // ":" +
-  // date.getSeconds();
   return showTime;
 };
-
 
 export const GetCurrentDateTimeForFileName = () => {
   const date = new Date();
@@ -43,5 +43,3 @@ export const GetCurrentDateTimeForFileName = () => {
     date.getMinutes();
   return showTime;
 };
-
-

@@ -15,6 +15,7 @@ import {
 } from "../../utilities/downloadFile";
 
 const Diagram = ({ dataKey = "", flow = [], texts = "" }) => {
+  console.log("🚀 ~ file: Diagram.jsx:18 ~ Diagram ~ flow", flow)
   const steam = [...flow].map((item, id) => {
     return {
       name: item?.id ?? id,

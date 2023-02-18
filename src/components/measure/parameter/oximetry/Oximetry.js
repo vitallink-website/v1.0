@@ -19,21 +19,21 @@ const Oximetry = () => {
 
   const addToDB = (heartBeat, SPO2) => {
     const currentDate = GetCurrentDateTime();
-    console.log(UserInfo.lastDateMeasured+ " " + currentDate)
-    if(!isEqualDays(currentDate, UserInfo.lastDateMeasured))
-    { UserInfo.parameters = {
-      heartBeatPPG: '',
-      SPO2: '',
-      heartBeatECG: '',
-      QRS_Duration: '',
-      PR_RR_Interval: '',
-      SYS_DIA: ''
+    console.log(UserInfo.lastDateMeasured + " " + currentDate);
+    if (!isEqualDays(currentDate, UserInfo.lastDateMeasured)) {
+      UserInfo.parameters = {
+        heartBeatPPG: "",
+        SPO2: "",
+        heartBeatECG: "",
+        QRS_Duration: "",
+        PR_RR_Interval: "",
+        SYS_DIA: "",
+      };
+      UserInfo.setLastDateMeasured(currentDate);
     }
-    UserInfo.setLastDateMeasured(currentDate);
-  }
-    
+
     updateParameterHistory({
-      dateAndId: currentDate + ' ' + UserInfo.id,
+      dateAndId: currentDate + " " + UserInfo.id,
       userId: UserInfo.id,
       heartBeatPPG: heartBeat,
       SPO2: SPO2,
@@ -47,7 +47,7 @@ const Oximetry = () => {
     );
 
     updateTimeHistory({
-      dateAndId: currentDate + ' ' + UserInfo.id,
+      dateAndId: currentDate + " " + UserInfo.id,
       parameters: {
         ...UserInfo.parameters,
         heartBeatPPG: heartBeat,
@@ -62,13 +62,11 @@ const Oximetry = () => {
       }
     );
 
-    
-    UserInfo.setParameters({...UserInfo.parameters, 
+    UserInfo.setParameters({
+      ...UserInfo.parameters,
       heartBeatPPG: heartBeat,
-      SPO2: SPO2
-    }
-    )
-
+      SPO2: SPO2,
+    });
   };
 
   const calculateBeatPerMinute = (inputs) => {

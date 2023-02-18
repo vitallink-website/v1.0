@@ -72,9 +72,9 @@ export const useSignalFeed = () => {
     write_charastirctic.writeValue(new Uint8Array([command]).buffer);
 
     read_charastirctic.oncharacteristicvaluechanged = (data) => {
+      console.log("🚀 ~ file: bluetooth.jsx:75 ~ sendCommand ~ data", data);
       const ppg = data.srcElement.value.getUint16(0, true);
-      // const IR = data.srcElement.value.getUint16(0, true);
-      // const red = data.srcElement.value.getUint16(2, true);
+      const red = data.srcElement.value.getUint16(2, true);
       const ecg = data.srcElement.value.getInt16(4, true);
       const force = Bytes2Float16(data.srcElement.value.getUint16(6, true));
       Data.push(data);
@@ -82,7 +82,7 @@ export const useSignalFeed = () => {
         ppg,
         ecg,
         force,
-        // , red
+        red,
       });
     };
   };
