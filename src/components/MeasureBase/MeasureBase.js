@@ -10,26 +10,20 @@ function MeasureBase({ name, command, action, texts, title, children }) {
   const [loading, setLoading] = useState(false);
   const [active, setActive] = useState(0);
   const [data, setData] = useState([]);
-  console.log("🚀 ~ file: MeasureBase.js:13 ~ MeasureBase ~ data", data);
   const [sampleTime, setTime] = useState(10);
 
-  const temp = [];
+  let temp = [];
 
   const pendingTime = 5000;
-  const sample = (10 * pendingTime) / 1000;
+  const sample = (99.5 * (pendingTime + 1000)) / 1000;
   const startTime = useRef(null);
   const endTime = useRef(null);
 
   const hanldeCallback = (inputs) => {
-    temp.push(inputs[name]);
-    console.log(
-      "🚀 ~ file: MeasureBase.js:28 ~ hanldeCallback ~ temp",
-      temp,
-      temp.length,
-      sample
-    );
+    temp = temp.concat(inputs[name]);
     if (temp.length >= sample) {
-      setData(temp);
+      let target = data.concat(temp);
+      setData(target);
     }
   };
 
@@ -64,6 +58,8 @@ function MeasureBase({ name, command, action, texts, title, children }) {
   const startInput = () => {
     setLoading(true);
     bluetooth.start();
+    temp = [];
+    setData([]);
     startTime.current = setTimeout(() => {
       setActive(1);
       setLoading(false);

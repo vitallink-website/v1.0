@@ -19,7 +19,6 @@ const Oximetry = () => {
 
   const addToDB = (heartBeat, SPO2) => {
     const currentDate = GetCurrentDateTime();
-    console.log(UserInfo.lastDateMeasured + " " + currentDate);
     if (!isEqualDays(currentDate, UserInfo.lastDateMeasured)) {
       UserInfo.parameters = {
         heartBeatPPG: "",
@@ -70,20 +69,21 @@ const Oximetry = () => {
   };
 
   const calculateBeatPerMinute = (inputs) => {
+    console.log("🚀 ~ file: Oximetry.js:73 ~ calculateBeatPerMinute ~ inputs:", inputs)
     // eslint-disable-next-line no-undef
     const heartBeat = HeartBeat_PPG(inputs.data, inputs.freq);
 
     // eslint-disable-next-line no-undef
-    // const SPO2 = SpO2_estimation(inputs.data, inputs.freq);
+    const spo2 = SpO2_estimation(inputs.data, inputs.freq);
 
     // eslint-disable-next-line no-undef
-    // const Quality_index = Quality_PPG(inputs.data, inputs.freq);
+    const qi = Quality_PPG(inputs.data, inputs.freq);
 
     console.log(heartBeat);
     setHeartBeat(Number(heartBeat).toFixed(2));
     // todo ? do toFixed here
-    // setSPO2(SPO2);
-    // setQualityIndex(Quality_index);
+    setSPO2(spo2);
+    setQualityIndex(qi);
     addToDB(Number(heartBeat).toFixed(0), Number(SPO2).toFixed(2));
   };
 

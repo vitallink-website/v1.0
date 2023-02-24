@@ -1,4 +1,3 @@
-import React from "react";
 import { Link, useParams } from "react-router-dom";
 import Diagram from "../../../Diagram/Diagram";
 import { DataContext } from "./ShowTimeData";
@@ -8,7 +7,6 @@ import { useContext } from "react";
 function TimeDiagram() {
   const data = useParams();
   const flow = useContext(DataContext);
-  console.log(data);
   return (
       <Container className="history-section">
       <Row>
