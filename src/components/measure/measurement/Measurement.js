@@ -1,9 +1,8 @@
 import React from "react";
-import { useContext } from "react";
+import { useContext, useEffect} from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { DeviceContext } from "../../../App";
-import { useEffect } from "react";
 
 function Measurement() {
   const bluetooth = useContext(DeviceContext);

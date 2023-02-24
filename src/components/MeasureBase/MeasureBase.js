@@ -125,7 +125,7 @@ function MeasureBase({
     }
     return [...new Array(diagrams.length % 2 === 0 ? 101 : 201).fill(0)];
   };
-
+  console.log(getStreamOfData());
   return (
     <div className="measure-section">
       <br />
@@ -150,9 +150,14 @@ function MeasureBase({
         </Col>
       </Row>
       <Row className="my-4">
-        {diagrams.map((key, i) => (
-          <Col xs={12} sm={diagrams.length % 2 === 0 ? 6 : 12} key={key}>
-            <Diagram dataKey={key} flow={getStreamOfData(key)} texts={texts} />
+        {diagrams.map((key) => (
+          <Col xs={12} sm={diagrams.length % 2 === 0 ? 6 : 12} key={key.name}>
+            <Diagram
+              dataKey={key.name}
+              flow={getStreamOfData(key.name)}
+              texts={texts}
+              calculatedDots={key.calculatedDots}
+            />
           </Col>
         ))}
       </Row>

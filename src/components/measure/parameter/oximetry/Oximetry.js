@@ -36,7 +36,7 @@ const Oximetry = () => {
         console.log(error);
       }
     );
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const addToDB = (heartBeat, SPO2) => {
@@ -78,24 +78,32 @@ const Oximetry = () => {
   };
 
   const calculateBeatPerMinute = (inputs) => {
-    const signal_output = Array.from(
-      // eslint-disable-next-line no-undef
-      // PPG_signal_processing(inputs.IR, inputs.Red, inputs.freq)
-    ); // HeartRate, SpO2, Quality_index
+    // const signal_output = Array.from(
+    // eslint-disable-next-line no-undef
+    // PPG_signal_processing(inputs.IR, inputs.Red, inputs.freq)
+    // ); // HeartRate, SpO2, Quality_index
 
     console.log(heartBeat);
     // setHeartBeat(signal_output[0]);
     // setSPO2(signal_output[1]);
     // setQualityIndex(signal_output[2]);
 
-    addToDB(signal_output[0], signal_output[1]);
+    // addToDB(signal_output[0], signal_output[1]);
   };
 
   return (
     <MeasureBase
       {...{
         values: ["ppg", "red", "force"],
-        diagrams: ["ppg"],
+        diagrams: [
+          {
+            name: "ppg",
+            calculatedDots: [
+              { name: "q", value: { x: 100, y: 4175 }, color: "red" },
+              { name: "y", value: { x: 150, y: 14175 }, color: "blue" },
+            ],
+          },
+        ],
         command: 0x01,
         action: calculateBeatPerMinute,
         texts: [

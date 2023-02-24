@@ -1,12 +1,14 @@
 import * as React from "react";
+
 import {
-  Brush,
-  Legend,
+  ComposedChart,
   Line,
-  LineChart,
-  ResponsiveContainer,
   XAxis,
   YAxis,
+  Tooltip,
+  Legend,
+  Scatter,
+  ResponsiveContainer,
 } from "recharts";
 import { Button } from "react-bootstrap";
 import {
@@ -14,46 +16,69 @@ import {
   downloadSVGAsPNG,
 } from "../../utilities/downloadFile";
 
-const Diagram = ({ dataKey = "", flow = [], texts = "" }) => {
-  const steam = [...flow].map((item, id) => {
-    return {
-      name: item?.id ?? id,
-      [dataKey]: item?.value ?? item,
-      impression: 0,
-    };
-  });
-
+const Diagram = ({
+  dataKey = "",
+  flow = [],
+  texts = "",
+  calculatedDots = [],
+  // { name: "q", value: { x: 1242, y: 100 },color:"" }
+}) => {
+  const getSteam = () => {
+    let steam = [...flow].map((item, id) => {
+      return {
+        x: item?.id ?? id,
+        [dataKey]: item?.value ?? item,
+        impression: 0,
+      };
+    });
+    if (calculatedDots.length > 0) {
+      steam = steam.map((item, e) => {
+        for (const element of calculatedDots) {
+          if (element.value.x === e) item[element.name] = element.value.y;
+        }
+        return item;
+      });
+    }
+    return steam;
+  };
+  const data = getSteam();
+  console.log("🚀 ~ file: Diagram.jsx:46 ~ data:", data, calculatedDots);
   return (
     <div className="highlight-bar-charts" style={{ userSelect: "none" }}>
       <ResponsiveContainer height={400} width={"100%"}>
-        <LineChart
+        <ComposedChart
+          width={500}
+          height={400}
           data={
-            steam.length > 2500
-              ? steam.slice(
-                  Math.ceil(steam.length / 2) - 500,
-                  Math.ceil(steam.length / 2) + 500
+            data.length > 2500
+              ? data.slice(
+                  Math.ceil(data.length / 2) - 500,
+                  Math.ceil(data.length / 2) + 500
                 )
-              : steam
+              : data
           }
+          margin={{
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20,
+          }}
         >
-          <XAxis dataKey="name" domain={["dataMin", "dataMax"]} type="number" />
-          <YAxis
-            domain={["dataMax-10", "dataMax+10"]}
-            type="number"
-            yAxisId="1"
-          />
+          <XAxis dataKey="x" scale="band" />
+          <YAxis />
+          <Tooltip />
           <Legend />
           <Line
-            yAxisId="1"
             type="linear"
             dataKey={dataKey}
             stroke="#8884d8"
             dot={false}
             animationDuration={500}
           />
-
-          {steam.length > 500 && <Brush />}
-        </LineChart>
+          {calculatedDots.map((item, i) => (
+            <Scatter key={i} dataKey={item.name} fill={item.color} />
+          ))}
+        </ComposedChart>
       </ResponsiveContainer>
       <Button onClick={(e) => downloadSVGAsPNG(e, dataKey, texts)}>
         download PNG
