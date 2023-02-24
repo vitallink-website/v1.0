@@ -27,18 +27,21 @@ const Oximetry = () => {
     getByID(id).then(
       (data) => {
         console.log(data);
-        const [dateAndId, ...newData] = data;
-        UserInfo.setParameters(newData);
+        UserInfo.setParameters({
+          parameters: data.parameters,
+          userId: data.userId,
+        });
       },
       (error) => {
         console.log(error);
       }
     );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const addToDB = (heartBeat, SPO2) => {
     const currentDate = GetCurrentDateTimeDB();
-    const id = parseInt(String(currentDate + UserInfo.id))
+    const id = parseInt(String(currentDate + UserInfo.id));
     console.log("parameter: " + JSON.stringify(UserInfo.parameters));
 
     updateParameterHistory({
@@ -55,10 +58,10 @@ const Oximetry = () => {
       }
     );
 
-    var newParameter = UserInfo.parameters;
-    newParameter['heartBeatPPG'] = heartBeat;
+    let newParameter = UserInfo.parameters;
+    newParameter["heartBeatPPG"] = heartBeat;
     console.log("new parameter: " + JSON.stringify(newParameter));
-    newParameter['SPO2'] = SPO2;
+    newParameter["SPO2"] = SPO2;
 
     updateTimeHistory({
       dateAndId: id,
@@ -75,28 +78,32 @@ const Oximetry = () => {
   };
 
   const calculateBeatPerMinute = (inputs) => {
-    console.log("🚀 ~ file: Oximetry.js:73 ~ calculateBeatPerMinute ~ inputs:", inputs)
+    console.log(
+      "🚀 ~ file: Oximetry.js:73 ~ calculateBeatPerMinute ~ inputs:",
+      inputs
+    );
     // eslint-disable-next-line no-undef
-    const heartBeat = HeartBeat_PPG(inputs.data, inputs.freq);
+    const heartBeat = HeartBeat_PPG(inputs.data.ppg, inputs.freq);
 
     // eslint-disable-next-line no-undef
-    const spo2 = SpO2_estimation(inputs.data, inputs.freq);
+    // const spo2 = SpO2_estimation(inputs.data.ppg, inputs.data.red, inputs.freq);
 
     // eslint-disable-next-line no-undef
-    const qi = Quality_PPG(inputs.data, inputs.freq);
+    // const qi = Quality_PPG(inputs.data.ppg, inputs.freq, inputs.time);
 
     console.log(heartBeat);
     setHeartBeat(Number(heartBeat).toFixed(2));
     // todo ? do toFixed here
-    setSPO2(spo2);
-    setQualityIndex(qi);
+    setSPO2(-1);
+    setQualityIndex(-1);
     addToDB(Number(heartBeat).toFixed(0), Number(SPO2).toFixed(2));
   };
 
   return (
     <MeasureBase
       {...{
-        name: "ppg",
+        values: ["ppg", "red", "force"],
+        diagrams: ["ppg"],
         command: 0x01,
         action: calculateBeatPerMinute,
         texts: [

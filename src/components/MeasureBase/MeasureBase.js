@@ -3,27 +3,57 @@ import { DeviceContext } from "../../App";
 import { Row, Form, Col } from "react-bootstrap";
 import Diagram from "../Diagram/Diagram";
 import { MeasureModal } from "./MeasureModal";
+import { KEYS } from "../../utilities/bluetooth";
 
-function MeasureBase({ name, command, action, texts, title, children }) {
+const init = {
+  ppg: [],
+  ecg: [],
+  force: [],
+  red: [],
+};
+function MeasureBase({
+  values,
+  diagrams,
+  command,
+  action,
+  texts,
+  title,
+  children,
+}) {
   const bluetooth = useContext(DeviceContext);
 
   const [loading, setLoading] = useState(false);
   const [active, setActive] = useState(0);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(init);
   const [sampleTime, setTime] = useState(10);
 
-  let temp = [];
+  let temp = {
+    ppg: [],
+    ecg: [],
+    force: [],
+    red: [],
+  };
 
   const pendingTime = 5000;
-  const sample = (99.5 * (pendingTime + 1000)) / 1000;
+  const sample = (65 * pendingTime) / 1000;
   const startTime = useRef(null);
   const endTime = useRef(null);
 
   const hanldeCallback = (inputs) => {
-    temp = temp.concat(inputs[name]);
-    if (temp.length >= sample) {
-      let target = data.concat(temp);
-      setData(target);
+    KEYS.map((key) => {
+      if (values.includes(key)) {
+        temp[key] = [...temp[key], ...inputs[key]];
+      }
+      return "";
+    });
+    if (temp[values[0]].length >= sample) {
+      let cv = {
+        ppg: temp.ppg.slice(sample),
+        ecg: temp.ecg.slice(sample),
+        force: temp.force.slice(sample),
+        red: temp.red.slice(sample),
+      };
+      setData(cv);
     }
   };
 
@@ -48,8 +78,10 @@ function MeasureBase({ name, command, action, texts, title, children }) {
       bluetooth.stop();
       action({
         data: data,
-        time: bluetooth.GetTime() - pendingTime,
-        freq: bluetooth.GetFrequency(),
+        time: Math.ceil(bluetooth.GetTime() - pendingTime),
+        freq: Math.ceil(
+          (data[values[0]].length / (bluetooth.GetTime() - pendingTime)) * 1000
+        ),
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -58,8 +90,13 @@ function MeasureBase({ name, command, action, texts, title, children }) {
   const startInput = () => {
     setLoading(true);
     bluetooth.start();
-    temp = [];
-    setData([]);
+    temp = {
+      ppg: [],
+      ecg: [],
+      force: [],
+      red: [],
+    };
+    setData(init);
     startTime.current = setTimeout(() => {
       setActive(1);
       setLoading(false);
@@ -73,14 +110,20 @@ function MeasureBase({ name, command, action, texts, title, children }) {
   const closeModal = () => setShow(false);
   const openModal = () => setShow(true);
 
-  const getStreamOfData = () => {
-    if (data.length > 201) {
+  const getStreamOfData = (key) => {
+    if (
+      data[key] &&
+      data[key].length > (diagrams.length % 2 === 0 ? 101 : 201)
+    ) {
       if (active === 1) {
-        return data.slice(data.length - 201, data.length);
+        return data[key].slice(
+          data[key].length - (diagrams.length % 2 === 0 ? 101 : 201),
+          data[key].length
+        );
       }
-      if (active === -1) return data;
+      if (active === -1) return data[key];
     }
-    return [...new Array(201).fill(0)];
+    return [...new Array(diagrams.length % 2 === 0 ? 101 : 201).fill(0)];
   };
 
   return (
@@ -101,15 +144,17 @@ function MeasureBase({ name, command, action, texts, title, children }) {
                 placeholder="Enter seconds"
                 value={sampleTime}
               />
-              <Form.Text className="text-muted">
-                must be more than 5 seconds.
-              </Form.Text>
+              <Form.Text className="text-muted">{"> 5 seconds"}</Form.Text>
             </Form.Group>
           </Form>
         </Col>
       </Row>
-      <Row>
-        <Diagram dataKey={name} flow={getStreamOfData()} texts={texts} />
+      <Row className="my-4">
+        {diagrams.map((key, i) => (
+          <Col xs={12} sm={diagrams.length % 2 === 0 ? 6 : 12} key={key}>
+            <Diagram dataKey={key} flow={getStreamOfData(key)} texts={texts} />
+          </Col>
+        ))}
       </Row>
       {children()}
       <MeasureModal

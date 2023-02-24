@@ -36,7 +36,7 @@ export const useSignalFeed = () => {
 
   const GetFrequency = () => {
     const time = performance.now() - duration;
-    return Data.length / Math.floor(time / 1000);
+    return Math.ceil(Data.length / Math.ceil(time / 1000));
   };
   const GetTime = () => performance.now() - duration;
 
@@ -81,9 +81,8 @@ export const useSignalFeed = () => {
         red.push(data.srcElement.value.getUint16(8 * i + 2, true));
         ecg.push(data.srcElement.value.getInt16(8 * i + 4, true));
         force.push(Bytes2Float16(data.srcElement.value.getUint16(6, true)));
-        Data.push(ppg);
+        Data.push(0);
       }
-      console.log(ppg, red, ecg, force);
       callBack({
         ppg,
         ecg,
@@ -124,3 +123,5 @@ const Bytes2Float16 = (bytes) => {
 
   return sign * significand * Math.pow(2, exponent);
 };
+
+export const KEYS = ["ppg", "red", "ecg", "force"];

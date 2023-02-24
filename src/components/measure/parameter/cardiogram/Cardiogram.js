@@ -41,8 +41,8 @@ function Cardiogram() {
 
   const addToDB = (heartBeat, PR_RR_Interval, QRS_Duration) => {
     const currentDate = GetCurrentDateTimeDB();
-    const id = parseInt(String(currentDate + UserInfo.id))
-    
+    const id = parseInt(String(currentDate + UserInfo.id));
+
     updateParameterHistory({
       dateAndId: id,
       userId: UserInfo.id,
@@ -59,10 +59,10 @@ function Cardiogram() {
     );
 
     var newParameter = UserInfo.parameters;
-    newParameter['heartBeatECG'] = heartBeat;
-    newParameter['QRS_Duration'] = QRS_Duration;
-    newParameter['PR_RR_Interval'] = PR_RR_Interval;
-    
+    newParameter["heartBeatECG"] = heartBeat;
+    newParameter["QRS_Duration"] = QRS_Duration;
+    newParameter["PR_RR_Interval"] = PR_RR_Interval;
+
     updateTimeHistory({
       dateAndId: id,
       userId: UserInfo.id,
@@ -78,13 +78,15 @@ function Cardiogram() {
   };
 
   const calculateBeatPerMinute = (inputs) => {
+    // todo - remove and debug
+    return;
     // eslint-disable-next-line no-undef
     const signal_output = Array.from(
       // eslint-disable-next-line no-undef
-      ECG_signal_processing_ECG(inputs.data, inputs.freq)
+      ECG_signal_processing_ECG(inputs.data.ecg, inputs.freq)
     ); // HeartRate, PR_RR, QRS_duration, Quality_index, P, Q, R, S, T
     console.log(inputs);
-    console.log(inputs.data[Array.from(signal_output[4])[0]]);
+    console.log(inputs.data.ecg[Array.from(signal_output[4])[0]]);
     console.log(signal_output[0]);
     console.log(signal_output[1]);
     console.log(signal_output[2]);
@@ -95,7 +97,7 @@ function Cardiogram() {
     console.log(Array.from(signal_output[7]));
     console.log(Array.from(signal_output[8]));
 
-    if (inputs.freq != 0) {
+    if (inputs.freq !== 0) {
       const heartBeat = Number(
         signal_output[Object.keys(signal_output)[0]]
       ).toFixed(0);
@@ -117,7 +119,7 @@ function Cardiogram() {
 
       let newPArr = [];
       for (const p of Array.from(signal_output[4])) {
-        newPArr.push({ x: p, y: inputs.data[p] });
+        newPArr.push({ x: p, y: inputs.data.ecg[p] });
       }
       console.log("newParr: " + newPArr);
 
@@ -132,7 +134,8 @@ function Cardiogram() {
   return (
     <MeasureBase
       {...{
-        name: "ecg",
+        values: ["ecg"],
+        diagrams: ["ecg"],
         command: 0x02,
         action: calculateBeatPerMinute,
         texts: ["Heart beat: " + heartBeat],
