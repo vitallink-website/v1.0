@@ -35,6 +35,7 @@ function MeasureBase({
   };
 
   const pendingTime = 5000;
+  // here frequency is estimated, should be change after changing frequencies of device
   const sample = (65 * pendingTime) / 1000;
   const startTime = useRef(null);
   const endTime = useRef(null);
