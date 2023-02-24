@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { Button, Container } from "react-bootstrap";
 import { DeviceContext } from "../../App";
 import Spinner from "react-bootstrap/esm/Spinner";
+import { Link } from "react-router-dom";
 
 function DeviceConnection() {
   const bluetooth = useContext(DeviceContext);
@@ -14,13 +15,19 @@ function DeviceConnection() {
         <Container
           style={{ display: "grid", maxWidth: "20em", placeItems: "center" }}
         >
-          <Button
-            onClick={bluetooth.connect}
-            disabled={bluetooth.isConnected}
-            style={{ width: "min-content" }}
-          >
-            {bluetooth.isConnected ? "Paired!" : "Pair"}
-          </Button>
+          {bluetooth.isConnected ? (
+            <Link to="/Measure">
+              <Button style={{ width: "min-content" }}>Measurement</Button>
+            </Link>
+          ) : (
+            <Button
+              onClick={bluetooth.connect}
+              style={{ width: "min-content" }}
+            >
+              Pair
+            </Button>
+          )}
+
           {bluetooth.isConnected && (
             <Button onClick={bluetooth.disconnect}>
               Disconnect the device

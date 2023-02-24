@@ -1,8 +1,17 @@
 import React from "react";
+import { useContext } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { DeviceContext } from "../../../App";
+import { useEffect } from "react";
 
 function Measurement() {
+  const bluetooth = useContext(DeviceContext);
+  const history = useNavigate();
+  useEffect(() => {
+    if (!bluetooth.isConnected) history("/DeviceConnection");
+  }, [bluetooth, history]);
+
   return (
     <div className="measure-section">
       <br />
@@ -39,9 +48,12 @@ function Measurement() {
             </Link>
           </Col>
           <Col>
-            <Link to="/Measure/Measurement/BloodPressure">
+            {/* <Link to="/Measure/Measurement/BloodPressure"> */}
+            <Link to="/Measure/Measurement/BloodPressure/BPWithoutCalibration">
               <Button className="measure-btn"> Blood Pressure</Button>
             </Link>
+
+            {/* </Link> */}
           </Col>
         </Row>
         <Row>

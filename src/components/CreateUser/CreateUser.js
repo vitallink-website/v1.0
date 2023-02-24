@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { Container, Form, Button } from "react-bootstrap";
 import { useIndexedDB } from "react-indexed-db";
 import { UserContext } from "../../App";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function CreateUser() {
   const [form, setForm] = useState({
@@ -44,14 +44,14 @@ function CreateUser() {
     setErrors(Validator());
     let id;
     if (Object.keys(err).length === 0) {
-      add({...form, lastMeasureDate: ''}).then(
+      add({ ...form, lastMeasureDate: "" }).then(
         (event) => {
           console.log("Data added: ", event);
           id = event;
           UserInfo.SetAllInfo({
             id,
             ...form,
-            date: form.dob
+            date: form.dob,
           });
           history("/");
         },
@@ -68,8 +68,11 @@ function CreateUser() {
         <h1 style={{ marginBottom: "50px" }}>Create a new User</h1>
         <Form>
           <Form.Group className="create-user-input">
-            <Form.Label>Name</Form.Label>
+            <Form.Label aria-required>
+              Name <span className="text-danger">*</span>
+            </Form.Label>
             <Form.Control
+              required
               placeholder="Enter your name"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -118,9 +121,19 @@ function CreateUser() {
             </Form.Select>
             <span className="text-danger">{errors.gender}</span>
           </Form.Group>
-          <Button variant="primary" type="submit" onClick={handleSubmit}>
-            Submit
-          </Button>
+          <div className="d-flex justify-content-between">
+            <Link to="/">
+              <Button>Back</Button>
+            </Link>
+            <Button
+              variant="primary"
+              type="submit"
+              onClick={handleSubmit}
+              disabled={form.name.length < 1}
+            >
+              Submit
+            </Button>
+          </div>
         </Form>
       </Container>
     </div>

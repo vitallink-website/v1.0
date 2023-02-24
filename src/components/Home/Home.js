@@ -30,6 +30,17 @@ function Home({ isSignedIn, isUserSelected }) {
     <div>
       <Particle />
       <div className="home-section">
+        {isSignedIn && isUserSelected && (
+          <Row>
+            <h1>Welcome to the Hekidesk!</h1>
+            <h6>Select Measurement to start the process.</h6>
+            <Link to="/Measure">
+              <Button className="register-btn-inner" size="lg">
+                Measurementd
+              </Button>
+            </Link>
+          </Row>
+        )}
         {!isSignedIn && (
           <Row>
             <Col>
@@ -41,14 +52,10 @@ function Home({ isSignedIn, isUserSelected }) {
             </Col>
           </Row>
         )}
-        {isSignedIn && (
+        {!isUserSelected && (
           <Row>
             <Col>
-              <DropdownButton
-                className="user-dropdown-btn"
-                title="Select User"
-                disabled={!isSignedIn}
-              >
+              <DropdownButton className="user-dropdown-btn" title="Select User">
                 {users.map((user) => (
                   <Dropdown.Item
                     key={user.id}
@@ -64,11 +71,9 @@ function Home({ isSignedIn, isUserSelected }) {
                   <Link to="/CreateUser">Create User</Link>
                 </Dropdown.Item>
               </DropdownButton>
-              {!isUserSelected && (
-                <h4 style={{ fontFamily: "cursive", paddingTop: "50px" }}>
-                  Please select an user
-                </h4>
-              )}
+              <h4 style={{ fontFamily: "cursive", paddingTop: "50px" }}>
+                Please select an user
+              </h4>
             </Col>
           </Row>
         )}

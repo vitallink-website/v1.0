@@ -10,14 +10,28 @@ function MeasureBase({ name, command, action, texts, title, children }) {
   const [loading, setLoading] = useState(false);
   const [active, setActive] = useState(0);
   const [data, setData] = useState([]);
+  console.log("🚀 ~ file: MeasureBase.js:13 ~ MeasureBase ~ data", data);
   const [sampleTime, setTime] = useState(10);
 
   const temp = [];
 
   const pendingTime = 5000;
-  const sample = 198 * 5;
+  const sample = (10 * pendingTime) / 1000;
   const startTime = useRef(null);
   const endTime = useRef(null);
+
+  const hanldeCallback = (inputs) => {
+    temp.push(inputs[name]);
+    console.log(
+      "🚀 ~ file: MeasureBase.js:28 ~ hanldeCallback ~ temp",
+      temp,
+      temp.length,
+      sample
+    );
+    if (temp.length >= sample) {
+      setData(temp);
+    }
+  };
 
   useEffect(() => {
     if (bluetooth && command) bluetooth.sendCommand(command, hanldeCallback);
@@ -47,17 +61,12 @@ function MeasureBase({ name, command, action, texts, title, children }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active]);
 
-  const hanldeCallback = (inputs) => {
-    temp.push(inputs[name]);
-    if (temp.length >= sample) {
-      setData(temp.slice(sample));
-    }
-  };
-
   const startInput = () => {
+    setLoading(true);
     bluetooth.start();
     startTime.current = setTimeout(() => {
       setActive(1);
+      setLoading(false);
     }, [pendingTime]);
     endTime.current = setTimeout(() => {
       setActive(-1);
@@ -69,22 +78,24 @@ function MeasureBase({ name, command, action, texts, title, children }) {
   const openModal = () => setShow(true);
 
   const getStreamOfData = () => {
-    if (data.length > 200) {
+    if (data.length > 201) {
       if (active === 1) {
-        return data.slice(data.length - 200, data.length);
+        return data.slice(data.length - 201, data.length);
       }
       if (active === -1) return data;
     }
-    return [...new Array(200).fill(0)];
+    return [...new Array(201).fill(0)];
   };
 
   return (
     <div className="measure-section">
       <br />
       <br />
-      <Row>
-        <Col xs={10}>{title(openModal)}</Col>
-        <Col xs={2}>
+      <Row className="align-items-center">
+        <Col xs={12} sm={10}>
+          {title(openModal)}
+        </Col>
+        <Col xs={12} sm={2}>
           <Form>
             <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>Sample Time</Form.Label>
@@ -95,7 +106,7 @@ function MeasureBase({ name, command, action, texts, title, children }) {
                 value={sampleTime}
               />
               <Form.Text className="text-muted">
-                must be more than 5 seconds{" "}
+                must be more than 5 seconds.
               </Form.Text>
             </Form.Group>
           </Form>

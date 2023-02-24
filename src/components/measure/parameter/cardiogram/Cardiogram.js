@@ -79,7 +79,10 @@ function Cardiogram() {
 
   const calculateBeatPerMinute = (inputs) => {
     // eslint-disable-next-line no-undef
-    const signal_output = Array.from(ECG_signal_processing_ECG(inputs.data, inputs.freq)); // HeartRate, PR_RR, QRS_duration, Quality_index, P, Q, R, S, T
+    const signal_output = Array.from(
+      // eslint-disable-next-line no-undef
+      ECG_signal_processing_ECG(inputs.data, inputs.freq)
+    ); // HeartRate, PR_RR, QRS_duration, Quality_index, P, Q, R, S, T
     console.log(inputs);
     console.log(inputs.data[Array.from(signal_output[4])[0]]);
     console.log(signal_output[0]);
@@ -176,9 +179,9 @@ function Cardiogram() {
                 </Link>
               </Col>
               <Col>
-                <Link to="/Measure/Measurement/Cardiogram/AbnormalityDetection">
-                  <Button>Abnormality Detection</Button>
-                </Link>
+                {/* <Link to="/Measure/Measurement/Cardiogram/AbnormalityDetection"> */}
+                <Button disabled>Abnormality Detection</Button>
+                {/* </Link> */}
               </Col>
               <Col>
                 <Button

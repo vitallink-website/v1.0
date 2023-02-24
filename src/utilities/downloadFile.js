@@ -2,7 +2,6 @@ import * as saveSvgAsPng from "save-svg-as-png";
 import { jsPDF } from "jspdf";
 
 export function prepareSvgFile(texts) {
-  console.log("🚀 ~ file: downloadFile.js:5 ~ prepareSvgFile ~ texts", texts);
   const svg = document.querySelector(".recharts-surface");
   const svgNS = "http://www.w3.org/2000/svg";
   if (texts !== "") {
