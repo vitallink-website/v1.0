@@ -3,96 +3,51 @@ import { Row, Col, Button, Pagination } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useIndexedDB } from "react-indexed-db";
 import { UserContext } from "../../../../App";
-import { isEqualDays } from "../../../../utilities/time";
 import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
 import { FaAngleDoubleDown, FaAngleDoubleUp } from "react-icons/fa";
+import {
+  convertStringToDateDB,
+  GetDateTimeDB,
+} from "../../../../utilities/time";
 
 function TimeHistory() {
-  const [ecgHeartBeat, setEcgHeartBeat] = useState(0);
-  const [SPO2, setSPO2] = useState(0);
-  const [ppgHeartBeat, setPpgHeartBeat] = useState(0);
-  const [SYS_DIA, setSYS_DIA] = useState([]);
+  const [data, setData] = useState(0);
+  const [parameter, setParameter] = useState({});
 
   //pagination
   const [dates, setDates] = useState([]);
   const [currentDate, setCurrentDate] = useState(0);
-
-  const [cardiogramData, setCardiogramData] = useState([]);
-  const [oximetryData, setOximetryData] = useState([]);
-  const [BPData, setBPData] = useState([]);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const UserInfo = useContext(UserContext);
-  const { getAll: getAllCData } = useIndexedDB("cardiogramData");
-  const { getAll: getAllOData } = useIndexedDB("oximetryData");
-  const { getAll: getAllBPData } = useIndexedDB("BPData");
+  const { getAll: getAllData } = useIndexedDB("dataTime");
 
   useEffect(() => {
-    getAllCData().then((dataFromDB) => {
+    getAllData().then((dataFromDB) => {
       const result = dataFromDB.filter((temp) => temp.userId === UserInfo.id);
-      setCardiogramData(result);
-      const resDate = [];
-      result.map((res) => resDate.push(String(res["date"]).split(" ")[0]));
-      resDate.map((resD) => setDates((dates) => [...dates, resD]));
+      let dateAndIds = result.map((d) => d.dateAndId);
+      const result2 = dateAndIds.map((d) => GetDateTimeDB(String(d)));
+      setDates(result2);
+      setData(result);
     });
   }, []);
 
-  useEffect(() => {
-    getAllOData().then((dataFromDB) => {
-      const result = dataFromDB.filter((temp) => temp.userId === UserInfo.id);
-      setOximetryData(result);
-      const resDate = [];
-      result.map((res) => resDate.push(String(res["date"]).split(" ")[0]));
-      resDate.map((resD) => setDates((dates) => [...dates, resD]));
-    });
-  }, []);
-
-  useEffect(() => {
-    getAllBPData().then((dataFromDB) => {
-      const result = dataFromDB.filter((temp) => temp.userId === UserInfo.id);
-      setBPData(result);
-      const resDate = [];
-      result.map((res) => resDate.push(String(res["date"]).split(" ")[0]));
-      resDate.map((resD) => setDates((dates) => [...dates, resD]));
-    });
-  }, []);
-
-  useEffect(() => {
-    const uniqueDates = Array.from(new Set(dates));
-    setDates(uniqueDates);
-  }, [dates])
-
-  function retrieveDate() {
-    console.log(dates);
-    console.log("hi :)" + currentDate);
-    // cardiogramData.map((cData) => {
-    //   const historyDate = cData["date"];
-    //   if (isEqualDays(dates[currentDate], historyDate))
-    //     setEcgHeartBeat(cData["heartBeat"]);
-    // });
-
-    // oximetryData.map((oData) => {
-    //   const historyDate = oData["date"];
-    //   if (isEqualDays(dates[currentDate], historyDate)) {
-    //     setPpgHeartBeat(oData["heartBeat"]);
-    //     setSPO2(oData["SPO2"]);
-    //   }
-    // });
-
-    // BPData.map((bData) => {
-    //   const historyDate = bData["date"];
-    //   if (isEqualDays(currentDate, historyDate)) setSYS_DIA(bData["SYS_DIA"]);
-    // });
-  }
+  const retrieveDate = (currentDate) => {
+    setActiveIndex(currentDate);
+    setCurrentDate(currentDate);
+    const dateAndId = parseInt(
+      convertStringToDateDB(dates[currentDate], UserInfo.id)
+    );
+    const result = data.filter((temp) => temp.dateAndId === dateAndId);
+    setParameter(result[0].parameters);
+  };
 
   return (
     <div className="history-section">
       <h1 style={{ marginBottom: "50px" }}>Time History</h1>
       <Row>
         <Col xs={{ span: 2, offset: 1 }}>
-          <Pagination
-            style={{ display: "inline-block" }}
-            onClick={retrieveDate()}
-          >
+          <Pagination style={{ display: "inline-block" }}>
             <Pagination.First onClick={() => setCurrentDate(0)}>
               <FaAngleDoubleUp />
             </Pagination.First>
@@ -105,14 +60,15 @@ function TimeHistory() {
             >
               <AiFillCaretUp />
             </Pagination.Prev>
-            {/* {[...Array(7)].map(function(i){
-                <Pagination.Item onClick={() => setCurrentDate(currentDate)} active = {i==0}>{console.log("hry " + {currentDate} + dates[5])}{dates[currentDate + i]}</Pagination.Item>
-            })} */}
-            <Pagination.Item onClick={() => setCurrentDate(currentDate)} active>{dates[currentDate]}</Pagination.Item>
-            <Pagination.Item onClick={() => setCurrentDate(currentDate)} >{dates[currentDate + 1]}</Pagination.Item>
-            <Pagination.Item onClick={() => setCurrentDate(currentDate)} >{dates[currentDate + 2]}</Pagination.Item>
-            <Pagination.Item onClick={() => setCurrentDate(currentDate)} >{dates[currentDate + 3]}</Pagination.Item>
-            <Pagination.Item onClick={() => setCurrentDate(currentDate)} >{dates[currentDate + 4]}</Pagination.Item>
+            {[...Array(5)].map((currElement, index) => (
+              <Pagination.Item
+                key={currElement}
+                onClick={() => retrieveDate(currentDate + index)}
+                active={activeIndex === currentDate + index}
+              >
+                {dates[currentDate + index]}
+              </Pagination.Item>
+            ))}
             <Pagination.Next
               onClick={() => {
                 currentDate + 1 < dates.length
@@ -130,11 +86,17 @@ function TimeHistory() {
         <Col xs={{ span: 6, offset: 1 }}>
           <Row className="time-history-row">
             <Col>
-              <Row>Heart Rate(ppg): {ppgHeartBeat ? ppgHeartBeat : ""}</Row>
+              <Row>
+                Heart Rate(ppg):{" "}
+                {parameter.heartBeatPPG ? parameter.heartBeatPPG : ""}
+              </Row>
               <Row style={{ fontSize: "0.8rem" }}>(beat per minute)</Row>
             </Col>
             <Col>
-              <Row>Heart Rate(ecg): {ecgHeartBeat ? ecgHeartBeat : ""}</Row>
+              <Row>
+                Heart Rate(ecg):{" "}
+                {parameter.heartBeatECG ? parameter.heartBeatECG : ""}
+              </Row>
               <Row style={{ fontSize: "0.8rem" }}>(beat per minute)</Row>
             </Col>
           </Row>
@@ -144,7 +106,10 @@ function TimeHistory() {
               <Row style={{ fontSize: "0.8rem" }}>(mg/dL)</Row>
             </Col>
             <Col>
-              <Row>PR/RR Interval </Row>
+              <Row>
+                PR/RR Interval{" "}
+                {parameter.PR_RR_Interval ? parameter.PR_RR_Interval : ""}
+              </Row>
               <Row style={{ fontSize: "0.8rem" }}>(msec)</Row>
             </Col>
           </Row>
@@ -154,13 +119,16 @@ function TimeHistory() {
               <Row style={{ fontSize: "0.8rem" }}>(breath per minute)</Row>
             </Col>
             <Col>
-              <Row>QRS Duration</Row>
+              <Row>
+                QRS Duration{" "}
+                {parameter.QRS_Duration ? parameter.QRS_Duration : ""}
+              </Row>
               <Row style={{ fontSize: "0.8rem" }}>(msec)</Row>
             </Col>
           </Row>
           <Row className="time-history-row">
             <Col>
-              <Row>SpO2: {SPO2 ? SPO2 : ""}</Row>
+              <Row>SpO2: {parameter.SPO2 ? parameter.SPO2 : ""}</Row>
               <Row style={{ fontSize: "0.8rem" }}>(%)</Row>
             </Col>
             <Col>

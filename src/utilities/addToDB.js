@@ -1,26 +1,18 @@
 import { useIndexedDB } from "react-indexed-db";
-import { UserContext } from "../../../../App";
+import { UserContext } from "../App";
+import { useContext } from "react";
+import { GetCurrentDateTimeDB } from "./time";
 
-export const addToDB = ({DBName, data}) => {
+function AddToDB({DBName, data}){
   const { update: updateParameterHistory } = useIndexedDB(DBName);
   const { update: updateTimeHistory } = useIndexedDB("dataTime");
   const UserInfo = useContext(UserContext);
 
-  const currentDate = GetCurrentDateTime();
-  if(!isEqualDays(currentDate, UserInfo.lastDateMeasured))
-    { UserInfo.parameters = {
-      heartBeatPPG: '',
-      SPO2: '',
-      heartBeatECG: '',
-      QRS_Duration: '',
-      PR_RR_Interval: '',
-      SYS_DIA: ''
-    }
-    UserInfo.setLastDateMeasured(currentDate);
-  }
-
+  const currentDate = GetCurrentDateTimeDB();
+  const id = parseInt(String(currentDate + UserInfo.id))
+  
   updateParameterHistory({
-    dateAndId: currentDate + " " + UserInfo.id,
+    dateAndId: id,
     userId: UserInfo.id,
     data,
   }).then(
@@ -32,12 +24,12 @@ export const addToDB = ({DBName, data}) => {
     }
   );
 
+  var newParameter = UserInfo.parameters;
+  Object.keys(data).map((d) => (newParameter[d] = data[d]));
+
   updateTimeHistory({
-    dateAndId: currentDate + " " + UserInfo.id,
-    parameters: {
-      ...UserInfo.parameters,
-      data
-    },
+    dateAndId: id,
+    parameters: newParameter,
   }).then(
     (event) => {
       console.log("timeData updated: ", event);
@@ -47,3 +39,5 @@ export const addToDB = ({DBName, data}) => {
     }
   );
 };
+
+export default AddToDB;

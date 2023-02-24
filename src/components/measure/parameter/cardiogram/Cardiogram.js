@@ -1,17 +1,17 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Row, Col, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { UserContext } from "../../../../App";
 import { useIndexedDB } from "react-indexed-db";
 import { shareData } from "../../share/Share";
-import { GetCurrentDateTime, isEqualDays } from "../../../../utilities/time";
+import { GetCurrentDateTimeDB } from "../../../../utilities/time";
 import MeasureBase from "../../../MeasureBase/MeasureBase";
 
 function Cardiogram() {
   const UserInfo = useContext(UserContext);
 
   const { update: updateParameterHistory } = useIndexedDB("cardiogramData");
-  const { update: updateTimeHistory } = useIndexedDB("dataTime");
+  const { getByID, update: updateTimeHistory } = useIndexedDB("dataTime");
 
   const [heartBeat, setHeartBeat] = useState(0);
   const [qualityIndex, setQualityIndex] = useState(0);
@@ -23,25 +23,28 @@ function Cardiogram() {
   const [s, setS] = useState(0);
   const [t, setT] = useState(0);
 
-  const addToDB = (heartBeat, PR_RR_Interval, QRS_Duration) => {
-    const currentDate = GetCurrentDateTime();
-    console.log(UserInfo.lastDateMeasured+ " " + currentDate)
-    if(!isEqualDays(currentDate, UserInfo.lastDateMeasured))
-    {
-      UserInfo.parameters = {
-        heartBeatPPG: '',
-        SPO2: '',
-        heartBeatECG: '',
-        QRS_Duration: '',
-        PR_RR_Interval: '',
-        SYS_DIA: ''
+  useEffect(() => {
+    const currentDate = GetCurrentDateTimeDB();
+    const id = currentDate + UserInfo.id;
+    console.log(id);
+    getByID(id).then(
+      (data) => {
+        console.log(data);
+        const [dateAndId, ...newData] = data;
+        UserInfo.setParameters(newData);
+      },
+      (error) => {
+        console.log(error);
       }
-      UserInfo.setLastDateMeasured(currentDate);
-    } 
+    );
+  }, []);
 
-
+  const addToDB = (heartBeat, PR_RR_Interval, QRS_Duration) => {
+    const currentDate = GetCurrentDateTimeDB();
+    const id = parseInt(String(currentDate + UserInfo.id))
+    
     updateParameterHistory({
-      dateAndId: currentDate + ' ' + UserInfo.id,
+      dateAndId: id,
       userId: UserInfo.id,
       heartBeatECG: heartBeat,
       PR_RR_Interval: PR_RR_Interval,
@@ -55,14 +58,15 @@ function Cardiogram() {
       }
     );
 
+    var newParameter = UserInfo.parameters;
+    newParameter['heartBeatECG'] = heartBeat;
+    newParameter['QRS_Duration'] = QRS_Duration;
+    newParameter['PR_RR_Interval'] = PR_RR_Interval;
+    
     updateTimeHistory({
-      dateAndId: currentDate + ' ' + UserInfo.id,
-      parameters: {
-        ...UserInfo.parameters,
-        heartBeatECG: heartBeat,
-        QRS_Duration: QRS_Duration,
-        PR_RR_Interval: PR_RR_Interval,
-      },
+      dateAndId: id,
+      userId: UserInfo.id,
+      parameters: newParameter,
     }).then(
       (event) => {
         console.log("timeData updated: ", event);
@@ -71,11 +75,6 @@ function Cardiogram() {
         console.log(error);
       }
     );
-
-    UserInfo.setParameters({...UserInfo.parameters, 
-      heartBeatECG: heartBeat,
-      QRS_Duration: QRS_Duration,
-      PR_RR_Interval: PR_RR_Interval})
   };
 
   const calculateBeatPerMinute = (inputs) => {
@@ -93,38 +92,38 @@ function Cardiogram() {
     console.log(Array.from(signal_output[7]));
     console.log(Array.from(signal_output[8]));
 
-    if(inputs.freq != 0)
-    {const heartBeat = Number(
-      signal_output[Object.keys(signal_output)[0]]
-    ).toFixed(0);
-    const PR_RR_Interval = Number(
-      signal_output[Object.keys(signal_output)[1]]
-    ).toFixed(2);
-    const QRS_Duration = Number(
-      signal_output[Object.keys(signal_output)[2]]
-    ).toFixed(2);
-    setHeartBeat(heartBeat);
-    setPR_RR_INTERVAL(PR_RR_Interval);
-    setQRSDuration(QRS_Duration);
-    setQualityIndex(
-      Number(signal_output[Object.keys(signal_output)[3]]).toFixed(0)
-    );
+    if (inputs.freq != 0) {
+      const heartBeat = Number(
+        signal_output[Object.keys(signal_output)[0]]
+      ).toFixed(0);
+      const PR_RR_Interval = Number(
+        signal_output[Object.keys(signal_output)[1]]
+      ).toFixed(2);
+      const QRS_Duration = Number(
+        signal_output[Object.keys(signal_output)[2]]
+      ).toFixed(2);
+      setHeartBeat(heartBeat);
+      setPR_RR_INTERVAL(PR_RR_Interval);
+      setQRSDuration(QRS_Duration);
+      setQualityIndex(
+        Number(signal_output[Object.keys(signal_output)[3]]).toFixed(0)
+      );
 
-    setP(Array.from(signal_output[4]));
-    // var newPArr = Array.from(signal_output[4]).map(o => ({x: o, y: Array.from(signal_output[4])[o]}));
+      setP(Array.from(signal_output[4]));
+      // var newPArr = Array.from(signal_output[4]).map(o => ({x: o, y: Array.from(signal_output[4])[o]}));
 
-    let newPArr = [];
-    for (const p of Array.from(signal_output[4])) {
-      newPArr.push({ x: p, y: inputs.data[p] });
+      let newPArr = [];
+      for (const p of Array.from(signal_output[4])) {
+        newPArr.push({ x: p, y: inputs.data[p] });
+      }
+      console.log("newParr: " + newPArr);
+
+      setQ(Array.from(signal_output[5]));
+      setR(Array.from(signal_output[6]));
+      setS(Array.from(signal_output[7]));
+      setT(Array.from(signal_output[8]));
+      addToDB(heartBeat, PR_RR_Interval, QRS_Duration);
     }
-    console.log("newParr: " + newPArr);
-
-    setQ(Array.from(signal_output[5]));
-    setR(Array.from(signal_output[6]));
-    setS(Array.from(signal_output[7]));
-    setT(Array.from(signal_output[8]));
-    addToDB(heartBeat, PR_RR_Interval, QRS_Duration);
-  }
   };
 
   return (
@@ -194,6 +193,13 @@ function Cardiogram() {
                 <Link to="/">
                   <Button>Save</Button>
                 </Link>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Button onClick={() => addToDB(100, 100, 100)}>
+                  Add To DB
+                </Button>
               </Col>
             </Row>
           </>

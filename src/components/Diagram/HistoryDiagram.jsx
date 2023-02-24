@@ -16,9 +16,7 @@ import {
 } from "../../utilities/downloadFile";
 
 const HistoryDiagram = ({ dataKey = "", flow = [], texts = "" }) => {
-  console.log(dataKey, flow);
   const steam = [...flow].map((item, id) => {
-    console.log(item, id);
     return {
       name: item?.id ?? id,
       date: item?.date ?? item,

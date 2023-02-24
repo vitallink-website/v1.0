@@ -9,7 +9,7 @@ function ParameterHistory() {
         <Row className="time-history-row">
           <Col>
             <Row style={{ textAlign: "left" }}>
-              <Link to="/Measure/History/ParameterHistory/oximetryData/heartBeat">
+              <Link to="/Measure/History/ParameterHistory/oximetryData/heartBeatPPG">
                 Heart Rate(ppg)
               </Link>
             </Row>
@@ -27,7 +27,7 @@ function ParameterHistory() {
         <Row className="time-history-row">
           <Col>
             <Row style={{ textAlign: "left" }}>
-              <Link to="/Measure/History/ParameterHistory/cardiogramData/heartBeat">
+              <Link to="/Measure/History/ParameterHistory/cardiogramData/heartBeatECG">
                 Heart Rate(ecg)
               </Link>
             </Row>
@@ -74,7 +74,7 @@ function ParameterHistory() {
         <Row className="time-history-row">
           <Col>
             <Row style={{ textAlign: "left", paddingLeft: "0" }}>
-              <Link to="/Measure/History/ParameterHistory/BPData/SYS-DIA">
+              <Link to="/Measure/History/ParameterHistory/BPData/SYS_DIA">
                 SYS/DIA
               </Link>
             </Row>

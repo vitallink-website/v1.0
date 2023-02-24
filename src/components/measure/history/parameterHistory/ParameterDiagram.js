@@ -4,6 +4,7 @@ import HistoryDiagram from "../../../Diagram/HistoryDiagram";
 import { useEffect, useState, useContext } from "react";
 import { useIndexedDB } from "react-indexed-db";
 import { UserContext } from "../../../../App";
+import { GetDateTimeDB } from "../../../../utilities/time";
 
 const ParameterDiagram = () => {
   const { type, data } = useParams();
@@ -17,7 +18,7 @@ const ParameterDiagram = () => {
     getAll().then(dataFromDB => {
       const result = dataFromDB.filter(temp => temp.userId === UserInfo.id);
       let tempFlow = [];
-      result.map((res) => tempFlow.push({'date' : String(res['date']), 'value': res[data]}));
+      result.map((res) => tempFlow.push({'date' : GetDateTimeDB(String(res['dateAndId'])), 'value': res[data]}));
       setFlow(tempFlow);
     });
 
