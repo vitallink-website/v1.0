@@ -36,7 +36,7 @@ function Home({ isSignedIn, isUserSelected }) {
             <h6>Select Measurement to start the process.</h6>
             <Link to="/Measure">
               <Button className="register-btn-inner" size="lg">
-                Measurementd
+                Measurement
               </Button>
             </Link>
           </Row>
