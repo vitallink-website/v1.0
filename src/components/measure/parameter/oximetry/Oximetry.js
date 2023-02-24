@@ -78,25 +78,17 @@ const Oximetry = () => {
   };
 
   const calculateBeatPerMinute = (inputs) => {
-    console.log(
-      "🚀 ~ file: Oximetry.js:73 ~ calculateBeatPerMinute ~ inputs:",
-      inputs
-    );
-    // eslint-disable-next-line no-undef
-    const heartBeat = HeartBeat_PPG(inputs.data.ppg, inputs.freq);
-
-    // eslint-disable-next-line no-undef
-    // const spo2 = SpO2_estimation(inputs.data.ppg, inputs.data.red, inputs.freq);
-
-    // eslint-disable-next-line no-undef
-    // const qi = Quality_PPG(inputs.data.ppg, inputs.freq, inputs.time);
+    const signal_output = Array.from(
+      // eslint-disable-next-line no-undef
+      // PPG_signal_processing(inputs.IR, inputs.Red, inputs.freq)
+    ); // HeartRate, SpO2, Quality_index
 
     console.log(heartBeat);
-    setHeartBeat(Number(heartBeat).toFixed(2));
-    // todo ? do toFixed here
-    setSPO2(-1);
-    setQualityIndex(-1);
-    addToDB(Number(heartBeat).toFixed(0), Number(SPO2).toFixed(2));
+    // setHeartBeat(signal_output[0]);
+    // setSPO2(signal_output[1]);
+    // setQualityIndex(signal_output[2]);
+
+    addToDB(signal_output[0], signal_output[1]);
   };
 
   return (
