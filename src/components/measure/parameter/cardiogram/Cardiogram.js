@@ -6,15 +6,7 @@ import { useIndexedDB } from "react-indexed-db";
 import { shareData } from "../../share/Share";
 import { GetCurrentDateTimeDB } from "../../../../utilities/time";
 import MeasureBase from "../../../MeasureBase/MeasureBase";
-import {
-  ScatterChart,
-  Scatter,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+
 
 function Cardiogram() {
   const UserInfo = useContext(UserContext);
@@ -179,11 +171,11 @@ function Cardiogram() {
                 </h5>
               </Col>
               <Col>
-                <h5 style={{ color: "black" }}>QRS Duration: {QRS_Duration}</h5>
+                <h5 style={{ color: "black" }}>QRS Duration: {QRS_Duration} (ms)</h5>
               </Col>
               <Col>
                 <h5 style={{ color: "black" }}>
-                  Quality Index: {qualityIndex}
+                  Quality Index: {qualityIndex} (%)
                 </h5>
               </Col>
             </Row>
