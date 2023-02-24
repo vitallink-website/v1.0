@@ -5,7 +5,6 @@ import {
 } from "../../../utilities/time";
 
 export function shareData(dataName, texts) {
-  console.log("🚀 ~ file: Share.js:8 ~ shareData ~ texts:", texts);
   const showTime1 = GetCurrentDateTime();
   const showTime2 = GetCurrentDateTimeForFileName();
 

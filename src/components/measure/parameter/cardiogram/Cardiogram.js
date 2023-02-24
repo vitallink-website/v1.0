@@ -1,17 +1,17 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Row, Col, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { UserContext } from "../../../../App";
 import { useIndexedDB } from "react-indexed-db";
 import { shareData } from "../../share/Share";
-import { GetCurrentDateTime, isEqualDays } from "../../../../utilities/time";
+import { GetCurrentDateTimeDB } from "../../../../utilities/time";
 import MeasureBase from "../../../MeasureBase/MeasureBase";
 
 function Cardiogram() {
   const UserInfo = useContext(UserContext);
 
   const { update: updateParameterHistory } = useIndexedDB("cardiogramData");
-  const { update: updateTimeHistory } = useIndexedDB("dataTime");
+  const { getByID, update: updateTimeHistory } = useIndexedDB("dataTime");
 
   const [heartBeat, setHeartBeat] = useState(0);
   const [qualityIndex, setQualityIndex] = useState(0);
@@ -23,23 +23,28 @@ function Cardiogram() {
   const [s, setS] = useState(0);
   const [t, setT] = useState(0);
 
-  const addToDB = (heartBeat, PR_RR_Interval, QRS_Duration) => {
-    const currentDate = GetCurrentDateTime();
-    console.log(UserInfo.lastDateMeasured + " " + currentDate);
-    if (!isEqualDays(currentDate, UserInfo.lastDateMeasured)) {
-      UserInfo.parameters = {
-        heartBeatPPG: "",
-        SPO2: "",
-        heartBeatECG: "",
-        QRS_Duration: "",
-        PR_RR_Interval: "",
-        SYS_DIA: "",
-      };
-      UserInfo.setLastDateMeasured(currentDate);
-    }
+  useEffect(() => {
+    const currentDate = GetCurrentDateTimeDB();
+    const id = currentDate + UserInfo.id;
+    console.log(id);
+    getByID(id).then(
+      (data) => {
+        console.log(data);
+        const [dateAndId, ...newData] = data;
+        UserInfo.setParameters(newData);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }, []);
 
+  const addToDB = (heartBeat, PR_RR_Interval, QRS_Duration) => {
+    const currentDate = GetCurrentDateTimeDB();
+    const id = parseInt(String(currentDate + UserInfo.id))
+    
     updateParameterHistory({
-      dateAndId: currentDate + " " + UserInfo.id,
+      dateAndId: id,
       userId: UserInfo.id,
       heartBeatECG: heartBeat,
       PR_RR_Interval: PR_RR_Interval,
@@ -53,14 +58,15 @@ function Cardiogram() {
       }
     );
 
+    var newParameter = UserInfo.parameters;
+    newParameter['heartBeatECG'] = heartBeat;
+    newParameter['QRS_Duration'] = QRS_Duration;
+    newParameter['PR_RR_Interval'] = PR_RR_Interval;
+    
     updateTimeHistory({
-      dateAndId: currentDate + " " + UserInfo.id,
-      parameters: {
-        ...UserInfo.parameters,
-        heartBeatECG: heartBeat,
-        QRS_Duration: QRS_Duration,
-        PR_RR_Interval: PR_RR_Interval,
-      },
+      dateAndId: id,
+      userId: UserInfo.id,
+      parameters: newParameter,
     }).then(
       (event) => {
         console.log("timeData updated: ", event);
@@ -69,13 +75,6 @@ function Cardiogram() {
         console.log(error);
       }
     );
-
-    UserInfo.setParameters({
-      ...UserInfo.parameters,
-      heartBeatECG: heartBeat,
-      QRS_Duration: QRS_Duration,
-      PR_RR_Interval: PR_RR_Interval,
-    });
   };
 
   const calculateBeatPerMinute = (inputs) => {
@@ -96,7 +95,7 @@ function Cardiogram() {
     console.log(Array.from(signal_output[7]));
     console.log(Array.from(signal_output[8]));
 
-    if (inputs.freq !== 0) {
+    if (inputs.freq != 0) {
       const heartBeat = Number(
         signal_output[Object.keys(signal_output)[0]]
       ).toFixed(0);
@@ -197,6 +196,13 @@ function Cardiogram() {
                 <Link to="/">
                   <Button>Save</Button>
                 </Link>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Button onClick={() => addToDB(100, 100, 100)}>
+                  Add To DB
+                </Button>
               </Col>
             </Row>
           </>
