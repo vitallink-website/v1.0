@@ -15,12 +15,13 @@ export function shareData(dataName, texts) {
   newText.setAttributeNS(null, "y", 450);
   newText.setAttributeNS(null, "font-size", "28");
   newText.setAttributeNS(null, "font-family", "cursive");
-  texts.foreach((text) => {
+  texts.map((text) => {
     let tspan = document.createElement("tspan");
     tspan.setAttribute("x", "60");
     tspan.setAttribute("dy", "2em");
     tspan.textContent = text;
     newText.appendChild(tspan);
+    return "";
   });
   svg.appendChild(newText);
 

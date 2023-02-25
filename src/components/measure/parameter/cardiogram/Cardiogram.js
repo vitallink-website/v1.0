@@ -7,7 +7,6 @@ import { shareData } from "../../share/Share";
 import { GetCurrentDateTimeDB } from "../../../../utilities/time";
 import MeasureBase from "../../../MeasureBase/MeasureBase";
 
-
 function Cardiogram() {
   const UserInfo = useContext(UserContext);
 
@@ -82,8 +81,19 @@ function Cardiogram() {
   const calculateBeatPerMinute = (inputs) => {
     const signal_output = Array.from(
       // eslint-disable-next-line no-undef
-      ECG_signal_processing_ECG(inputs.data, inputs.freq)
+      ECG_signal_processing_ECG(inputs.data.ecg, inputs.freq)
     ); // HeartRate, PR_RR, QRS_duration, Quality_index, P, Q, R, S, T
+    console.log(inputs);
+    console.log(inputs.data.ecg[Array.from(signal_output[4])[0]]);
+    console.log(signal_output[0]);
+    console.log(signal_output[1]);
+    console.log(signal_output[2]);
+    console.log(signal_output[3]);
+    console.log(Array.from(signal_output[4]));
+    console.log(Array.from(signal_output[5]));
+    console.log(Array.from(signal_output[6]));
+    console.log(Array.from(signal_output[7]));
+    console.log(Array.from(signal_output[8]));
 
     if (inputs.freq !== 0) {
       const heartBeat = Number(
@@ -129,7 +139,13 @@ function Cardiogram() {
   return (
     <MeasureBase
       {...{
-        name: "ecg",
+        values: ["ecg"],
+        diagrams: [
+          {
+            name: "ecg",
+            calculatedDots: [],
+          },
+        ],
         command: 0x02,
         action: calculateBeatPerMinute,
         texts: ["Heart beat: " + heartBeat],
@@ -161,7 +177,9 @@ function Cardiogram() {
                 </h5>
               </Col>
               <Col>
-                <h5 style={{ color: "black" }}>QRS Duration: {QRS_Duration} (ms)</h5>
+                <h5 style={{ color: "black" }}>
+                  QRS Duration: {QRS_Duration} (ms)
+                </h5>
               </Col>
               <Col>
                 <h5 style={{ color: "black" }}>
