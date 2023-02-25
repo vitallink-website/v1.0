@@ -57,7 +57,6 @@ const Oximetry = () => {
 
     var newParameter = UserInfo.parameters;
     newParameter['heartBeatPPG'] = heartBeat;
-    console.log("new parameter: " + JSON.stringify(newParameter));
     newParameter['SPO2'] = SPO2;
 
     updateTimeHistory({

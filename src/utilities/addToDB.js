@@ -14,7 +14,7 @@ function AddToDB({DBName, data}){
   updateParameterHistory({
     dateAndId: id,
     userId: UserInfo.id,
-    data,
+    ...data,
   }).then(
     (event) => {
       console.log("cardiogramData updated: ", event);

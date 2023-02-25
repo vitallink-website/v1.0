@@ -39,6 +39,7 @@ function Cardiogram() {
       }
     );
   }, []);
+  
 
   const addToDB = (heartBeat, PR_RR_Interval, QRS_Duration) => {
     const currentDate = GetCurrentDateTimeDB();
