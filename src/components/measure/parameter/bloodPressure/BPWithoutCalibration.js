@@ -41,7 +41,16 @@ function BPWithoutCalibration() {
     <MeasureBase
       {...{
         values: ["ppg", "red", "force"],
-        diagrams: ["ppg", "force"],
+        diagrams: [
+          {
+            name: "ppg",
+            calculatedDots: []
+          },
+          {
+            name: "force",
+            calculatedDots: [],
+          },
+        ],
         command: 0x01,
         action: calculate,
         texts: ["SYS/DIA: " + SYS_DIA, "Quality index: " + qualityIndex],
