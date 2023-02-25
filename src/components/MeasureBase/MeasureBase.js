@@ -36,7 +36,7 @@ function MeasureBase({
 
   const pendingTime = 5000;
   // here frequency is estimated, should be change after changing frequencies of device
-  const sample = (65 * pendingTime) / 1000;
+  const sample = (60 * pendingTime) / 1000;
   const startTime = useRef(null);
   const endTime = useRef(null);
 
@@ -112,6 +112,11 @@ function MeasureBase({
   const openModal = () => setShow(true);
 
   const getStreamOfData = (key) => {
+    console.log(
+      "🚀 ~ file: MeasureBase.js:115 ~ getStreamOfData ~ key:",
+      key,
+      data
+    );
     if (
       data[key] &&
       data[key].length > (diagrams.length % 2 === 0 ? 101 : 201)

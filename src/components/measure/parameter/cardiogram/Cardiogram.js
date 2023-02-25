@@ -7,7 +7,6 @@ import { shareData } from "../../share/Share";
 import { GetCurrentDateTimeDB } from "../../../../utilities/time";
 import MeasureBase from "../../../MeasureBase/MeasureBase";
 
-
 function Cardiogram() {
   const UserInfo = useContext(UserContext);
 
@@ -140,7 +139,12 @@ function Cardiogram() {
     <MeasureBase
       {...{
         values: ["ecg"],
-        diagrams: ["ecg"],
+        diagrams: [
+          {
+            name: "ecg",
+            calculatedDots: [],
+          },
+        ],
         command: 0x02,
         action: calculateBeatPerMinute,
         texts: ["Heart beat: " + heartBeat],
@@ -172,7 +176,9 @@ function Cardiogram() {
                 </h5>
               </Col>
               <Col>
-                <h5 style={{ color: "black" }}>QRS Duration: {QRS_Duration} (ms)</h5>
+                <h5 style={{ color: "black" }}>
+                  QRS Duration: {QRS_Duration} (ms)
+                </h5>
               </Col>
               <Col>
                 <h5 style={{ color: "black" }}>
