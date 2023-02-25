@@ -641,7 +641,7 @@ a {
 
 .history-section {
   position: relative !important;
-  padding-top: 260px !important;
+  padding-top: 200px !important;
   padding-bottom: 30px !important;
   min-height: 100vh;
   background-image: var(--section-background-color) !important;

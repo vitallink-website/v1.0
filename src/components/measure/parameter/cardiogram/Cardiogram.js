@@ -83,17 +83,6 @@ function Cardiogram() {
       // eslint-disable-next-line no-undef
       ECG_signal_processing_ECG(inputs.data, inputs.freq)
     ); // HeartRate, PR_RR, QRS_duration, Quality_index, P, Q, R, S, T
-    console.log(inputs);
-    console.log(inputs.data[Array.from(signal_output[4])[0]]);
-    console.log(signal_output[0]);
-    console.log(signal_output[1]);
-    console.log(signal_output[2]);
-    console.log(signal_output[3]);
-    console.log(Array.from(signal_output[4]));
-    console.log(Array.from(signal_output[5]));
-    console.log(Array.from(signal_output[6]));
-    console.log(Array.from(signal_output[7]));
-    console.log(Array.from(signal_output[8]));
 
     if (inputs.freq !== 0) {
       const heartBeat = Number(

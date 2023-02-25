@@ -6,6 +6,9 @@ function ParameterHistory() {
   return (
     <div className="history-section">
       <Container>
+        <Row className="time-history-row" > 
+          <h3> parameter history </h3>
+        </Row>
         <Row className="time-history-row">
           <Col>
             <Row style={{ textAlign: "left" }}>
@@ -18,7 +21,11 @@ function ParameterHistory() {
             </Row>
           </Col>
           <Col>
-            <Row>PR/RR Interval </Row>
+            <Row  style={{ textAlign: "left" }}>
+              <Link to="/Measure/History/ParameterHistory/cardiogramData/PR_RR_Interval">
+                PR/RR Interval 
+              </Link>
+            </Row>
             <Row style={{ paddingLeft: "1.5rem", fontSize: "0.8rem" }}>
               (msec)
             </Row>
@@ -42,7 +49,11 @@ function ParameterHistory() {
             <Row style={{ fontSize: "0.8rem" }}>(mg/dL)</Row>
           </Col>
           <Col>
-            <Row>QRS Duration</Row>
+            <Row  style={{ textAlign: "left" }}>
+              <Link to="/Measure/History/ParameterHistory/cardiogramData/QRS_Duration">
+                QRS Duration
+              </Link>
+            </Row>
             <Row style={{ fontSize: "0.8rem" }}>(msec)</Row>
           </Col>
         </Row>

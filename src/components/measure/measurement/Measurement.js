@@ -8,9 +8,9 @@ import { useEffect } from "react";
 function Measurement() {
   const bluetooth = useContext(DeviceContext);
   const history = useNavigate();
-  useEffect(() => {
-    if (!bluetooth.isConnected) history("/DeviceConnection");
-  }, [bluetooth, history]);
+  // useEffect(() => {
+  //   if (!bluetooth.isConnected) history("/DeviceConnection");
+  // }, [bluetooth, history]);
 
   return (
     <div className="measure-section">

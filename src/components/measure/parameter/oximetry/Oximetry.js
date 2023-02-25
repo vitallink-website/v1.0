@@ -77,7 +77,7 @@ const Oximetry = () => {
   const calculateBeatPerMinute = (inputs) => {
     const signal_output = Array.from(
       // eslint-disable-next-line no-undef
-      // PPG_signal_processing(inputs.IR, inputs.Red, inputs.freq)
+      PPG_signal_processing(inputs.IR, inputs.Red, inputs.freq)
     ); // HeartRate, SpO2, Quality_index
 
     console.log(heartBeat);

@@ -332,7 +332,6 @@ def BP_estimation(PPG, Force, fs):
       BV = np.zeros(len(AP))
       BV[:k] = A2 + (A1-A2)*np.exp(-1/2*((AP[:k]-B1)/B2)**2)
       BV[k:] = A1 * np.exp(-1/2*((AP[k:]-B1)/B3)**2)
-      plt.plot(AP , BV, 'r',AP, PPG_ip, 'b')
       # BP estimation --------------------------------------------------------------
       Diastolic = 0.65*B1 - 1.54*A2/A1*B2 + 26.2
       Mean = 0.68*B1 - 1.53*A2/A1*B2 + 38.8
