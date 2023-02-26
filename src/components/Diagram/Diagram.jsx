@@ -8,6 +8,7 @@ import {
   Tooltip,
   Legend,
   Scatter,
+  Brush,
   ResponsiveContainer,
 } from "recharts";
 import { Button } from "react-bootstrap";
@@ -42,13 +43,11 @@ const Diagram = ({
     return steam;
   };
   const data = getSteam();
-  console.log("🚀 ~ file: Diagram.jsx:46 ~ data:", data, calculatedDots);
+  // console.log("🚀 ~ file: Diagram.jsx:46 ~ data:", data, calculatedDots);
   return (
     <div className="highlight-bar-charts" style={{ userSelect: "none" }}>
       <ResponsiveContainer height={400} width={"100%"}>
         <ComposedChart
-          width={500}
-          height={400}
           data={
             data.length > 2500
               ? data.slice(
@@ -65,7 +64,7 @@ const Diagram = ({
           }}
         >
           <XAxis dataKey="x" scale="band" />
-          <YAxis />
+          <YAxis domain={["dataMax-10", "dataMax+10"]} />
           <Tooltip />
           <Legend />
           <Line
@@ -75,9 +74,11 @@ const Diagram = ({
             dot={false}
             animationDuration={500}
           />
-          {calculatedDots.map((item, i) => (
+          {/* {calculatedDots.map((item, i) => (
             <Scatter key={i} dataKey={item.name} fill={item.color} />
-          ))}
+          ))} */}
+        {data.length > 200 && <Brush />}
+
         </ComposedChart>
       </ResponsiveContainer>
       <Button onClick={(e) => downloadSVGAsPNG(e, dataKey, texts)}>

@@ -112,11 +112,11 @@ function MeasureBase({
   const openModal = () => setShow(true);
 
   const getStreamOfData = (key) => {
-    console.log(
-      "🚀 ~ file: MeasureBase.js:115 ~ getStreamOfData ~ key:",
-      key,
-      data
-    );
+    // console.log(
+    //   "🚀 ~ file: MeasureBase.js:115 ~ getStreamOfData ~ key:",
+    //   key,
+    //   data
+    // );
     if (
       data[key] &&
       data[key].length > (diagrams.length % 2 === 0 ? 101 : 201)
@@ -131,7 +131,7 @@ function MeasureBase({
     }
     return [...new Array(diagrams.length % 2 === 0 ? 101 : 201).fill(0)];
   };
-  console.log(getStreamOfData());
+  // console.log(getStreamOfData());
   return (
     <div className="measure-section">
       <br />

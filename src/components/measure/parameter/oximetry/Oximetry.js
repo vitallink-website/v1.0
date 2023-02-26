@@ -6,6 +6,7 @@ import { useIndexedDB } from "react-indexed-db";
 import { shareData } from "../../share/Share";
 import { GetCurrentDateTimeDB } from "../../../../utilities/time";
 import MeasureBase from "../../../MeasureBase/MeasureBase";
+import AddToDB from "../../../../utilities/AddToDB";
 
 const Oximetry = () => {
   const UserInfo = useContext(UserContext);
@@ -77,17 +78,24 @@ const Oximetry = () => {
   };
 
   const calculateBeatPerMinute = (inputs) => {
+    console.log(inputs.data);
     // const signal_output = Array.from(
     // eslint-disable-next-line no-undef
     // PPG_signal_processing(inputs.IR, inputs.Red, inputs.freq)
     // ); // HeartRate, SpO2, Quality_index
 
-    console.log(heartBeat);
+    // console.log(heartBeat);
     // setHeartBeat(signal_output[0]);
     // setSPO2(signal_output[1]);
     // setQualityIndex(signal_output[2]);
-
-    // addToDB(signal_output[0], signal_output[1]);
+    
+    var newParameter = UserInfo.parameters;
+    var dataParameter = {};
+    newParameter["heartBeatPPG"] = dump1//signal_output[0];
+    newParameter["SPO2"] = dump2//signal_output[1];
+    dataParameter["heartBeatPPG"] = dump1//signal_output[0];
+    dataParameter["SPO2"] = dump2//signal_output[1];
+    // AddToDB("oximetryData", dataParameter, newParameter);
   };
 
   return (
