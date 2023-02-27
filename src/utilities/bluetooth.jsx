@@ -72,22 +72,22 @@ export const useSignalFeed = () => {
     write_charastirctic.writeValue(new Uint8Array([command]).buffer);
 
     read_charastirctic.oncharacteristicvaluechanged = (data) => {
-      const ppg = [];
       const red = [];
+      const ir = [];
       const ecg = [];
       const force = [];
       for (let i = 0; i < 8; i++) {
-        ppg.push(data.srcElement.value.getUint16(8 * i + 0, true));
-        red.push(data.srcElement.value.getUint16(8 * i + 2, true));
+        red.push(data.srcElement.value.getUint16(8 * i + 0, true));
+        ir.push(data.srcElement.value.getUint16(8 * i + 2, true));
         ecg.push(data.srcElement.value.getInt16(8 * i + 4, true));
-        force.push(Bytes2Float16(data.srcElement.value.getUint16(6, true)));
+        force.push(Bytes2Float16(data.srcElement.value.getUint16(8 * i + 6, true)));
         Data.push(0);
       }
       callBack({
-        ppg,
+        red,
         ecg,
         force,
-        red,
+        ir,
       });
     };
   };
@@ -124,4 +124,4 @@ const Bytes2Float16 = (bytes) => {
   return sign * significand * Math.pow(2, exponent);
 };
 
-export const KEYS = ["ppg", "red", "ecg", "force"];
+export const KEYS = ["red", "ir", "ecg", "force"];

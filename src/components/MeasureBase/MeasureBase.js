@@ -6,10 +6,10 @@ import { MeasureModal } from "./MeasureModal";
 import { KEYS } from "../../utilities/bluetooth";
 
 const init = {
-  ppg: [],
+  red: [],
   ecg: [],
   force: [],
-  red: [],
+  ir: [],
 };
 function MeasureBase({
   values,
@@ -28,10 +28,10 @@ function MeasureBase({
   const [sampleTime, setTime] = useState(10);
 
   let temp = {
-    ppg: [],
+    red: [],
     ecg: [],
     force: [],
-    red: [],
+    ir: [],
   };
 
   const pendingTime = 5000;
@@ -49,10 +49,10 @@ function MeasureBase({
     });
     if (temp[values[0]].length >= sample) {
       let cv = {
-        ppg: temp.ppg.slice(sample),
+        red: temp.red.slice(sample),
         ecg: temp.ecg.slice(sample),
         force: temp.force.slice(sample),
-        red: temp.red.slice(sample),
+        ir: temp.ir.slice(sample),
       };
       setData(cv);
     }
@@ -92,10 +92,10 @@ function MeasureBase({
     setLoading(true);
     bluetooth.start();
     temp = {
-      ppg: [],
+      red: [],
       ecg: [],
       force: [],
-      red: [],
+      ir: [],
     };
     setData(init);
     startTime.current = setTimeout(() => {

@@ -79,32 +79,33 @@ const Oximetry = () => {
 
   const calculateBeatPerMinute = (inputs) => {
     console.log(inputs.data);
-    // const signal_output = Array.from(
+    const signal_output = Array.from(
     // eslint-disable-next-line no-undef
-    // PPG_signal_processing(inputs.IR, inputs.Red, inputs.freq)
-    // ); // HeartRate, SpO2, Quality_index
+    PPG_signal_processing(inputs.data.ir, inputs.data.red, inputs.freq)
+    ); // HeartRate, SpO2, Quality_index
 
-    // console.log(heartBeat);
-    // setHeartBeat(signal_output[0]);
-    // setSPO2(signal_output[1]);
-    // setQualityIndex(signal_output[2]);
+    console.log(signal_output[0]);
+    console.log(signal_output[1]);
+    setHeartBeat(signal_output[0]);
+    setSPO2(signal_output[1]);
+    setQualityIndex(signal_output[2]);
     
-    var newParameter = UserInfo.parameters;
-    var dataParameter = {};
-    newParameter["heartBeatPPG"] = dump1//signal_output[0];
-    newParameter["SPO2"] = dump2//signal_output[1];
-    dataParameter["heartBeatPPG"] = dump1//signal_output[0];
-    dataParameter["SPO2"] = dump2//signal_output[1];
+    // var newParameter = UserInfo.parameters;
+    // var dataParameter = {};
+    // newParameter["heartBeatPPG"] = dump1//signal_output[0];
+    // newParameter["SPO2"] = dump2//signal_output[1];
+    // dataParameter["heartBeatPPG"] = dump1//signal_output[0];
+    // dataParameter["SPO2"] = dump2//signal_output[1];
     // AddToDB("oximetryData", dataParameter, newParameter);
   };
 
   return (
     <MeasureBase
       {...{
-        values: ["ppg", "red", "force"],
+        values: ["red", "ir", "force"],
         diagrams: [
           {
-            name: "ppg",
+            name: "red",
             calculatedDots: [
               { name: "q", value: { x: 100, y: 4175 }, color: "red" },
               { name: "y", value: { x: 150, y: 14175 }, color: "blue" },
@@ -160,9 +161,9 @@ const Oximetry = () => {
                 <Button
                   onClick={() => {
                     shareData("OximetryData", [
-                      "Heart beat: " + Number(heartBeat).toFixed(2),
-                      "SPO2: " + Number(SPO2).toFixed(2),
-                      "Quality index: " + Number(qualityIndex).toFixed(2),
+                      "Heart beat: " + heartBeat,
+                      "SPO2: " + SPO2,
+                      "Quality index: " + qualityIndex,
                     ]);
                   }}
                 >

@@ -81,59 +81,59 @@ function Cardiogram() {
 
   const calculateBeatPerMinute = (inputs) => {
     console.log(inputs.data);
-    // const signal_output = Array.from(
-    //   // eslint-disable-next-line no-undef
-    //   ECG_signal_processing_ECG(inputs.data.ecg, inputs.freq)
-    // ); // HeartRate, PR_RR, QRS_duration, Quality_index, P, Q, R, S, T
-    // console.log(inputs);
-    // console.log(inputs.data.ecg[Array.from(signal_output[4])[0]]);
-    // console.log(signal_output[0]);
-    // console.log(signal_output[1]);
-    // console.log(signal_output[2]);
-    // console.log(signal_output[3]);
-    // console.log(Array.from(signal_output[4]));
-    // console.log(Array.from(signal_output[5]));
-    // console.log(Array.from(signal_output[6]));
-    // console.log(Array.from(signal_output[7]));
-    // console.log(Array.from(signal_output[8]));
+    console.log(inputs.freq);
+    const signal_output = Array.from(
+      // eslint-disable-next-line no-undef
+      ECG_signal_processing(inputs.data.ecg, inputs.freq)
+    ); // HeartRate, PR_RR, QRS_duration, Quality_index, P, Q, R, S, T
+    console.log(signal_output);
+    console.log(signal_output[0]);
+    console.log(signal_output[1]);
+    console.log(signal_output[2]);
+    console.log(signal_output[3]);
+    console.log(Array.from(signal_output[4]));
+    console.log(Array.from(signal_output[5]));
+    console.log(Array.from(signal_output[6]));
+    console.log(Array.from(signal_output[7]));
+    console.log(Array.from(signal_output[8]));
 
-    // if (inputs.freq !== 0) {
-    //   const heartBeat = Number(
-    //     signal_output[Object.keys(signal_output)[0]]
-    //   ).toFixed(0);
-    //   const PR_RR_Interval = Number(
-    //     signal_output[Object.keys(signal_output)[1]]
-    //   ).toFixed(2);
-    //   const QRS_Duration = Number(
-    //     signal_output[Object.keys(signal_output)[2]]
-    //   ).toFixed(2);
-    //   setHeartBeat(heartBeat);
-    //   setPR_RR_INTERVAL(PR_RR_Interval);
-    //   setQRSDuration(QRS_Duration);
-    //   setQualityIndex(
-    //     Number(signal_output[Object.keys(signal_output)[3]]).toFixed(0)
-    //   );
-    //   let newPArr = [];
-    //   let newQArr = [];
-    //   let newRArr = [];
-    //   let newSArr = [];
-    //   let newTArr = [];
-    //   for (const p of Array.from(signal_output[4]))
-    //     newPArr.push({ x: p, y: inputs.data[p] });
-    //   for (const q of Array.from(signal_output[5]))
-    //     newQArr.push({ x: q, y: inputs.data[q] });
-    //   for (const r of Array.from(signal_output[6]))
-    //     newRArr.push({ x: r, y: inputs.data[r] });
-    //   for (const s of Array.from(signal_output[7]))
-    //     newSArr.push({ x: s, y: inputs.data[s] });
-    //   for (const t of Array.from(signal_output[7]))
-    //     newTArr.push({ x: t, y: inputs.data[t] });
-    //   console.log("newParr: " + JSON.stringify(newPArr));
-    //   setP(newPArr);
-    //   setQ(newQArr);
-    //   setR(newRArr);
-    //   setS(newSArr);
-    //   setT(newTArr);
+    if (inputs.freq !== 0) {
+      const heartBeat = Number(
+        signal_output[Object.keys(signal_output)[0]]
+      ).toFixed(0);
+      const PR_RR_Interval = Number(
+        signal_output[Object.keys(signal_output)[1]]
+      ).toFixed(2);
+      const QRS_Duration = Number(
+        signal_output[Object.keys(signal_output)[2]]
+      ).toFixed(2);
+      setHeartBeat(heartBeat);
+      setPR_RR_Interval(PR_RR_Interval);
+      setQRSDuration(QRS_Duration);
+      setQualityIndex(
+        Number(signal_output[Object.keys(signal_output)[3]]).toFixed(0)
+      );
+      let newPArr = [];
+      let newQArr = [];
+      let newRArr = [];
+      let newSArr = [];
+      let newTArr = [];
+      for (const p of Array.from(signal_output[4]))
+        newPArr.push({ x: p, y: inputs.data[p] });
+      for (const q of Array.from(signal_output[5]))
+        newQArr.push({ x: q, y: inputs.data[q] });
+      for (const r of Array.from(signal_output[6]))
+        newRArr.push({ x: r, y: inputs.data[r] });
+      for (const s of Array.from(signal_output[7]))
+        newSArr.push({ x: s, y: inputs.data[s] });
+      for (const t of Array.from(signal_output[7]))
+        newTArr.push({ x: t, y: inputs.data[t] });
+      console.log("newParr: " + JSON.stringify(newPArr));
+      setP(newPArr);
+      setQ(newQArr);
+      setR(newRArr);
+      setS(newSArr);
+      setT(newTArr);
     // var newParameter = UserInfo.parameters;
     // var dataParameter = {};
     // newParameter["heartBeatECG"] = heartBeat;
@@ -143,7 +143,7 @@ function Cardiogram() {
     // dataParameter["QRS_Duration"] = QRS_Duration;
     // dataParameter["PR_RR_Interval"] = PR_RR_Interval;
     //   AddToDB("cardiogramData", dataParameter, newParameter);
-    // }
+    }
   };
 
   return (

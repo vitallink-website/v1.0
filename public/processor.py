@@ -258,7 +258,7 @@ def PPG_signal_processing(IR, Red, fs):
     # SpO2 = 0
     Quality_index = Quality_PPG(IR, fs, t)
     # Quality_index = 0
-    return HeartRate, SpO2, Quality_index
+    return round(HeartRate), round(SpO2,2), round(Quality_index,2)
 
 # def PPG_signal_processing(IR, Red, fs):
 #     t = np.linspace(0, len(IR)/fs, len(IR), endpoint = True)
@@ -338,7 +338,7 @@ def BP_estimation(PPG, Force, fs):
       Systolic = 2.5*Mean - 1.5*Diastolic
     else: print('Try Again!')
   else: print('Try Again!')
-  return [Diastolic, Systolic]
+  return Diastolic, Systolic
   
 
 def B2_B3_estimation(x, y, k, A1, A2, B1):
@@ -355,10 +355,11 @@ def B2_B3_estimation(x, y, k, A1, A2, B1):
   return B2, B3
 
 
-def BloodPressure_Adapter(PPG_data, BPData, fs):
-    array = np.asarray(PPG_data.to_py())
+def BloodPressure_Adapter(PPG_data, force_Data, fs):
+    ppg_array = np.asarray(PPG_data.to_py())
+    force_array = np.asarray(force_Data.to_py())
     try :
-      return BP_estimation(array, fs)
+      return BP_estimation(ppg_array, force_array, fs)
     except: 
       return -1
 
@@ -371,6 +372,6 @@ def ECG_signal_processing_Adapter(ECG_data, fs):
     except: 
       return -1
 
-createObject(create_proxy(ECG_signal_processing_Adapter), "ECG_signal_processing_ECG")
+createObject(create_proxy(ECG_signal_processing_Adapter), "ECG_signal_processing")
 
 

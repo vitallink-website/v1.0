@@ -7,43 +7,24 @@ function BPWithoutCalibration() {
   const [SYS_DIA, setSYS_DIA] = useState(0);
   const [qualityIndex, setQualityIndex] = useState(0);
 
-  // const UserInfo = useContext(UserContext);
-
-  // const { add } = useIndexedDB("BPData");
-
-  // const addToDB = () => {
-  //   const showTime = GetCurrentDateTime();
-
-  //   add({
-  //     userId: UserInfo.id,
-  //     ppgData: ppgs,
-  //     forceData: forces,
-  //     date: showTime,
-  //     SYS_DIA: 0,
-  //   }).then(
-  //     (event) => {
-  //       console.log("BP added: ", event);
-  //     },
-  //     (error) => {
-  //       console.log(error);
-  //     }
-  //   );
-  // };
 
   const calculate = (inputs) => {
-    console.log(
-      "🚀 ~ file: BPWithoutCalibration.js:87 ~ calculate ~ inputs:",
-      inputs
-    );
+    console.log(inputs.data);
+    const signal_output = Array.from(
+    // eslint-disable-next-line no-undef
+      BloodPressure(inputs.data.ir, inputs.data.force, inputs.freq)
+    ); // HeartRate, SpO2, Quality_index
+    console.log(signal_output[0]);
+    console.log(signal_output[1]);
   };
 
   return (
     <MeasureBase
       {...{
-        values: ["ppg", "red", "force"],
+        values: ["ir", "force"],
         diagrams: [
           {
-            name: "ppg",
+            name: "ir",
             calculatedDots: []
           },
           {
