@@ -76,18 +76,26 @@ export const useSignalFeed = () => {
       const ir = [];
       const ecg = [];
       const force = [];
-      for (let i = 0; i < 8; i++) {
+      const pcg = []
+      if(command == 0x01 || command == 0x02){
+        for (let i = 0; i < 8; i++) {
         red.push(data.srcElement.value.getUint16(8 * i + 0, true));
         ir.push(data.srcElement.value.getUint16(8 * i + 2, true));
         ecg.push(data.srcElement.value.getInt16(8 * i + 4, true));
         force.push(Bytes2Float16(data.srcElement.value.getUint16(8 * i + 6, true)));
         Data.push(0);
-      }
+      }}
+      else if(command == 0x03)
+        for (let i = 0; i < 100; i++){
+          console.log(data.srcElement.value.getInt16(2 * i, true) << 8 + data.srcElement.value.getInt16(2 * i + 1, true))
+          pcg.push(data.srcElement.value.getInt16(2 * i, true) << 8 + data.srcElement.value.getInt16(2 * i + 1, true))
+        }
       callBack({
         red,
         ecg,
         force,
         ir,
+        pcg,
       });
     };
   };
@@ -124,4 +132,4 @@ const Bytes2Float16 = (bytes) => {
   return sign * significand * Math.pow(2, exponent);
 };
 
-export const KEYS = ["red", "ir", "ecg", "force"];
+export const KEYS = ["red", "ir", "ecg", "force", "pcg"];

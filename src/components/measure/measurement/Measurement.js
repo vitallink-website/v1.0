@@ -20,7 +20,7 @@ function Measurement() {
         <Row>
           <Col>
             <Link to="/Measure/Measurement/HeartAndLungSound">
-              <Button className="measure-btn" disabled>
+              <Button className="measure-btn">
                 Heart and Lung Sound
               </Button>
             </Link>

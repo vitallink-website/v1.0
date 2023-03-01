@@ -10,6 +10,7 @@ const init = {
   ecg: [],
   force: [],
   ir: [],
+  pcg: [],
 };
 function MeasureBase({
   values,
@@ -32,11 +33,11 @@ function MeasureBase({
     ecg: [],
     force: [],
     ir: [],
+    pcg: [],
   };
 
   const pendingTime = 5000;
   // here frequency is estimated, should be change after changing frequencies of device
-  const sample = (60 * pendingTime) / 1000;
   const startTime = useRef(null);
   const endTime = useRef(null);
 
@@ -47,15 +48,15 @@ function MeasureBase({
       }
       return "";
     });
-    if (temp[values[0]].length >= sample) {
-      let cv = {
-        red: temp.red.slice(sample),
-        ecg: temp.ecg.slice(sample),
-        force: temp.force.slice(sample),
-        ir: temp.ir.slice(sample),
-      };
-      setData(cv);
-    }
+    if (temp[values[0]].length >= 100) {
+    let cv = {
+      red: temp.red,
+      ecg: temp.ecg,
+      force: temp.force,
+      ir: temp.ir,
+    };
+    setData(cv);
+  }
   };
 
   useEffect(() => {
@@ -79,9 +80,9 @@ function MeasureBase({
       bluetooth.stop();
       action({
         data: data,
-        time: Math.ceil(bluetooth.GetTime() - pendingTime),
+        time: Math.ceil(bluetooth.GetTime()),
         freq: Math.ceil(
-          (data[values[0]].length / (bluetooth.GetTime() - pendingTime)) * 1000
+          (data[values[0]].length / (bluetooth.GetTime())) * 1000
         ),
       });
     }
@@ -90,17 +91,18 @@ function MeasureBase({
 
   const startInput = () => {
     setLoading(true);
-    bluetooth.start();
     temp = {
       red: [],
       ecg: [],
       force: [],
       ir: [],
+      pcg: [],
     };
     setData(init);
     startTime.current = setTimeout(() => {
       setActive(1);
       setLoading(false);
+      bluetooth.start();
     }, [pendingTime]);
     endTime.current = setTimeout(() => {
       setActive(-1);
@@ -119,11 +121,11 @@ function MeasureBase({
     // );
     if (
       data[key] &&
-      data[key].length > (diagrams.length % 2 === 0 ? 101 : 201)
+      data[key].length > (diagrams.length % 2 === 0 ? 201 : 401)
     ) {
       if (active === 1) {
         return data[key].slice(
-          data[key].length - (diagrams.length % 2 === 0 ? 101 : 201),
+          data[key].length - (diagrams.length % 2 === 0 ? 201 : 401),
           data[key].length
         );
       }

@@ -258,7 +258,7 @@ def PPG_signal_processing(IR, Red, fs):
     # SpO2 = 0
     Quality_index = Quality_PPG(IR, fs, t)
     # Quality_index = 0
-    return round(HeartRate), round(SpO2,2), round(Quality_index,2)
+    return round(HeartRate), round(SpO2), round(Quality_index,2)
 
 # def PPG_signal_processing(IR, Red, fs):
 #     t = np.linspace(0, len(IR)/fs, len(IR), endpoint = True)

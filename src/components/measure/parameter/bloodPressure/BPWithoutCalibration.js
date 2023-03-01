@@ -4,7 +4,8 @@ import { Link } from "react-router-dom";
 import MeasureBase from "../../../MeasureBase/MeasureBase";
 
 function BPWithoutCalibration() {
-  const [SYS_DIA, setSYS_DIA] = useState(0);
+  const [SYS, setSYS] = useState(0);
+  const [DIA, setDIA] = useState(0);
   const [qualityIndex, setQualityIndex] = useState(0);
 
 
@@ -16,6 +17,8 @@ function BPWithoutCalibration() {
     ); // HeartRate, SpO2, Quality_index
     console.log(signal_output[0]);
     console.log(signal_output[1]);
+    setSYS(signal_output[0]);
+    setDIA(signal_output[1]);
   };
 
   return (
@@ -34,7 +37,7 @@ function BPWithoutCalibration() {
         ],
         command: 0x01,
         action: calculate,
-        texts: ["SYS/DIA: " + SYS_DIA, "Quality index: " + qualityIndex],
+        texts: ["SYS/DIA: " + SYS + "/" + DIA, "Quality index: " + qualityIndex],
         title: (openModal) => (
           <>
             <h2 className="measure-title">
@@ -62,7 +65,7 @@ function BPWithoutCalibration() {
             </Col>
             <Col>
               <h5 style={{ color: "black" }}>
-                SYS/DIA: {Number(0.0).toFixed(2)} (mmHg)
+                SYS/DIA: {SYS}/{DIA}  (mmHg)
               </h5>
             </Col>
             <Col>
