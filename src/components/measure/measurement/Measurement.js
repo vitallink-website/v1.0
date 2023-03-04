@@ -58,7 +58,7 @@ function Measurement() {
         <Row>
           <Col>
             <Link to="/Measure/Measurement/Temperature">
-              <Button className="measure-btn" disabled>
+              <Button className="measure-btn">
                 Temperature
               </Button>
             </Link>

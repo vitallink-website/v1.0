@@ -6,24 +6,44 @@ import { useState } from "react";
 import { shareData } from "../../share/Share";
 import { AiFillPlayCircle } from "react-icons/ai";
 
+
 function HeartAndLungSound() {
+  const [sound, setSound] = useState([]);
   const [heartBeat, setHeartBeat] = useState(0);
   const [qualityIndex, setQualityIndex] = useState(0);
 
-  const playAudio = (inputs) => {
+  const prepareWavFile = () => {
+    const wav = new Blob([sound], { type: 'audio/wav' })
+    var url = URL.createObjectURL(wav)
+    console.log(url);
+    var audio = new Audio(url);
+    audio.play().catch(console.log);
+  };
+
+  const playAudio = () => {
+    console.log(sound);
+    prepareWavFile();
+  };
+
+  const calculate = (inputs) => {
     console.log(inputs.data);
     console.log(inputs.freq);
-    // var audio = new Audio(inputs.data.pcg);
-    // audio.play();
+    setSound(inputs.data.pcg);
   };
+
 
   return (
     <MeasureBase
       {...{
         values: ["pcg"],
-        diagrams: [],
+        diagrams: [
+          {
+            name: "pcg",
+            calculatedDots: [],
+          },
+        ],
         command: 0x03,
-        action: playAudio,
+        action: calculate,
         texts: ["Heart beat: " + heartBeat, "Quality index: " + qualityIndex],
         title: (openModal) => (
           <>
@@ -44,8 +64,12 @@ function HeartAndLungSound() {
         children: () => (
           <>
             <Row className="mt-5">
+            </Row>
+            <Row className="mt-5">
               <Col>
-                <Button onClick={() => playAudio()}>play <AiFillPlayCircle /></Button>
+                <Button onClick={() => playAudio()}>
+                  play <AiFillPlayCircle />
+                </Button>
               </Col>
             </Row>
             <Row className="mt-5">

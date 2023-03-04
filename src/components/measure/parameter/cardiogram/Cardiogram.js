@@ -88,7 +88,7 @@ function Cardiogram() {
     ); // HeartRate, PR_RR, QRS_duration, Quality_index, P, Q, R, S, T
     
     console.log(signal_output);
-    if (inputs.freq !== 0 && signal_output.length != 0) {
+    if (inputs.freq !== 0 && signal_output.length !== 0) {
       console.log(signal_output[0]);
       console.log(signal_output[1]);
       console.log(signal_output[2]);
@@ -223,17 +223,6 @@ function Cardiogram() {
                 <Link to="/">
                   <Button>Save</Button>
                 </Link>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Button
-                  onClick={() =>
-                    calculateBeatPerMinute({ data: ppg_data, freq: 120 })
-                  }
-                >
-                  Calculate
-                </Button>
               </Col>
             </Row>
           </>

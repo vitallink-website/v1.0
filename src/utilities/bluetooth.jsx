@@ -76,8 +76,9 @@ export const useSignalFeed = () => {
       const ir = [];
       const ecg = [];
       const force = [];
-      const pcg = []
-      if(command == 0x01 || command == 0x02){
+      const pcg = [];
+      const temperature = [];
+      if(command === 0x01 || command === 0x02){
         for (let i = 0; i < 8; i++) {
         red.push(data.srcElement.value.getUint16(8 * i + 0, true));
         ir.push(data.srcElement.value.getUint16(8 * i + 2, true));
@@ -85,17 +86,21 @@ export const useSignalFeed = () => {
         force.push(Bytes2Float16(data.srcElement.value.getUint16(8 * i + 6, true)));
         Data.push(0);
       }}
-      else if(command == 0x03)
+      else if(command === 0x03){
         for (let i = 0; i < 100; i++){
-          console.log(data.srcElement.value.getInt16(2 * i, true) << 8 + data.srcElement.value.getInt16(2 * i + 1, true))
-          pcg.push(data.srcElement.value.getInt16(2 * i, true) << 8 + data.srcElement.value.getInt16(2 * i + 1, true))
+          pcg.push(data.srcElement.value.getInt16(2 * i, true));
         }
+      }
+      else if(command === 0x04){
+        temperature.push(Bytes2Float16(data.srcElement.value.getUint16(0, true)));        
+      }
       callBack({
         red,
         ecg,
         force,
         ir,
         pcg,
+        temperature,
       });
     };
   };
@@ -116,20 +121,7 @@ export const useSignalFeed = () => {
 };
 
 const Bytes2Float16 = (bytes) => {
-  let sign = bytes & 0x8000 ? -1 : 1;
-  let exponent = ((bytes >> 10) & 0x1f) - 15;
-  let significand = bytes & ~(-1 << 10);
-
-  if (exponent === 16)
-    return sign * (significand ? Number.NaN : Number.POSITIVE_INFINITY);
-
-  if (exponent === -15) {
-    if (significand === 0) return sign * 0.0;
-    exponent = -14;
-    significand /= 1 << 9;
-  } else significand = (significand | (1 << 10)) / (1 << 10);
-
-  return sign * significand * Math.pow(2, exponent);
+  return (bytes & 0x00FF) + ((bytes >> 8))/100;
 };
 
-export const KEYS = ["red", "ir", "ecg", "force", "pcg"];
+export const KEYS = ["red", "ir", "pcg", "temperature", "ecg", "force"];

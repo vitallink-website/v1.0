@@ -11,6 +11,7 @@ const init = {
   force: [],
   ir: [],
   pcg: [],
+  temperature: [],
 };
 function MeasureBase({
   values,
@@ -27,6 +28,8 @@ function MeasureBase({
   const [active, setActive] = useState(0);
   const [data, setData] = useState(init);
   const [sampleTime, setTime] = useState(10);
+  const [scale, setScale] = useState(values.includes('pcg') ? 10001 :
+                                    diagrams.length % 2 === 0 ? 201 : 401);
 
   let temp = {
     red: [],
@@ -34,10 +37,10 @@ function MeasureBase({
     force: [],
     ir: [],
     pcg: [],
+    temperature:[],
   };
 
   const pendingTime = 5000;
-  // here frequency is estimated, should be change after changing frequencies of device
   const startTime = useRef(null);
   const endTime = useRef(null);
 
@@ -48,15 +51,17 @@ function MeasureBase({
       }
       return "";
     });
-    if (temp[values[0]].length >= 100) {
-    let cv = {
-      red: temp.red,
-      ecg: temp.ecg,
-      force: temp.force,
-      ir: temp.ir,
-    };
-    setData(cv);
-  }
+    if (active === 1) {
+        let cv = {
+        red: temp.red,
+        ecg: temp.ecg,
+        force: temp.force,
+        ir: temp.ir,
+        pcg: temp.pcg,
+        temperature: temp.temperature
+      }
+      setData(cv);
+    }
   };
 
   useEffect(() => {
@@ -81,9 +86,7 @@ function MeasureBase({
       action({
         data: data,
         time: Math.ceil(bluetooth.GetTime()),
-        freq: Math.ceil(
-          (data[values[0]].length / (bluetooth.GetTime())) * 1000
-        ),
+        freq: Math.ceil(data[values[0]].length / sampleTime),
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -97,6 +100,7 @@ function MeasureBase({
       force: [],
       ir: [],
       pcg: [],
+      temperature: [],
     };
     setData(init);
     startTime.current = setTimeout(() => {
@@ -114,24 +118,23 @@ function MeasureBase({
   const openModal = () => setShow(true);
 
   const getStreamOfData = (key) => {
-    // console.log(
-    //   "🚀 ~ file: MeasureBase.js:115 ~ getStreamOfData ~ key:",
-    //   key,
-    //   data
-    // );
     if (
-      data[key] &&
-      data[key].length > (diagrams.length % 2 === 0 ? 201 : 401)
+      data[key] 
+      &&
+      data[key].length > (scale)
     ) {
       if (active === 1) {
         return data[key].slice(
-          data[key].length - (diagrams.length % 2 === 0 ? 201 : 401),
+          data[key].length - (scale),
           data[key].length
         );
       }
-      if (active === -1) return data[key];
+      if (active === -1) 
+        return data[key];
     }
-    return [...new Array(diagrams.length % 2 === 0 ? 101 : 201).fill(0)];
+    if(key === 'temperature' && data[key].length > 0)
+      return data[key];
+    return [...new Array(scale).fill(0)];
   };
   // console.log(getStreamOfData());
   return (
@@ -166,6 +169,7 @@ function MeasureBase({
               texts={texts}
               calculatedDots={key.calculatedDots}
             />
+
           </Col>
         ))}
       </Row>

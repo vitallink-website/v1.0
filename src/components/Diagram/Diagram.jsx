@@ -16,6 +16,9 @@ import {
   downloadPDFAsPNG,
   downloadSVGAsPNG,
 } from "../../utilities/downloadFile";
+import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
+import { useState } from "react";
 
 const Diagram = ({
   dataKey = "",
@@ -24,6 +27,7 @@ const Diagram = ({
   calculatedDots = [],
   // { name: "q", value: { x: 1242, y: 100 },color:"" }
 }) => {
+
   const getSteam = () => {
     let steam = [...flow].map((item, id) => {
       return {
@@ -42,19 +46,42 @@ const Diagram = ({
     }
     return steam;
   };
-  const data = getSteam();
-  // console.log("🚀 ~ file: Diagram.jsx:46 ~ data:", data, calculatedDots);
+
+  
+  const dataOfChart = getSteam();
+
+  const options = {
+    chart: {
+      renderTo: 'container',
+      defaultSeriesType: 'spline',
+      backgroundColor: 'transparent',
+    },
+    title: {
+      text: 'My chart'
+    },
+    xAxis: {
+    },
+    yAxis: {
+    },
+    series: [{
+      name: 'data',
+      data: flow,
+    }]
+  };
+
   return (
     <div className="highlight-bar-charts" style={{ userSelect: "none" }}>
+      {(dataKey !== 'pcg') ? 
       <ResponsiveContainer height={400} width={"100%"}>
         <ComposedChart
           data={
-            data.length > 2500
-              ? data.slice(
-                  Math.ceil(data.length / 2) - 500,
-                  Math.ceil(data.length / 2) + 500
-                )
-              : data
+            // dataOfChart.length > 2500
+            //   ? dataOfChart.slice(
+            //       Math.ceil(dataOfChart.length / 2) - 500,
+            //       Math.ceil(dataOfChart.length / 2) + 500
+            //     )
+            //   : 
+              dataOfChart
           }
           margin={{
             top: 20,
@@ -63,8 +90,8 @@ const Diagram = ({
             left: 20,
           }}
         >
-          <XAxis dataKey="x" scale="band" />
-          <YAxis domain={["dataMax-10", "dataMax+10"]} />
+          <XAxis dataKey="x" domain= {[0, 'auto']}/>
+          <YAxis domain = {['auto', 'auto']} />
           <Tooltip />
           <Legend />
           <Line
@@ -77,10 +104,12 @@ const Diagram = ({
           {/* {calculatedDots.map((item, i) => (
             <Scatter key={i} dataKey={item.name} fill={item.color} />
           ))} */}
-        {data.length > 200 && <Brush />}
+        {dataOfChart.length > 200 && <Brush />}
 
         </ComposedChart>
-      </ResponsiveContainer>
+      </ResponsiveContainer> :
+        <HighchartsReact highcharts={Highcharts} options={options} />      
+      }
       <Button onClick={(e) => downloadSVGAsPNG(e, dataKey, texts)}>
         download PNG
       </Button>
