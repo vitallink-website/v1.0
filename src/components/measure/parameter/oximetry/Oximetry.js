@@ -2,81 +2,18 @@ import React, { useContext, useState, useEffect } from "react";
 import { Row, Col, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { UserContext } from "../../../../App";
-import { useIndexedDB } from "react-indexed-db";
 import { shareData } from "../../share/Share";
-import { GetCurrentDateTimeDB } from "../../../../utilities/time";
 import MeasureBase from "../../../MeasureBase/MeasureBase";
-import AddToDB from "../../../../utilities/AddToDB";
+import {useAddToDB} from "../../../../utilities/AddToDB";
 
 const Oximetry = () => {
   const UserInfo = useContext(UserContext);
-
-  const { update: updateParameterHistory } = useIndexedDB("oximetryData");
-  const { getByID, update: updateTimeHistory } = useIndexedDB("dataTime");
+  const dbFunc = useAddToDB("oximetryData");
 
   const [heartBeat, setHeartBeat] = useState(0);
   const [SPO2, setSPO2] = useState(0);
   const [qualityIndex, setQualityIndex] = useState(0);
-
-  const dump1 = 240;
-  const dump2 = 100;
-
-  useEffect(() => {
-    const currentDate = GetCurrentDateTimeDB();
-    const id = currentDate + UserInfo.id;
-    console.log(id);
-    getByID(id).then(
-      (data) => {
-        console.log(data);
-        UserInfo.setParameters({
-          parameters: data.parameters,
-          userId: data.userId,
-        });
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const addToDB = (heartBeat, SPO2) => {
-    const currentDate = GetCurrentDateTimeDB();
-    const id = parseInt(String(currentDate + UserInfo.id));
-    console.log("parameter: " + JSON.stringify(UserInfo.parameters));
-
-    updateParameterHistory({
-      dateAndId: id,
-      userId: UserInfo.id,
-      heartBeatPPG: heartBeat,
-      SPO2: SPO2,
-    }).then(
-      (event) => {
-        console.log("oximetryData updated: ", event);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-
-    var newParameter = UserInfo.parameters;
-    newParameter['heartBeatPPG'] = heartBeat;
-    newParameter['SPO2'] = SPO2;
-
-    updateTimeHistory({
-      dateAndId: id,
-      userId: UserInfo.id,
-      parameters: newParameter,
-    }).then(
-      (event) => {
-        console.log("timeData updated: ", event);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  };
-
+  
   const calculateBeatPerMinute = (inputs) => {
     console.log(inputs.data);
     const signal_output = Array.from(
@@ -90,14 +27,18 @@ const Oximetry = () => {
     setSPO2(signal_output[1]);
     setQualityIndex(signal_output[2]);
     
-    // var newParameter = UserInfo.parameters;
-    // var dataParameter = {};
-    // newParameter["heartBeatPPG"] = dump1//signal_output[0];
-    // newParameter["SPO2"] = dump2//signal_output[1];
-    // dataParameter["heartBeatPPG"] = dump1//signal_output[0];
-    // dataParameter["SPO2"] = dump2//signal_output[1];
-    // AddToDB("oximetryData", dataParameter, newParameter);
+    var dataParameter = {};
+    dataParameter["heartBeatPPG"] = signal_output[0]//signal_output[0];
+    dataParameter["SPO2"] = signal_output[1]//signal_output[1];
+    dbFunc.updateHistory(dataParameter);
   };
+
+  function adddb (){
+    var dataParameter = {};
+    dataParameter["heartBeatPPG"] = 35//signal_output[0];
+    dataParameter["SPO2"] = 14//signal_output[1];
+    dbFunc.updateHistory(dataParameter);
+  }
 
   return (
     <MeasureBase
@@ -178,7 +119,7 @@ const Oximetry = () => {
             </Row>
             <Row>
               <Col>
-                <Button onClick={() => addToDB(dump1, dump2)}>Add To DB</Button>
+                  <Button onClick = {() => adddb()}>add to db</Button>
               </Col>
             </Row>
           </>

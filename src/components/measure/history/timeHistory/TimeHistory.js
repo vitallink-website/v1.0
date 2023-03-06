@@ -25,6 +25,7 @@ function TimeHistory() {
   useEffect(() => {
     getAllData().then((dataFromDB) => {
       const result = dataFromDB.filter((temp) => temp.userId === UserInfo.id);
+      console.log(result);
       let dateAndIds = result.map((d) => d.dateAndId);
       const result2 = dateAndIds.map((d) => GetDateTimeDB(String(d)));
       setDates(result2);
@@ -137,11 +138,11 @@ function TimeHistory() {
           </Row>
           <Row className="time-history-row">
             <Col>
-              <Row>Sys/DIA</Row>
+              <Row>SYS/DIA: {parameter.SYS ? (parameter.SYS + '/' + parameter.DIA) : ""}</Row>
               <Row style={{ fontSize: "0.8rem" }}>(mmHg)</Row>
             </Col>
             <Col>
-              <Row>Temperature</Row>
+              <Row>Temperature: {parameter.temperature ? (parameter.temperature) : ""}</Row>
               <Row style={{ fontSize: "0.8rem" }}>(‘C)</Row>
             </Col>
           </Row>

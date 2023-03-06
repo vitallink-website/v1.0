@@ -60,8 +60,11 @@ const Diagram = ({
       text: 'My chart'
     },
     xAxis: {
+
     },
     yAxis: {
+      min:-50,
+      max: 50,
     },
     series: [{
       name: 'data',

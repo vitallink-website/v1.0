@@ -2,15 +2,17 @@ import React from "react";
 import { Row, Col, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import MeasureBase from "../../../MeasureBase/MeasureBase";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { shareData } from "../../share/Share";
 import { AiFillPlayCircle } from "react-icons/ai";
+import { useAddToDB } from "../../../../utilities/AddToDB";
 
 
 function HeartAndLungSound() {
   const [sound, setSound] = useState([]);
   const [heartBeat, setHeartBeat] = useState(0);
   const [qualityIndex, setQualityIndex] = useState(0);
+  const dbFunc = useAddToDB("PCGData");
 
   const prepareWavFile = () => {
     const wav = new Blob([sound], { type: 'audio/wav' })
@@ -18,6 +20,7 @@ function HeartAndLungSound() {
     console.log(url);
     var audio = new Audio(url);
     audio.play().catch(console.log);
+
   };
 
   const playAudio = () => {
@@ -29,6 +32,10 @@ function HeartAndLungSound() {
     console.log(inputs.data);
     console.log(inputs.freq);
     setSound(inputs.data.pcg);
+
+    // var dataParameter = {};
+    // dataParameter["sound"] = sound;
+    // dbFunc.updateHistory(dataParameter);
   };
 
 

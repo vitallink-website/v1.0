@@ -1,25 +1,42 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Row, Col, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import MeasureBase from "../../../MeasureBase/MeasureBase";
+import { useAddToDB } from "../../../../utilities/AddToDB";
+import { UserContext } from "../../../../App";
 
 function BPWithoutCalibration() {
+  const UserInfo = useContext(UserContext);
   const [SYS, setSYS] = useState(0);
   const [DIA, setDIA] = useState(0);
   const [qualityIndex, setQualityIndex] = useState(0);
-
-
+  const dbFunc = useAddToDB("BPData");
+  
   const calculate = (inputs) => {
     console.log(inputs.data);
     const signal_output = Array.from(
     // eslint-disable-next-line no-undef
       BloodPressure(inputs.data.ir, inputs.data.force, inputs.freq)
     ); // HeartRate, SpO2, Quality_index
-    console.log(signal_output[0]);
-    console.log(signal_output[1]);
-    setSYS(signal_output[0]);
-    setDIA(signal_output[1]);
+    const SYS_ = 100;//parseInt(signal_output[0]);
+    const DIA_ = 200;//parseInt(signal_output[1]);
+    setSYS(SYS_);
+    setDIA(DIA_);
+
+    var dataParameter = {};
+    dataParameter["SYS"] = SYS_;
+    dataParameter["DIA"] = DIA_;
+    dbFunc.updateHistory(dataParameter);
   };
+
+  function adddb (){
+    const SYS_ = 100;
+    const DIA_ = 200;
+    var dataParameter = {};
+    dataParameter["SYS"] = SYS_;
+    dataParameter["DIA"] = DIA_;
+    dbFunc.updateHistory(dataParameter);
+  }
 
   return (
     <MeasureBase
@@ -57,6 +74,7 @@ function BPWithoutCalibration() {
           </>
         ),
         children: () => (
+          <>
           <Row className="measure-button-row">
             <Col>
               <Link to="/Measure/Measurement">
@@ -82,6 +100,12 @@ function BPWithoutCalibration() {
               </Link>
             </Col>
           </Row>
+          <Row>
+            <Col>
+                <Button onClick = {() => adddb()}>add to db</Button>
+            </Col>
+          </Row>          
+        </>
         ),
       }}
     />

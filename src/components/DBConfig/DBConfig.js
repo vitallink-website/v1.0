@@ -1,6 +1,6 @@
 export const DBUser = {
   name: "userDB",
-  version: 5,
+  version: 7,
   objectStoresMeta: [
     {
       store: "cardiogramData",
@@ -27,6 +27,22 @@ export const DBUser = {
       storeSchema: [
         { name: "userId", keypath: "userId", options: { unique: false } },
         { name: "SYS_DIA", keypath: "SYS_DIA", options: { unique: false } },
+      ],
+    },
+    {
+      store: "PCGData",
+      storeConfig: { keyPath: "dateAndId", autoIncrement: false },
+      storeSchema: [
+        { name: "userId", keypath: "userId", options: { unique: false } },
+        { name: "PCG", keypath: "PCG", options: { unique: false } },
+      ],
+    },
+    {
+      store: "TemperatureData",
+      storeConfig: { keyPath: "dateAndId", autoIncrement: false },
+      storeSchema: [
+        { name: "userId", keypath: "userId", options: { unique: false } },
+        { name: "temperature", keypath: "temperature", options: { unique: false } },
       ],
     },
     {

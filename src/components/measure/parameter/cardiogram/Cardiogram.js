@@ -4,15 +4,14 @@ import { Link } from "react-router-dom";
 import { UserContext } from "../../../../App";
 import { useIndexedDB } from "react-indexed-db";
 import { shareData } from "../../share/Share";
-import { GetCurrentDateTimeDB } from "../../../../utilities/time";
 import MeasureBase from "../../../MeasureBase/MeasureBase";
-import AddToDB from "../../../../utilities/AddToDB";
+import {useAddToDB} from "../../../../utilities/AddToDB";
 
 function Cardiogram() {
   const UserInfo = useContext(UserContext);
 
-  const { update: updateParameterHistory } = useIndexedDB("cardiogramData");
-  const { getByID, update: updateTimeHistory } = useIndexedDB("dataTime");
+  const { getByID} = useIndexedDB("dataTime");
+  const dbFunc = useAddToDB("cardiogramData");
 
   const [heartBeat, setHeartBeat] = useState(0);
   const [qualityIndex, setQualityIndex] = useState(0);
@@ -23,62 +22,7 @@ function Cardiogram() {
   const [r, setR] = useState(0);
   const [s, setS] = useState(0);
   const [t, setT] = useState(0);
-
-  useEffect(() => {
-    const currentDate = GetCurrentDateTimeDB();
-    const id = currentDate + UserInfo.id;
-    console.log(id);
-    getByID(id).then(
-      (data) => {
-        console.log(data);
-        const [dateAndId, ...newData] = data;
-        UserInfo.setParameters(newData);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  }, []);
   
-
-  const addToDB = (heartBeat, PR_RR_Interval, QRS_Duration) => {
-    const currentDate = GetCurrentDateTimeDB();
-    const id = parseInt(String(currentDate + UserInfo.id));
-
-    updateParameterHistory({
-      dateAndId: id,
-      userId: UserInfo.id,
-      heartBeatECG: heartBeat,
-      PR_RR_Interval: PR_RR_Interval,
-      QRS_Duration: QRS_Duration,
-    }).then(
-      (event) => {
-        console.log("cardiogramData updated: ", event);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-
-    var newParameter = UserInfo.parameters;
-    newParameter["heartBeatECG"] = heartBeat;
-    newParameter["QRS_Duration"] = QRS_Duration;
-    newParameter["PR_RR_Interval"] = PR_RR_Interval;
-
-    updateTimeHistory({
-      dateAndId: id,
-      userId: UserInfo.id,
-      parameters: newParameter,
-    }).then(
-      (event) => {
-        console.log("timeData updated: ", event);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  };
-
   const calculateBeatPerMinute = (inputs) => {
     console.log(inputs.data);
     console.log(inputs.freq);
@@ -98,15 +42,15 @@ function Cardiogram() {
       console.log(Array.from(signal_output[6]));
       console.log(Array.from(signal_output[7]));
       console.log(Array.from(signal_output[8]));
-      const heartBeat = Number(
+      const heartBeat = parseInt(
         signal_output[Object.keys(signal_output)[0]]
-      ).toFixed(0);
-      const PR_RR_Interval = Number(
+      );
+      const PR_RR_Interval = parseFloat(
         signal_output[Object.keys(signal_output)[1]]
-      ).toFixed(2);
-      const QRS_Duration = Number(
+      );
+      const QRS_Duration = parseFloat(
         signal_output[Object.keys(signal_output)[2]]
-      ).toFixed(2);
+      );
       setHeartBeat(heartBeat);
       setPR_RR_Interval(PR_RR_Interval);
       setQRSDuration(QRS_Duration);
@@ -134,19 +78,26 @@ function Cardiogram() {
       setR(newRArr);
       setS(newSArr);
       setT(newTArr);
-    // var newParameter = UserInfo.parameters;
-    // var dataParameter = {};
-    // newParameter["heartBeatECG"] = heartBeat;
-    // newParameter["QRS_Duration"] = QRS_Duration;
-    // newParameter["PR_RR_Interval"] = PR_RR_Interval;
-    // dataParameter["heartBeatECG"] = heartBeat;
-    // dataParameter["QRS_Duration"] = QRS_Duration;
-    // dataParameter["PR_RR_Interval"] = PR_RR_Interval;
-    //   AddToDB("cardiogramData", dataParameter, newParameter);
-    }
+      
+    var dataParameter = {};
+    dataParameter["heartBeatECG"] = heartBeat;
+    dataParameter["QRS_Duration"] = QRS_Duration;
+    dataParameter["PR_RR_Interval"] = PR_RR_Interval;
+    dbFunc.updateHistory(dataParameter);
+  }
     else
       console.log("array is empty or freq is 0");
   };
+
+  
+  function adddb (){
+    var dataParameter = {};
+    dataParameter["heartBeatECG"] = heartBeat;
+    dataParameter["QRS_Duration"] = QRS_Duration;
+    dataParameter["PR_RR_Interval"] = PR_RR_Interval;
+    dbFunc.updateHistory(dataParameter);
+  }
+
 
   return (
     <MeasureBase
@@ -155,7 +106,9 @@ function Cardiogram() {
         diagrams: [
           {
             name: "ecg",
-            calculatedDots: [],
+            calculatedDots: [
+
+            ],
           },
         ],
         command: 0x02,
@@ -223,6 +176,11 @@ function Cardiogram() {
                 <Link to="/">
                   <Button>Save</Button>
                 </Link>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                  <Button onClick = {() => adddb()}>add to db</Button>
               </Col>
             </Row>
           </>

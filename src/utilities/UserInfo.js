@@ -8,7 +8,7 @@ export const UserInfo = () => {
   const [weight, setWeight] = useState("");
   const [height, setHeight] = useState("");
   const [gender, setGender] = useState("");
-  const [parameters, setParameters] = useState({})
+
 
   const SetAllInfo = (user) => {
     setIsUserSelected(true);
@@ -36,8 +36,6 @@ export const UserInfo = () => {
     weight,
     height,
     gender,
-    parameters,
-    setParameters,
   };
 };
 

@@ -78,14 +78,16 @@ function ParameterHistory() {
             </Row>
           </Col>
           <Col>
-            <Row>Temperature</Row>
+            <Link to="/Measure/History/ParameterHistory/TemperatureData/temperature">
+              <Row>Temperature</Row>
+            </Link>
             <Row style={{ fontSize: "0.8rem" }}>(‘C)</Row>
           </Col>
         </Row>
         <Row className="time-history-row">
           <Col>
             <Row style={{ textAlign: "left", paddingLeft: "0" }}>
-              <Link to="/Measure/History/ParameterHistory/BPData/SYS_DIA">
+              <Link to="/Measure/History/ParameterHistory/BPData/SYS">
                 SYS/DIA
               </Link>
             </Row>
