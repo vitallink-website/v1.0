@@ -134,7 +134,7 @@ def PQRST(ECG_filtered, fs):
     P = np.array(P); T = np.array(T)
     # ----------------------------------------------------------------------------
 
-    return P, Q, R, S, T 
+    return P.tolist(), Q.tolist(), R.tolist(), S.tolist(), T.tolist()
 
 def Quality_ECG(ECG_filtered, fs, t):
     num = int(np.floor(len(t)/(fs/3)))
@@ -340,7 +340,6 @@ def BP_estimation(PPG, Force, fs):
   else: print('Try Again!')
   return Diastolic, Systolic
   
-
 def B2_B3_estimation(x, y, k, A1, A2, B1):
   f = []; g = []
   for i in np.arange(1,len(x)):
@@ -353,7 +352,6 @@ def B2_B3_estimation(x, y, k, A1, A2, B1):
   B3_ind = np.argmin(g) + 1
   B3 = x[B3_ind]
   return B2, B3
-
 
 def BloodPressure_Adapter(PPG_data, force_Data, fs):
     ppg_array = np.asarray(PPG_data.to_py())
@@ -373,5 +371,8 @@ def ECG_signal_processing_Adapter(ECG_data, fs):
       return -1
 
 createObject(create_proxy(ECG_signal_processing_Adapter), "ECG_signal_processing")
+
+################################################ pcg
+
 
 
