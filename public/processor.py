@@ -134,7 +134,7 @@ def PQRST(ECG_filtered, fs):
     P = np.array(P); T = np.array(T)
     # ----------------------------------------------------------------------------
 
-    return P, Q, R, S, T 
+    return P.tolist(), Q.tolist(), R.tolist(), S.tolist(), T.tolist()
 
 def Quality_ECG(ECG_filtered, fs, t):
     num = int(np.floor(len(t)/(fs/3)))

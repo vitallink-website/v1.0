@@ -104,9 +104,15 @@ const Diagram = ({
             dot={false}
             animationDuration={500}
           />
-          {/* {calculatedDots.map((item, i) => (
-            <Scatter key={i} dataKey={item.name} fill={item.color} />
-          ))} */}
+          {calculatedDots.length !== 0 ? 
+          <>
+            <Scatter dataKey= "p" fill= "red"   />
+            <Scatter dataKey= "q" fill= "blue"  />
+            <Scatter dataKey= "r" fill= "black" />
+            <Scatter dataKey= "s" fill= "white" />
+            <Scatter dataKey= "t" fill= "orange"/>
+          </>
+          : <></>}
         {dataOfChart.length > 200 && <Brush />}
 
         </ComposedChart>

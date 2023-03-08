@@ -8,20 +8,13 @@ import MeasureBase from "../../../MeasureBase/MeasureBase";
 import {useAddToDB} from "../../../../utilities/AddToDB";
 
 function Cardiogram() {
-  const UserInfo = useContext(UserContext);
-
-  const { getByID} = useIndexedDB("dataTime");
   const dbFunc = useAddToDB("cardiogramData");
 
   const [heartBeat, setHeartBeat] = useState(0);
   const [qualityIndex, setQualityIndex] = useState(0);
   const [PR_RR_Interval, setPR_RR_Interval] = useState(0);
   const [QRS_Duration, setQRSDuration] = useState(0);
-  const [p, setP] = useState(0);
-  const [q, setQ] = useState(0);
-  const [r, setR] = useState(0);
-  const [s, setS] = useState(0);
-  const [t, setT] = useState(0);
+  const [dot, setDot] = useState([]);
   
   const calculateBeatPerMinute = (inputs) => {
     console.log(inputs.data);
@@ -57,28 +50,22 @@ function Cardiogram() {
       setQualityIndex(
         Number(signal_output[Object.keys(signal_output)[3]]).toFixed(0)
       );
-      let newPArr = [];
-      let newQArr = [];
-      let newRArr = [];
-      let newSArr = [];
-      let newTArr = [];
+
+      let newArr = [];
       for (const p of Array.from(signal_output[4]))
-        newPArr.push({ x: p, y: inputs.data[p] });
+        newArr.push({ name: "p", value: { x: p, y: inputs.data.ecg[p]}});
       for (const q of Array.from(signal_output[5]))
-        newQArr.push({ x: q, y: inputs.data[q] });
+        newArr.push({ name: "q", value: { x: q, y: inputs.data.ecg[q]}});
       for (const r of Array.from(signal_output[6]))
-        newRArr.push({ x: r, y: inputs.data[r] });
+        newArr.push({ name: "r", value: { x: r, y: inputs.data.ecg[r]}});
       for (const s of Array.from(signal_output[7]))
-        newSArr.push({ x: s, y: inputs.data[s] });
+        newArr.push({ name: "s", value: { x: s, y: inputs.data.ecg[s]}});
       for (const t of Array.from(signal_output[7]))
-        newTArr.push({ x: t, y: inputs.data[t] });
-      console.log("newParr: " + JSON.stringify(newPArr));
-      setP(newPArr);
-      setQ(newQArr);
-      setR(newRArr);
-      setS(newSArr);
-      setT(newTArr);
-      
+        newArr.push({ name: "t", value: { x: t, y: inputs.data.ecg[t]}});
+
+    console.log("newParr: " + JSON.stringify(newArr));
+    setDot(newArr);
+
     var dataParameter = {};
     dataParameter["heartBeatECG"] = heartBeat;
     dataParameter["QRS_Duration"] = QRS_Duration;
@@ -106,9 +93,7 @@ function Cardiogram() {
         diagrams: [
           {
             name: "ecg",
-            calculatedDots: [
-
-            ],
+            calculatedDots: dot,
           },
         ],
         command: 0x02,

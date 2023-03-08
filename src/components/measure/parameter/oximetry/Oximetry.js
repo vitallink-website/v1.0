@@ -7,7 +7,6 @@ import MeasureBase from "../../../MeasureBase/MeasureBase";
 import {useAddToDB} from "../../../../utilities/AddToDB";
 
 const Oximetry = () => {
-  const UserInfo = useContext(UserContext);
   const dbFunc = useAddToDB("oximetryData");
 
   const [heartBeat, setHeartBeat] = useState(0);
@@ -48,8 +47,6 @@ const Oximetry = () => {
           {
             name: "red",
             calculatedDots: [
-              { name: "q", value: { x: 100, y: 4175 }, color: "red" },
-              { name: "y", value: { x: 150, y: 14175 }, color: "blue" },
             ],
           },
         ],
