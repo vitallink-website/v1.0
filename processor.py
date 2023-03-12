@@ -5,6 +5,7 @@ import pandas as pd
 from copy import copy
 from scipy.interpolate import pchip_interpolate
 from scipy.signal import butter, filtfilt, find_peaks
+# import sounddevice as sd
 
 def filter(data, cutoff, fs, order, filter_type):
     nyq = fs / 2
@@ -374,5 +375,18 @@ createObject(create_proxy(ECG_signal_processing_Adapter), "ECG_signal_processing
 
 ################################################ pcg
 
+def play_sound(PPG_data):
+  fs = 16000
+  norm = PPG_data/np.max(np.abs(PPG_data))
+  sd.play(norm, fs)
+  status = sd.wait()
 
 
+def play_sound_Adapter(PPG_data):
+    array = np.asarray(PPG_data.to_py())
+    try :
+      play_sound(array)
+    except: 
+      return -1
+
+createObject(create_proxy(play_sound_Adapter), "play_sound_pyhton")
