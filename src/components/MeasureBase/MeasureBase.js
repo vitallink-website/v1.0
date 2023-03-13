@@ -28,8 +28,9 @@ function MeasureBase({
   const [active, setActive] = useState(0);
   const [data, setData] = useState(init);
   const [sampleTime, setTime] = useState(10);
-  const [scale, setScale] = useState(values.includes('pcg') ? 10001 :
-                                    diagrams.length % 2 === 0 ? 201 : 401);
+  const [scale, setScale] = useState(
+    values.includes("pcg") ? 10001 : diagrams.length % 2 === 0 ? 201 : 401
+  );
 
   let temp = {
     red: [],
@@ -37,7 +38,7 @@ function MeasureBase({
     force: [],
     ir: [],
     pcg: [],
-    temperature:[],
+    temperature: [],
   };
 
   const pendingTime = 5000;
@@ -52,14 +53,14 @@ function MeasureBase({
       return "";
     });
     if (active === 1) {
-        let cv = {
+      let cv = {
         red: temp.red,
         ecg: temp.ecg,
         force: temp.force,
         ir: temp.ir,
         pcg: temp.pcg,
-        temperature: temp.temperature
-      }
+        temperature: temp.temperature,
+      };
       setData(cv);
     }
   };
@@ -92,6 +93,10 @@ function MeasureBase({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active]);
 
+  useEffect(() => {
+    return bluetooth.turnOff;
+  }, []);
+
   const startInput = () => {
     setLoading(true);
     temp = {
@@ -118,22 +123,13 @@ function MeasureBase({
   const openModal = () => setShow(true);
 
   const getStreamOfData = (key) => {
-    if (
-      data[key] 
-      &&
-      data[key].length > (scale)
-    ) {
+    if (data[key] && data[key].length > scale) {
       if (active === 1) {
-        return data[key].slice(
-          data[key].length - (scale),
-          data[key].length
-        );
+        return data[key].slice(data[key].length - scale, data[key].length);
       }
-      if (active === -1) 
-        return data[key];
+      if (active === -1) return data[key];
     }
-    if(key === 'temperature' && data[key].length > 0)
-      return data[key];
+    if (key === "temperature" && data[key].length > 0) return data[key];
     return [...new Array(scale).fill(0)];
   };
   // console.log(getStreamOfData());
@@ -169,7 +165,6 @@ function MeasureBase({
               texts={texts}
               calculatedDots={key.calculatedDots}
             />
-
           </Col>
         ))}
       </Row>

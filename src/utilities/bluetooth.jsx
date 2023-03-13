@@ -28,6 +28,10 @@ export const useSignalFeed = () => {
     read_charastirctic.startNotifications();
   };
 
+  const turnOff = () => {
+    write_charastirctic.writeValue(new Uint8Array([0x000]).buffer);
+  };
+
   const stop = async () => {
     console.log("stop");
     setDuration(0);
@@ -78,21 +82,24 @@ export const useSignalFeed = () => {
       const force = [];
       const pcg = [];
       const temperature = [];
-      if(command === 0x01 || command === 0x02){
+      if (command === 0x01 || command === 0x02) {
         for (let i = 0; i < 8; i++) {
-        red.push(data.srcElement.value.getUint16(8 * i + 0, true));
-        ir.push(data.srcElement.value.getUint16(8 * i + 2, true));
-        ecg.push(data.srcElement.value.getInt16(8 * i + 4, true));
-        force.push(Bytes2Float16(data.srcElement.value.getUint16(8 * i + 6, true)));
-        Data.push(0);
-      }}
-      else if(command === 0x03){
-        for (let i = 0; i < 100; i++){
+          red.push(data.srcElement.value.getUint16(8 * i + 0, true));
+          ir.push(data.srcElement.value.getUint16(8 * i + 2, true));
+          ecg.push(data.srcElement.value.getInt16(8 * i + 4, true));
+          force.push(
+            Bytes2Float16(data.srcElement.value.getUint16(8 * i + 6, true))
+          );
+          Data.push(0);
+        }
+      } else if (command === 0x03) {
+        for (let i = 0; i < 100; i++) {
           pcg.push(data.srcElement.value.getInt16(2 * i, true));
         }
-      }
-      else if(command === 0x04){
-        temperature.push(Bytes2Float16(data.srcElement.value.getUint16(0, true)));        
+      } else if (command === 0x04) {
+        temperature.push(
+          Bytes2Float16(data.srcElement.value.getUint16(0, true))
+        );
       }
       callBack({
         red,
@@ -117,11 +124,12 @@ export const useSignalFeed = () => {
     loading,
     GetFrequency,
     GetTime,
+    turnOff,
   };
 };
 
 const Bytes2Float16 = (bytes) => {
-  return (bytes & 0x00FF) + ((bytes >> 8))/100;
+  return (bytes & 0x00ff) + (bytes >> 8) / 100;
 };
 
 export const KEYS = ["red", "ir", "pcg", "temperature", "ecg", "force"];

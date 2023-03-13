@@ -46,8 +46,7 @@ const Diagram = ({
     }
     return steam;
   };
-
-  
+ 
   const dataOfChart = getSteam();
 
   const options = {
@@ -55,6 +54,17 @@ const Diagram = ({
       renderTo: 'container',
       defaultSeriesType: 'spline',
       backgroundColor: 'transparent',
+      events: {
+        events: {
+          load() {
+            let chart = this,
+              max = chart.series[1].dataMax;
+            chart.yAxis[1].update({
+              max: max 
+            })
+          }
+        }
+      }
     },
     title: {
       text: 'My chart'
@@ -63,8 +73,7 @@ const Diagram = ({
 
     },
     yAxis: {
-      min:-50,
-      max: 50,
+      
     },
     series: [{
       name: 'data',
@@ -116,7 +125,7 @@ const Diagram = ({
         {dataOfChart.length > 200 && <Brush />}
 
         </ComposedChart>
-      </ResponsiveContainer> :
+      </ResponsiveContainer> : 
         <HighchartsReact highcharts={Highcharts} options={options} />      
       }
       <Button onClick={(e) => downloadSVGAsPNG(e, dataKey, texts)}>

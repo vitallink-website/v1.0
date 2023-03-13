@@ -5,6 +5,7 @@ import pandas as pd
 from copy import copy
 from scipy.interpolate import pchip_interpolate
 from scipy.signal import butter, filtfilt, find_peaks
+# import sounddevice as sd
 
 def filter(data, cutoff, fs, order, filter_type):
     nyq = fs / 2
@@ -340,7 +341,6 @@ def BP_estimation(PPG, Force, fs):
   else: print('Try Again!')
   return Diastolic, Systolic
   
-
 def B2_B3_estimation(x, y, k, A1, A2, B1):
   f = []; g = []
   for i in np.arange(1,len(x)):
@@ -353,7 +353,6 @@ def B2_B3_estimation(x, y, k, A1, A2, B1):
   B3_ind = np.argmin(g) + 1
   B3 = x[B3_ind]
   return B2, B3
-
 
 def BloodPressure_Adapter(PPG_data, force_Data, fs):
     ppg_array = np.asarray(PPG_data.to_py())
@@ -374,4 +373,20 @@ def ECG_signal_processing_Adapter(ECG_data, fs):
 
 createObject(create_proxy(ECG_signal_processing_Adapter), "ECG_signal_processing")
 
+################################################ pcg
 
+def play_sound(PPG_data):
+  fs = 16000
+  norm = PPG_data/np.max(np.abs(PPG_data))
+  sd.play(norm, fs)
+  status = sd.wait()
+
+
+def play_sound_Adapter(PPG_data):
+    array = np.asarray(PPG_data.to_py())
+    try :
+      play_sound(array)
+    except: 
+      return -1
+
+createObject(create_proxy(play_sound_Adapter), "play_sound_pyhton")

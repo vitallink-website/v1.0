@@ -7,25 +7,59 @@ import { shareData } from "../../share/Share";
 import { AiFillPlayCircle } from "react-icons/ai";
 import { useAddToDB } from "../../../../utilities/AddToDB";
 
-
 function HeartAndLungSound() {
   const [sound, setSound] = useState([]);
   const [heartBeat, setHeartBeat] = useState(0);
   const [qualityIndex, setQualityIndex] = useState(0);
   const dbFunc = useAddToDB("PCGData");
 
-  const prepareWavFile = () => {
-    const wav = new Blob([sound], { type: 'audio/wav' })
-    var url = URL.createObjectURL(wav)
-    console.log(url);
-    var audio = new Audio(url);
-    audio.play().catch(console.log);
+  // const prepareWavFile = (sound) => {
+  //   let max = Math.abs(sound[0]);
+  //   for (let i = 1; i < sound.length; ++i) {
+  //     var temp = Math.abs(sound[i])
+  //     if (temp > max)
+  //       max = temp;
+  //   }
+  //   var newData = sound.map(function(item) { return item/max } )
+  //   const blob = new Blob([newData], { type: 'audio/wav' });
+  //   const url = URL.createObjectURL(blob);
+  //   console.log(url);
+  //   var audio = new Audio(url);
+  //   audio.play().catch(console.log);
+  // };
 
-  };
+  function playWave(byteArray) {
+    var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    var myAudioBuffer = audioCtx.createBuffer(1, byteArray.length, 16000);
+    var nowBuffering = myAudioBuffer.getChannelData(0);
+    for (var i = 0; i < byteArray.length; i++) {
+      nowBuffering[i] = byteArray[i];
+    }
+
+    var source = audioCtx.createBufferSource();
+    source.buffer = myAudioBuffer;
+    source.connect(audioCtx.destination);
+    source.start();
+  }
+
+  var context = new AudioContext();
+  var arrayBuffer;
+  function playByteArray(byteArray) {
+    context = new (window.AudioContext || window.webkitAudioContext)();
+    // var arrayBuffer = new ArrayBuffer(byteArray.length);
+    var arrayBuffer = new ArrayBuffer(byteArray.length);
+    for (var i = 0; i < byteArray.length; i++) {
+      arrayBuffer[i] = byteArray[i];
+    }
+    context.decodeAudioData(arrayBuffer, function (buffer) {
+      var source = context.createBufferSource();
+      source.buffer = buffer;
+      source.connect(context.destination);
+      source.start();
+    });
+  }
 
   const playAudio = () => {
-    console.log(sound);
-    prepareWavFile();
   };
 
   const calculate = (inputs) => {
@@ -33,11 +67,13 @@ function HeartAndLungSound() {
     console.log(inputs.freq);
     setSound(inputs.data.pcg);
 
+    // eslint-disable-next-line no-undef
+    play_sound_pyhton(inputs.data.pcg);
+
     // var dataParameter = {};
     // dataParameter["sound"] = sound;
     // dbFunc.updateHistory(dataParameter);
   };
-
 
   return (
     <MeasureBase
@@ -70,8 +106,7 @@ function HeartAndLungSound() {
         ),
         children: () => (
           <>
-            <Row className="mt-5">
-            </Row>
+            <Row className="mt-5"></Row>
             <Row className="mt-5">
               <Col>
                 <Button onClick={() => playAudio()}>
