@@ -4,20 +4,25 @@ import { Link } from "react-router-dom";
 import { shareData } from "../../share/Share";
 import MeasureBase from "../../../MeasureBase/MeasureBase";
 import { useAddToDB } from "../../../../utilities/AddToDB";
+import { FcCheckmark } from "react-icons/fc";
 
 function Temperature() {
   const [temperature, setTemperature] = useState(0);
   const [qualityIndex, setQualityIndex] = useState(100);
   const dbFunc = useAddToDB("TemperatureData");
+  const [saved, setSaved] = useState(0);
 
   const calculateTemperature = (inputs) => {
     console.log(inputs.data.temperature);
     const average = inputs.data.temperature.reduce((a, b) => a + b, 0) / inputs.data.temperature.length;
     setTemperature(Number(average).toFixed(2));
+  }
 
+  function addToDB (){
     var dataParameter = {};
-    dataParameter["temperature"] = average;
+    dataParameter["temperature"] = temperature;
     dbFunc.updateHistory(dataParameter);
+    setSaved(1);
   }
 
   return (
@@ -80,9 +85,7 @@ function Temperature() {
                 </Button>
               </Col>
               <Col>
-                <Link to="/">
-                  <Button>Save</Button>
-                </Link>
+                  <Button onClick={() => addToDB()}>Save {saved ? <FcCheckmark /> : "" }</Button>
               </Col>
             </Row>
           </>

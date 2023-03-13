@@ -18,6 +18,7 @@ function MeasureBase({
   diagrams,
   command,
   action,
+  flushData,
   texts,
   title,
   children,
@@ -98,7 +99,9 @@ function MeasureBase({
   }, []);
 
   const startInput = () => {
+    bluetooth.isDeviceConnected();
     setLoading(true);
+    flushData && flushData();
     temp = {
       red: [],
       ecg: [],

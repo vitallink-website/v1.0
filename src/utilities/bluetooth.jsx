@@ -71,6 +71,10 @@ export const useSignalFeed = () => {
       });
   };
 
+  const isDeviceConnected = () =>{
+    read_charastirctic.isDeviceConnected(ReadCharistristicUUID).then((res) => console.log("connect??? " + res));
+  }
+
   const sendCommand = async (command, callBack) => {
     console.log("command ", command);
     write_charastirctic.writeValue(new Uint8Array([command]).buffer);
@@ -125,6 +129,7 @@ export const useSignalFeed = () => {
     GetFrequency,
     GetTime,
     turnOff,
+    isDeviceConnected,
   };
 };
 

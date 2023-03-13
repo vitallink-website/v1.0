@@ -5,6 +5,7 @@ import { UserContext } from "../../../../App";
 import { shareData } from "../../share/Share";
 import MeasureBase from "../../../MeasureBase/MeasureBase";
 import {useAddToDB} from "../../../../utilities/AddToDB";
+import { FcCheckmark } from "react-icons/fc";
 
 const Oximetry = () => {
   const dbFunc = useAddToDB("oximetryData");
@@ -12,6 +13,7 @@ const Oximetry = () => {
   const [heartBeat, setHeartBeat] = useState(0);
   const [SPO2, setSPO2] = useState(0);
   const [qualityIndex, setQualityIndex] = useState(0);
+  const [saved, setSaved] = useState(0);
   
   const calculateBeatPerMinute = (inputs) => {
     console.log(inputs.data);
@@ -25,18 +27,14 @@ const Oximetry = () => {
     setHeartBeat(signal_output[0]);
     setSPO2(signal_output[1]);
     setQualityIndex(signal_output[2]);
-    
-    var dataParameter = {};
-    dataParameter["heartBeatPPG"] = signal_output[0]//signal_output[0];
-    dataParameter["SPO2"] = signal_output[1]//signal_output[1];
-    dbFunc.updateHistory(dataParameter);
   };
 
-  function adddb (){
+  function addToDB (){
     var dataParameter = {};
     dataParameter["heartBeatPPG"] = 35//signal_output[0];
     dataParameter["SPO2"] = 14//signal_output[1];
     dbFunc.updateHistory(dataParameter);
+    setSaved(1);
   }
 
   return (
@@ -109,14 +107,7 @@ const Oximetry = () => {
                 </Button>
               </Col>
               <Col>
-                <Link to="/">
-                  <Button>Save</Button>
-                </Link>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                  <Button onClick = {() => adddb()}>add to db</Button>
+                  <Button onClick={() => addToDB()} >Save {saved ? <FcCheckmark /> : "" }</Button>
               </Col>
             </Row>
           </>

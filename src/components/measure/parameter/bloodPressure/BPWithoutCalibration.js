@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import MeasureBase from "../../../MeasureBase/MeasureBase";
 import { useAddToDB } from "../../../../utilities/AddToDB";
 import { UserContext } from "../../../../App";
+import { FcCheckmark } from "react-icons/fc";
 
 function BPWithoutCalibration() {
   const UserInfo = useContext(UserContext);
@@ -11,6 +12,7 @@ function BPWithoutCalibration() {
   const [DIA, setDIA] = useState(0);
   const [qualityIndex, setQualityIndex] = useState(0);
   const dbFunc = useAddToDB("BPData");
+  const [saved, setSaved] = useState(0);
   
   const calculate = (inputs) => {
     console.log(inputs.data);
@@ -21,21 +23,15 @@ function BPWithoutCalibration() {
     const SYS_ = 100;//parseInt(signal_output[0]);
     const DIA_ = 200;//parseInt(signal_output[1]);
     setSYS(SYS_);
-    setDIA(DIA_);
-
-    var dataParameter = {};
-    dataParameter["SYS"] = SYS_;
-    dataParameter["DIA"] = DIA_;
-    dbFunc.updateHistory(dataParameter);
+    setDIA(DIA_);  
   };
 
-  function adddb (){
-    const SYS_ = 100;
-    const DIA_ = 200;
+  function addToDB(){
     var dataParameter = {};
-    dataParameter["SYS"] = SYS_;
-    dataParameter["DIA"] = DIA_;
+    dataParameter["SYS"] = SYS;
+    dataParameter["DIA"] = DIA;
     dbFunc.updateHistory(dataParameter);
+    setSaved(1);
   }
 
   return (
@@ -95,16 +91,9 @@ function BPWithoutCalibration() {
               <Button onClick={() => {}}>Output</Button>
             </Col>
             <Col>
-              <Link to="/">
-                <Button>Save</Button>
-              </Link>
+                <Button onClick={() => addToDB()} >Save {saved ? <FcCheckmark /> : "" }</Button>
             </Col>
           </Row>
-          <Row>
-            <Col>
-                <Button onClick = {() => adddb()}>add to db</Button>
-            </Col>
-          </Row>          
         </>
         ),
       }}

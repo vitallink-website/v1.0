@@ -1,11 +1,10 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Row, Col, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { UserContext } from "../../../../App";
-import { useIndexedDB } from "react-indexed-db";
 import { shareData } from "../../share/Share";
 import MeasureBase from "../../../MeasureBase/MeasureBase";
 import {useAddToDB} from "../../../../utilities/AddToDB";
+import { FcCheckmark } from "react-icons/fc";
 
 function Cardiogram() {
   const dbFunc = useAddToDB("cardiogramData");
@@ -15,6 +14,7 @@ function Cardiogram() {
   const [PR_RR_Interval, setPR_RR_Interval] = useState(0);
   const [QRS_Duration, setQRSDuration] = useState(0);
   const [dot, setDot] = useState([]);
+  const [saved, setSaved] = useState(0);
   
   const calculateBeatPerMinute = (inputs) => {
     console.log(inputs.data);
@@ -65,26 +65,21 @@ function Cardiogram() {
 
     console.log("newParr: " + JSON.stringify(newArr));
     setDot(newArr);
-
-    var dataParameter = {};
-    dataParameter["heartBeatECG"] = heartBeat;
-    dataParameter["QRS_Duration"] = QRS_Duration;
-    dataParameter["PR_RR_Interval"] = PR_RR_Interval;
-    dbFunc.updateHistory(dataParameter);
   }
     else
       console.log("array is empty or freq is 0");
   };
 
-  
-  function adddb (){
+  function addToDB (){
     var dataParameter = {};
     dataParameter["heartBeatECG"] = heartBeat;
     dataParameter["QRS_Duration"] = QRS_Duration;
     dataParameter["PR_RR_Interval"] = PR_RR_Interval;
     dbFunc.updateHistory(dataParameter);
+    setSaved(1);
   }
 
+  const flushDots = () => setDot([]);
 
   return (
     <MeasureBase
@@ -98,6 +93,7 @@ function Cardiogram() {
         ],
         command: 0x02,
         action: calculateBeatPerMinute,
+        flushData: flushDots,
         texts: ["Heart beat: " + heartBeat],
         title: (openModal) => (
           <>
@@ -151,21 +147,16 @@ function Cardiogram() {
               <Col>
                 <Button
                   onClick={() =>
-                    shareData("CardiogramData", ["Heart beat: " + heartBeat])
+                    shareData("CardiogramData", ["Heart beat: " + heartBeat,
+                                                 "PR/RR Interval: " + PR_RR_Interval,
+                                                "QRS Duration: " + QRS_Duration])
                   }
                 >
                   output
                 </Button>
               </Col>
               <Col>
-                <Link to="/">
-                  <Button>Save</Button>
-                </Link>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                  <Button onClick = {() => adddb()}>add to db</Button>
+                  <Button onClick={() => addToDB()}>Save {saved ? <FcCheckmark /> : "" }</Button>
               </Col>
             </Row>
           </>
