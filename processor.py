@@ -5,7 +5,6 @@ import pandas as pd
 from copy import copy
 from scipy.interpolate import pchip_interpolate
 from scipy.signal import butter, filtfilt, find_peaks
-# import sounddevice as sd
 
 def filter(data, cutoff, fs, order, filter_type):
     nyq = fs / 2
@@ -390,3 +389,5 @@ def play_sound_Adapter(PPG_data):
       return -1
 
 createObject(create_proxy(play_sound_Adapter), "play_sound_pyhton")
+
+################################################### play sound
