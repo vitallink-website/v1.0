@@ -60,7 +60,7 @@ function Cardiogram() {
         newArr.push({ name: "r", value: { x: r, y: inputs.data.ecg[r]}});
       for (const s of Array.from(signal_output[7]))
         newArr.push({ name: "s", value: { x: s, y: inputs.data.ecg[s]}});
-      for (const t of Array.from(signal_output[7]))
+      for (const t of Array.from(signal_output[8]))
         newArr.push({ name: "t", value: { x: t, y: inputs.data.ecg[t]}});
 
     console.log("newParr: " + JSON.stringify(newArr));

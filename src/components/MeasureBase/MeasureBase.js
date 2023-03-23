@@ -99,7 +99,6 @@ function MeasureBase({
   }, []);
 
   const startInput = () => {
-    bluetooth.isDeviceConnected();
     setLoading(true);
     flushData && flushData();
     temp = {

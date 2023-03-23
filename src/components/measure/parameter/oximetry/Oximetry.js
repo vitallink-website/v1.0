@@ -17,6 +17,7 @@ const Oximetry = () => {
   
   const calculateBeatPerMinute = (inputs) => {
     console.log(inputs.data);
+
     const signal_output = Array.from(
     // eslint-disable-next-line no-undef
     PPG_signal_processing(inputs.data.ir, inputs.data.red, inputs.freq)
@@ -28,6 +29,23 @@ const Oximetry = () => {
     setSPO2(signal_output[1]);
     setQualityIndex(signal_output[2]);
   };
+
+  const calculateBeatPerMinuteAPI = (inputs) => {
+    console.log(inputs.data);
+    // axios.post("address", {
+    //   data: inputs.data,
+    //   freq: inputs.freq,
+    // })
+    // .then((response) => console.log(response.data))
+    // .then((error) => console.log(error));
+
+    // axios.get("address", {
+
+    // })
+    // .then((response) => console.log(response.data))
+    // .then((error) => console.log(error));   
+  };
+
 
   function addToDB (){
     var dataParameter = {};
