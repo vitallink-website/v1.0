@@ -25,6 +25,8 @@ function Temperature() {
     setSaved(1);
   }
 
+  const flushDatas = () => setSaved(0)
+
   return (
     <MeasureBase
       {...{
@@ -36,6 +38,7 @@ function Temperature() {
         ],
         command: 0x04,
         action: calculateTemperature,
+        flushData: flushDatas,
         texts: ["Temperature: " + temperature, "Quality index: " + qualityIndex],
         title: (openModal) => (
           <>

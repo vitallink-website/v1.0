@@ -55,6 +55,9 @@ const Oximetry = () => {
     setSaved(1);
   }
 
+  
+  const flushDatas = () => setSaved(0)
+
   return (
     <MeasureBase
       {...{
@@ -68,6 +71,7 @@ const Oximetry = () => {
         ],
         command: 0x01,
         action: calculateBeatPerMinute,
+        flushData: flushDatas,
         texts: [
           "Heart beat: " + heartBeat,
           "SPO2: " + SPO2,

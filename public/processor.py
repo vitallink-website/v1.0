@@ -4,7 +4,8 @@ from pyodide.ffi import create_proxy
 import pandas as pd
 from copy import copy
 from scipy.interpolate import pchip_interpolate
-from scipy.signal import butter, filtfilt, find_peaks
+from scipy.signal import butter, filtfilt, find_peaks, lfilter
+from scipy.fft import fft, fftshift
 
 def filter(data, cutoff, fs, order, filter_type):
     nyq = fs / 2
@@ -374,20 +375,258 @@ createObject(create_proxy(ECG_signal_processing_Adapter), "ECG_signal_processing
 
 ################################################ pcg
 
-def play_sound(PPG_data):
-  fs = 16000
-  norm = PPG_data/np.max(np.abs(PPG_data))
-  sd.play(norm, fs)
-  status = sd.wait()
+def butter_bandpass(lowcut, highcut, fs, order=5):
+    nyq = 0.5*fs
+    low = lowcut/nyq
+    high = highcut/nyq
+    b,a = butter(order, [low, high], btype='band')
+    return b, a
+
+def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
+  b, a = butter_bandpass(lowcut, highcut, fs, order = order)
+  y = lfilter(b, a, data)
+  return y
+
+def butterworth_low_pass_filter(original_signal, order, cutoff, fs):
+  b, a = butter(order, 2*cutoff/fs, btype = 'low')
+  low_pass_filtered_signal = filtfilt(b, a, original_signal)
+  return low_pass_filtered_signal
 
 
-def play_sound_Adapter(PPG_data):
-    array = np.asarray(PPG_data.to_py())
+def butterworth_high_pass_filter(original_signal, order, cutoff, fs):
+  b, a = butter(order, 2*cutoff/fs, btype = 'high')
+  high_pass_filtered_signal = filtfilt(b, a, original_signal)
+  return high_pass_filtered_signal
+
+def spike_removal(original_signal, fs):
+  windowsize = round(fs/2)
+
+  # Find any samples outside of an integer number of windows:
+  trailingsamples = len(original_signal) % windowsize
+
+  # Reshape the signal into a number of windows:
+  sampleframes = np.reshape(original_signal[0:len(original_signal)-trailingsamples], (windowsize,-1), order = 'F')
+  
+  # Find the MAAs:
+  MAAs = (abs(sampleframes)).max(0)
+  # MAAs = np.amax(abs(sampleframes), axis = 0)
+
+  val = np.max(MAAs)
+  window_num = np.argmax(MAAs)
+
+  # While there are still samples greater than 3* the median value of the MAAs, then remove those spikes:
+  while(len((np.where(np.array(MAAs) > np.median(MAAs)*3))[0]) != 0):
+
+    # Find the window with the max MAA:
+    val = np.max(MAAs)
+    window_num = np.argmax(MAAs)
+
+    if((type(window_num) != np.int64) and (len(window_num) > 1)):
+      window_num = window_num[0]
+
+    # Find the postion of the spike within that window:
+    val = max(abs(sampleframes[:,window_num]))
+    spike_position = np.argmax(abs(sampleframes[:,window_num]))
+
+    if((type(spike_position) != np.int64) and (len(spike_position) > 1)):
+      spike_position = spike_position[0]
+
+    # Finding zero crossings (where there may not be actual 0 values, just a change from positive to negative):
+    dummy = abs(np.diff(np.sign(sampleframes[:,window_num]))) > 1
+    zero_crossings = np.append(np.multiply(dummy, 1), 0)
+
+    # Find the start of the spike, finding the last zero crossing before spike position. If that is empty, take the start of the window:
+    non_zeros = list((np.where(zero_crossings[0:spike_position+1] != 0))[0])
+    spike_start = max([0 , non_zeros[len(non_zeros)-1]])
+
+    # Find the end of the spike, finding the first zero crossing after spike position. If that is empty, take the end of the window:
+    zero_crossings[0:spike_position+1] = np.zeros(spike_position+1)
+    non_zeros = list((np.where(zero_crossings != 0))[0])
+    spike_end = min([non_zeros[0] , windowsize])
+    # if non_zeros != []:
+    #   spike_end = min([non_zeros[0] , windowsize])
+    # else: 
+    #   spike_end = windowsize
+
+    # Set to Zero
+    sampleframes[spike_start:spike_end+1,window_num] = 0.0001*np.zeros(spike_end+1-spike_start)
+
+    # Recaclulate MAAs
+    MAAs = (abs(sampleframes)).max(0)
+
+  despiked_signal = np.array(np.reshape(sampleframes, (-1, 1), order = 'F'))
+
+  # Add the trailing samples back to the signal:
+  despiked_signal = np.append(despiked_signal, original_signal[len(despiked_signal):])
+  return despiked_signal
+
+def heart_signal_preprocessing(heart_signal, fs):
+  # 25-400Hz 4th order Butterworth band pass
+  heart_signal = butterworth_low_pass_filter(heart_signal, 2, 400, fs)
+  heart_signal = butterworth_high_pass_filter(heart_signal, 2, 25, fs)
+  # Spike removal from the filtered signal:
+  preprocessed_data = spike_removal(heart_signal, fs)
+  return preprocessed_data
+
+from scipy.signal import hilbert
+
+def Homomorphic_Envelope_with_Hilbert(input_signal, fs, lpf_frequency):
+  # 8Hz, 1st order, Butterworth LPF
+  B_low, A_low = butter(1, 2*lpf_frequency/fs, btype = 'low')
+
+  homomorphic_envelope = np.exp(filtfilt(B_low, A_low, np.log(abs(hilbert(input_signal)))))
+
+  # Remove spurious spikes in first sample:
+  homomorphic_envelope[0] = homomorphic_envelope[1]
+  return homomorphic_envelope
+
+
+def HeartRate(data, fs):
+  preprocessed_data = heart_signal_preprocessing(data, fs)
+  # Find the homomorphic envelope
+  homomorphic_envelope = Homomorphic_Envelope_with_Hilbert(preprocessed_data, fs, 8)
+  # Find the autocorrelation:
+  y = homomorphic_envelope-np.mean(homomorphic_envelope)
+  lags, c = xcorr(y, y, detrend = False, maxlags = len(y)-1)
+  signal_autocorrelation = c[len(homomorphic_envelope):]
+
+  min_index = int(0.5*fs)
+  max_index = 2*fs
+
+  index = np.argmax(signal_autocorrelation[min_index-1:max_index])
+  true_index = index+min_index-1
+
+  heartRate = 60/(true_index/fs)
+  return round(heartRate), preprocessed_data
+
+## -----------------------------------------------------------------------------
+def xcorr(x, y, normed = True, detrend = False, maxlags = 10):
+    # Cross correlation of two signals of equal length
+    # Returns the coefficients when normed=True
+    # Returns inner products when normed=False
+    # Usage: lags, c = xcorr(x,y,maxlags=len(x)-1)
+    # Optional detrending e.g. mlab.detrend_mean
+
+    Nx = len(x)
+    if Nx != len(y):
+        raise ValueError('x and y must be equal length')
+    
+    if detrend:
+        import matplotlib.mlab as mlab
+        x = mlab.detrend_mean(np.asarray(x)) # can set your preferences here
+        y = mlab.detrend_mean(np.asarray(y))
+    
+    c = np.correlate(x, y, mode='full')
+
+    if normed:
+        n = np.sqrt(np.dot(x, x) * np.dot(y, y)) # this is the transformation function
+        c = np.true_divide(c,n)
+
+    if maxlags is None:
+        maxlags = Nx - 1
+
+    if maxlags >= Nx or maxlags < 1:
+        raise ValueError('maglags must be None or strictly '
+                         'positive < %d' % Nx)
+
+    lags = np.arange(-maxlags, maxlags + 1)
+    c = c[Nx - 1 - maxlags:Nx + maxlags]
+    return lags, c
+
+
+def lung_signal_preprocessing(lung_signal, fs):
+  b, a = butter(2, [2*50/fs, 2*2500/fs], btype = 'bandpass')
+  denoised_signal = filtfilt(b, a, lung_signal)
+  preprocessed_data = spike_removal(denoised_signal, fs)
+  return preprocessed_data
+
+def Respiration_Rate(signal, fs):
+  preprocessed_data = lung_signal_preprocessing(signal, fs)
+  one_breath = 3*fs  # average duration of one breath is 3s 
+  peaks, _ = find_peaks(signal, distance = one_breath)
+  time = len(signal)/fs
+  RR = len(peaks)*60/time
+  return round(RR), preprocessed_data
+
+# ## **Quality Index**
+
+def Lung_SNR(signal, fs):
+  FFT = abs(fftshift(fft(signal)))
+  f = np.arange(0,fs/2,fs/len(FFT))
+  FFT = (FFT[int(len(FFT)/2):])
+  ind = [index for index,value in enumerate(f) if value > 50 and value < 2500]
+  s1_list = [FFT[i] for i in ind]
+  s2_list = np.delete(FFT, ind)
+  S1 = sum(s1_list)
+  S2 = sum(s2_list)
+  snr = S1/S2
+  return snr
+
+# ------------------------------------------------------------------------------
+def Heart_SNR(signal, fs):
+  FFT = abs(fftshift(fft(signal)))
+  f = np.arange(0,fs/2,fs/len(FFT))
+  FFT = (FFT[int(len(FFT)/2):])
+  ind = [index for index,value in enumerate(f) if value > 20 and value < 1200]
+  s1_list = [FFT[i] for i in ind]
+  s2_list = np.delete(FFT, ind)
+  S1 = sum(s1_list)
+  S2 = sum(s2_list)
+  snr = S1/S2
+  return snr
+
+# ------------------------------------------------------------------------------
+def Lung_Quality_Index(snr):
+  max_snr = 25
+  if snr > max_snr:
+    quality_ind = 100
+  elif snr < max_snr:
+    quality_ind = snr*100/max_snr
+  return quality_ind
+
+# ------------------------------------------------------------------------------
+def Heart_Quality_Index(snr):
+  max_snr = 25
+  if snr > max_snr:
+    quality_ind = 100
+  elif snr < max_snr:
+    quality_ind = snr*100/max_snr
+  return quality_ind
+
+# # **Final Functions for Software Implementation**
+
+def Heart_Lung_Separation(pcg_signal, fs):
+  pcg_filtered = butter_bandpass_filter(pcg_signal, 20, 2000, fs, order=5)
+  lung_signal = butter_bandpass_filter(pcg_filtered, 100, 1000, fs, order=5)
+  heart_signal = pcg_filtered - lung_signal
+
+  # Quality Index of heart signal:
+  heart_signal_snr = Heart_SNR(heart_signal, fs)
+  heart_quality_ind = Heart_Quality_Index(heart_signal_snr)
+
+  # Quality Index of lung signal:
+  lung_signal_snr = Lung_SNR(lung_signal, fs)
+  lung_quality_ind = Lung_Quality_Index(lung_signal_snr)
+  return [heart_signal, lung_signal, heart_quality_ind, lung_quality_ind]
+
+# def Record_Audio(heart_signal, lung_signal, fs):
+#   sf.write('heart_sound.wav', heart_sound, fs)
+#   sf.write('lung_sound.wav', lung_sound, fs)
+
+
+def PCG_Signal_Processing(pcg_signal, fs):
+  heart_signal, lung_signal, heart_quality_ind, lung_quality_ind = Heart_Lung_Separation(pcg_signal, fs)
+  heart_rate, preprocessed_heart_signal = HeartRate(heart_signal, fs)
+  respiration_rate, preprocessed_lung_signal = Respiration_Rate(lung_signal, fs)
+  return heart_quality_ind, lung_quality_ind, heart_rate, respiration_rate
+
+
+def PCG_signal_processing_Adapter(PCG, fs):
+    PCG_array = np.asarray(PCG.to_py())
     try :
-      play_sound(array)
+      return PCG_Signal_Processing(PCG_array, fs)
     except: 
       return -1
 
-createObject(create_proxy(play_sound_Adapter), "play_sound_pyhton")
+createObject(create_proxy(PCG_signal_processing_Adapter), "PCG_signal_processing") 
 
-################################################### play sound

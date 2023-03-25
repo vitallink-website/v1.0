@@ -24,7 +24,6 @@ function Cardiogram() {
       ECG_signal_processing(inputs.data.ecg, inputs.freq)
     ); // HeartRate, PR_RR, QRS_duration, Quality_index, P, Q, R, S, T
     
-    console.log(signal_output);
     if (inputs.freq !== 0 && signal_output.length !== 0) {
       console.log(signal_output[0]);
       console.log(signal_output[1]);
@@ -48,7 +47,7 @@ function Cardiogram() {
       setPR_RR_Interval(PR_RR_Interval);
       setQRSDuration(QRS_Duration);
       setQualityIndex(
-        Number(signal_output[Object.keys(signal_output)[3]]).toFixed(0)
+        parseInt(signal_output[Object.keys(signal_output)[3]]).toFixed(0)
       );
 
       let newArr = [];
@@ -65,6 +64,7 @@ function Cardiogram() {
 
     console.log("newParr: " + JSON.stringify(newArr));
     setDot(newArr);
+    return Array.from(signal_output[9])
   }
     else
       console.log("array is empty or freq is 0");
@@ -79,7 +79,8 @@ function Cardiogram() {
     setSaved(1);
   }
 
-  const flushDots = () => setDot([]);
+  const flushDatas = () => {setDot([]);
+                            setSaved(0);};
 
   return (
     <MeasureBase
@@ -93,13 +94,13 @@ function Cardiogram() {
         ],
         command: 0x02,
         action: calculateBeatPerMinute,
-        flushData: flushDots,
+        flushData: flushDatas,
         texts: ["Heart beat: " + heartBeat],
-        title: (openModal) => (
+        title: (openModal, changeFilterShow) => (
           <>
             <h2 className="measure-title">Cardiogram</h2>
             <Row style={{ display: "flex", alignItems: "center" }}>
-              <Col sm={8}>
+              <Col sm={7}>
                 <h5 className="measure-title">
                   Please put your right and left fingers on ECG sensors and then
                   press
@@ -107,6 +108,9 @@ function Cardiogram() {
               </Col>
               <Col sm={2}>
                 <Button onClick={openModal}>Start</Button>
+              </Col>
+              <Col sm={3}>
+                <Button onClick={changeFilterShow}>Filtered signal</Button>
               </Col>
             </Row>
           </>

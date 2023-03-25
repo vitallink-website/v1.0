@@ -66,13 +66,12 @@ function HeartAndLungSound() {
     console.log(inputs.data);
     console.log(inputs.freq);
     setSound(inputs.data.pcg);
-
-    // eslint-disable-next-line no-undef
-    play_sound_pyhton(inputs.data.pcg);
-
-    // var dataParameter = {};
-    // dataParameter["sound"] = sound;
-    // dbFunc.updateHistory(dataParameter);
+    const signal_output = Array.from(
+      // eslint-disable-next-line no-undef
+      PCG_signal_processing(inputs.data.pcg, inputs.freq)
+    );
+    console.log(signal_output);
+    
   };
 
   return (

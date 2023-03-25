@@ -3,6 +3,7 @@ import { DeviceContext } from "../../App";
 import { Row, Form, Col } from "react-bootstrap";
 import Diagram from "../Diagram/Diagram";
 import { MeasureModal } from "./MeasureModal";
+import { BlutoothModal } from "./BlutoothModal";
 import { KEYS } from "../../utilities/bluetooth";
 
 const init = {
@@ -24,11 +25,23 @@ function MeasureBase({
   children,
 }) {
   const bluetooth = useContext(DeviceContext);
-
   const [loading, setLoading] = useState(false);
   const [active, setActive] = useState(0);
   const [data, setData] = useState(init);
+  const [filteredData, setFilteredData] = useState();
   const [sampleTime, setTime] = useState(10);
+
+  const [show, setShow] = useState(false);
+  const closeModal = () => setShow(false);
+  const openModal = () => setShow(true);
+
+  const [filterShow, setFilterShow] = useState(false);
+  const changeFilterShow = () => {
+    active === -1 ? setFilterShow(true) : setFilterShow(false);
+  };
+  const [bluShow, setBluShow] = useState(true);
+  const closeBluModal = () => setBluShow(false);
+
   const [scale, setScale] = useState(
     values.includes("pcg") ? 10001 : diagrams.length % 2 === 0 ? 201 : 401
   );
@@ -85,11 +98,13 @@ function MeasureBase({
       setLoading(false);
     } else if (active === -1) {
       bluetooth.stop();
-      action({
+      const filterdDataTemp = action({
         data: data,
         time: Math.ceil(bluetooth.GetTime()),
         freq: Math.ceil(data[values[0]].length / sampleTime),
       });
+      console.log(filterdDataTemp);
+      filterdDataTemp && setFilteredData(filterdDataTemp);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active]);
@@ -120,12 +135,10 @@ function MeasureBase({
     }, [sampleTime * 1000 + pendingTime]);
   };
 
-  const [show, setShow] = useState(false);
-  const closeModal = () => setShow(false);
-  const openModal = () => setShow(true);
-
   const getStreamOfData = (key) => {
     if (data[key] && data[key].length > scale) {
+      if(filterShow)
+        return filteredData;
       if (active === 1) {
         return data[key].slice(data[key].length - scale, data[key].length);
       }
@@ -141,7 +154,7 @@ function MeasureBase({
       <br />
       <Row className="align-items-center">
         <Col xs={12} sm={10}>
-          {title(openModal)}
+          {title(openModal, changeFilterShow)}
         </Col>
         <Col xs={12} sm={2}>
           <Form>
@@ -170,13 +183,18 @@ function MeasureBase({
           </Col>
         ))}
       </Row>
-      {children()}
       <MeasureModal
         loading={loading}
         show={show}
         closeModal={closeModal}
         autoStart={startInput}
       />
+      {children()}
+      {bluetooth.isConnected ? (
+        <></>
+      ) : (
+        <BlutoothModal show={bluShow} closeModal={closeBluModal} />
+      )}
     </div>
   );
 }

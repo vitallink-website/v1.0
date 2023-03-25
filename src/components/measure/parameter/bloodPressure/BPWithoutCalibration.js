@@ -34,6 +34,8 @@ function BPWithoutCalibration() {
     setSaved(1);
   }
 
+  const flushDatas = () => setSaved(0)
+
   return (
     <MeasureBase
       {...{
@@ -50,6 +52,7 @@ function BPWithoutCalibration() {
         ],
         command: 0x01,
         action: calculate,
+        flushData: flushDatas,
         texts: ["SYS/DIA: " + SYS + "/" + DIA, "Quality index: " + qualityIndex],
         title: (openModal) => (
           <>

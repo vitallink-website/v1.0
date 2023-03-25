@@ -11,6 +11,7 @@ export const useSignalFeed = () => {
   const [read_charastirctic, setCharastircticR] = useState();
   const [write_charastirctic, setCharastircticW] = useState();
   const [duration, setDuration] = useState(0);
+  const [isConnected, setIsConnected] = useState(false);
   const Data = [];
   const disconnect = () => {
     console.log("disconnect");
@@ -29,7 +30,9 @@ export const useSignalFeed = () => {
   };
 
   const turnOff = () => {
-    write_charastirctic.writeValue(new Uint8Array([0x000]).buffer);
+    if (isConnected && device.gatt.connected) {
+      write_charastirctic.writeValue(new Uint8Array([0x000]).buffer);
+    }
   };
 
   const stop = async () => {
@@ -55,6 +58,7 @@ export const useSignalFeed = () => {
       .then((device) => {
         setLoading(true);
         setDevice(device);
+        setIsConnected(true);
         device.gatt.connect().then((gatt) => {
           gatt.getPrimaryService(ServiceUUID).then((service) => {
             setService(service);
@@ -68,55 +72,62 @@ export const useSignalFeed = () => {
             });
           });
         });
+        device.addEventListener("gattserverdisconnected", onDisconnected);
       });
   };
-  
-  const sendCommand = async (command, callBack) => {
-    console.log("command ", command);
-    write_charastirctic.writeValue(new Uint8Array([command]).buffer);
 
-    read_charastirctic.oncharacteristicvaluechanged = (data) => {
-      const red = [];
-      const ir = [];
-      const ecg = [];
-      const force = [];
-      const pcg = [];
-      const temperature = [];
-      if (command === 0x01 || command === 0x02) {
-        for (let i = 0; i < 8; i++) {
-          red.push(data.srcElement.value.getUint16(8 * i + 0, true));
-          ir.push(data.srcElement.value.getUint16(8 * i + 2, true));
-          ecg.push(data.srcElement.value.getInt16(8 * i + 4, true));
-          force.push(
-            Bytes2Float16(data.srcElement.value.getUint16(8 * i + 6, true))
+  const onDisconnected = (event) => {
+    setIsConnected(false);
+    setDevice("");
+  };
+
+  const sendCommand = async (command, callBack) => {
+    if (device.gatt.connected) {
+      console.log("command ", command);
+      write_charastirctic.writeValue(new Uint8Array([command]).buffer);
+      read_charastirctic.oncharacteristicvaluechanged = (data) => {
+        const red = [];
+        const ir = [];
+        const ecg = [];
+        const force = [];
+        const pcg = [];
+        const temperature = [];
+        if (command === 0x01 || command === 0x02) {
+          for (let i = 0; i < 8; i++) {
+            red.push(data.srcElement.value.getUint16(8 * i + 0, true));
+            ir.push(data.srcElement.value.getUint16(8 * i + 2, true));
+            ecg.push(data.srcElement.value.getInt16(8 * i + 4, true));
+            force.push(
+              Bytes2Float16(data.srcElement.value.getUint16(8 * i + 6, true))
+            );
+            Data.push(0);
+          }
+        } else if (command === 0x03) {
+          for (let i = 0; i < 100; i++) {
+            pcg.push(data.srcElement.value.getInt16(2 * i, true));
+          }
+        } else if (command === 0x04) {
+          temperature.push(
+            Bytes2Float16(data.srcElement.value.getUint16(0, true))
           );
-          Data.push(0);
         }
-      } else if (command === 0x03) {
-        for (let i = 0; i < 100; i++) {
-          pcg.push(data.srcElement.value.getInt16(2 * i, true));
-        }
-      } else if (command === 0x04) {
-        temperature.push(
-          Bytes2Float16(data.srcElement.value.getUint16(0, true))
-        );
-      }
-      callBack({
-        red,
-        ecg,
-        force,
-        ir,
-        pcg,
-        temperature,
-      });
-    };
+        callBack({
+          red,
+          ecg,
+          force,
+          ir,
+          pcg,
+          temperature,
+        });
+      };
+    }
   };
 
   return {
     device,
     stop,
     start,
-    isConnected: service !== undefined,
+    isConnected,
     channelConnected: !!read_charastirctic,
     connect,
     disconnect,
