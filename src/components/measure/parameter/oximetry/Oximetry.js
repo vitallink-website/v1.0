@@ -1,7 +1,6 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState} from "react";
 import { Row, Col, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { UserContext } from "../../../../App";
 import { shareData } from "../../share/Share";
 import MeasureBase from "../../../MeasureBase/MeasureBase";
 import {useAddToDB} from "../../../../utilities/AddToDB";
@@ -49,13 +48,12 @@ const Oximetry = () => {
 
   function addToDB (){
     var dataParameter = {};
-    dataParameter["heartBeatPPG"] = 35//signal_output[0];
-    dataParameter["SPO2"] = 14//signal_output[1];
+    dataParameter["heartBeatPPG"] = heartBeat;
+    dataParameter["SPO2"] = SPO2;
     dbFunc.updateHistory(dataParameter);
     setSaved(1);
   }
 
-  
   const flushDatas = () => setSaved(0)
 
   return (

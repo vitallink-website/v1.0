@@ -1,8 +1,8 @@
 import React from "react";
-import { Row, Col, Button } from "react-bootstrap";
+import { Row, Col, Button, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import MeasureBase from "../../../MeasureBase/MeasureBase";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { shareData } from "../../share/Share";
 import { AiFillPlayCircle } from "react-icons/ai";
 import { useAddToDB } from "../../../../utilities/AddToDB";
@@ -10,6 +10,7 @@ import { useAddToDB } from "../../../../utilities/AddToDB";
 function HeartAndLungSound() {
   const [sound, setSound] = useState([]);
   const [heartBeat, setHeartBeat] = useState(0);
+  const [respirationRate, setRespirationRate] = useState(0);
   const [qualityIndex, setQualityIndex] = useState(0);
   const dbFunc = useAddToDB("PCGData");
 
@@ -91,14 +92,24 @@ function HeartAndLungSound() {
           <>
             <h2 className="measure-title">Heart and Lung Sound</h2>
             <Row style={{ display: "flex", alignItems: "center" }}>
-              <Col sm={8}>
+              <Col sm={5}>
                 <h5 className="measure-title">
-                  Select one of the following positions, then put the microphone
-                  on that position and press
+                  put the microphone on your heart position and press
                 </h5>
               </Col>
               <Col sm={2}>
                 <Button onClick={openModal}>Start</Button>
+              </Col>
+              <Col sm={3}>
+                <Button>Filtered signal</Button>
+              </Col>
+              <Col sm={2}>
+                <Form.Select>
+                  <option value={null}>Choose...</option>
+                  <option value={2}>heart</option>
+                  <option value={1}>lung</option>
+                  <option value={0}>both</option>
+                </Form.Select>
               </Col>
             </Row>
           </>
@@ -122,7 +133,7 @@ function HeartAndLungSound() {
               <Col>
                 <h5 style={{ color: "black" }}>
                   {" "}
-                  Respiration Rate (breath per minute)
+                  Respiration Rate: {respirationRate} (breath per minute)
                 </h5>
               </Col>
               <Col>

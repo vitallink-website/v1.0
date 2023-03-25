@@ -121,7 +121,7 @@ function MeasureBase({
       ecg: [],
       force: [],
       ir: [],
-      pcg: [],
+       pcg: [],
       temperature: [],
     };
     setData(init);

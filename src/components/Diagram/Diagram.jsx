@@ -16,7 +16,7 @@ import {
   downloadPDFAsPNG,
   downloadSVGAsPNG,
 } from "../../utilities/downloadFile";
-import CanvasJSReact from './canvasjs.react'
+import CanvasJSReact from "./canvasjs.react";
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 const Diagram = ({
@@ -24,7 +24,6 @@ const Diagram = ({
   flow = [],
   texts = "",
   calculatedDots = [],
-  // { name: "q", value: { x: 1242, y: 100 },color:"" }
 }) => {
   const getSteam = () => {
     let steam = [...flow].map((item, id) => {
@@ -48,42 +47,37 @@ const Diagram = ({
   const dataOfChart = getSteam();
 
   const options = {
-    theme: "light1", // "light1", "dark1", "dark2"
+    theme: "light1",
     backgroundColor: "transparent",
-    axisY:{
+    zoomEnabled: true,
+    axisY: {
       labelFontFamily: "system-ui",
       gridThickness: 0,
     },
-    axisX:{
-      labelFontFamily: "system-ui"
+    axisX: {
+      labelFontFamily: "system-ui",
     },
-    data: [{				
-          type: "line",
-          lineColor: "#8884d8",
-          lineThickness: 1,
-          dataPoints: [...flow].map((item, id) => {
+    data: [
+      {
+        type: "line",
+        lineColor: "#8884d8",
+        lineThickness: 1,
+        dataPoints: [...flow].map((item, id) => {
           return {
             x: item?.id ?? id,
             y: item?.value ?? item,
           };
-        })
-     }]
- }
+        }),
+      },
+    ],
+  };
 
   return (
     <div className="highlight-bar-charts" style={{ userSelect: "none" }}>
       {dataKey !== "pcg" ? (
         <ResponsiveContainer height={400} width={"100%"}>
           <ComposedChart
-            data={
-              // dataOfChart.length > 2500
-              //   ? dataOfChart.slice(
-              //       Math.ceil(dataOfChart.length / 2) - 500,
-              //       Math.ceil(dataOfChart.length / 2) + 500
-              //     )
-              //   :
-              dataOfChart
-            }
+            data={dataOfChart}
             margin={{
               top: 20,
               right: 20,
@@ -117,14 +111,22 @@ const Diagram = ({
           </ComposedChart>
         </ResponsiveContainer>
       ) : (
-        <CanvasJSChart options = {options}/>
+        <div className="canva-chart">
+          <CanvasJSChart options={options}/>
+        </div>
       )}
-      <Button onClick={(e) => downloadSVGAsPNG(e, dataKey, texts)}>
-        download PNG
-      </Button>
-      <Button onClick={(e) => downloadPDFAsPNG(e, dataKey, texts)}>
-        download PDF
-      </Button>
+      {dataKey !== "pcg" ? (
+        <>
+          <Button onClick={(e) => downloadSVGAsPNG(e, dataKey, texts)}>
+            download PNG
+          </Button>
+          <Button onClick={(e) => downloadPDFAsPNG(e, dataKey, texts)}>
+            download PDF
+          </Button>
+        </>
+      ) : (
+        <></>
+      )}
     </div>
   );
 };
