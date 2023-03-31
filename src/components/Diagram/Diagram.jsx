@@ -24,19 +24,21 @@ const Diagram = ({
   flow = [],
   texts = "",
   calculatedDots = [],
+  dotShow = false,
+  xAxisDomain = "",
 }) => {
   const getSteam = () => {
     let steam = [...flow].map((item, id) => {
       return {
         x: item?.id ?? id,
-        [dataKey]: item?.value ?? item,
-        impression: 0,
+        y: item?.value ?? item,
       };
     });
-    if (calculatedDots.length > 0) {
+    if (calculatedDots.length > 0 && dotShow) {
       steam = steam.map((item, e) => {
         for (const element of calculatedDots) {
-          if (element.value.x === e) item[element.name] = element.value.y;
+          if (element['x'] === e) {item.markerColor = element['color'];
+                                    item.markerSize = 10}
         }
         return item;
       });
@@ -44,89 +46,47 @@ const Diagram = ({
     return steam;
   };
 
-  const dataOfChart = getSteam();
 
   const options = {
     theme: "light1",
     backgroundColor: "transparent",
     zoomEnabled: true,
+    toolTip: {
+      animationEnabled: true, 
+    },
     axisY: {
       labelFontFamily: "system-ui",
       gridThickness: 0,
     },
     axisX: {
+      minimum: 0,
+      maximum: xAxisDomain != "" ? xAxisDomain : null,
       labelFontFamily: "system-ui",
     },
+    animationEnabled: true,
+    animationDuration: 500,
     data: [
       {
         type: "line",
         lineColor: "#8884d8",
         lineThickness: 1,
-        dataPoints: [...flow].map((item, id) => {
-          return {
-            x: item?.id ?? id,
-            y: item?.value ?? item,
-          };
-        }),
+        dataPoints: getSteam(),
       },
     ],
   };
 
+
   return (
     <div className="highlight-bar-charts" style={{ userSelect: "none" }}>
-      {dataKey !== "pcg" ? (
-        <ResponsiveContainer height={400} width={"100%"}>
-          <ComposedChart
-            data={dataOfChart}
-            margin={{
-              top: 20,
-              right: 20,
-              bottom: 20,
-              left: 20,
-            }}
-          >
-            <XAxis dataKey="x" domain={[0, "auto"]} />
-            <YAxis domain={["auto", "auto"]} />
-            <Tooltip />
-            <Legend />
-            <Line
-              type="linear"
-              dataKey={dataKey}
-              stroke="#8884d8"
-              dot={false}
-              animationDuration={500}
-            />
-            {calculatedDots.length !== 0 ? (
-              <>
-                <Scatter dataKey="p" fill="red" />
-                <Scatter dataKey="q" fill="blue" />
-                <Scatter dataKey="r" fill="black" />
-                <Scatter dataKey="s" fill="white" />
-                <Scatter dataKey="t" fill="orange" />
-              </>
-            ) : (
-              <></>
-            )}
-            {dataOfChart.length > 200 && <Brush />}
-          </ComposedChart>
-        </ResponsiveContainer>
-      ) : (
-        <div className="canva-chart">
-          <CanvasJSChart options={options}/>
-        </div>
-      )}
-      {dataKey !== "pcg" ? (
-        <>
-          <Button onClick={(e) => downloadSVGAsPNG(e, dataKey, texts)}>
-            download PNG
-          </Button>
-          <Button onClick={(e) => downloadPDFAsPNG(e, dataKey, texts)}>
-            download PDF
-          </Button>
-        </>
-      ) : (
-        <></>
-      )}
+      <div className="canva-chart">
+        <CanvasJSChart options={options} />
+      </div>
+      <Button onClick={(e) => downloadSVGAsPNG(e, dataKey, texts)}>
+        download PNG
+      </Button>
+      <Button onClick={(e) => downloadPDFAsPNG(e, dataKey, texts)}>
+        download PDF
+      </Button>
     </div>
   );
 };

@@ -34,6 +34,7 @@ function Cardiogram() {
       console.log(Array.from(signal_output[6]));
       console.log(Array.from(signal_output[7]));
       console.log(Array.from(signal_output[8]));
+      console.log(Array.from(signal_output[9]));
       const heartBeat = parseInt(
         signal_output[Object.keys(signal_output)[0]]
       );
@@ -50,17 +51,18 @@ function Cardiogram() {
         parseInt(signal_output[Object.keys(signal_output)[3]]).toFixed(0)
       );
 
+      let filterd_signal = Array.from(signal_output[9]);
       let newArr = [];
       for (const p of Array.from(signal_output[4]))
-        newArr.push({ name: "p", value: { x: p, y: inputs.data.ecg[p]}});
+        newArr.push({'x': p, 'color': 'red'});
       for (const q of Array.from(signal_output[5]))
-        newArr.push({ name: "q", value: { x: q, y: inputs.data.ecg[q]}});
+        newArr.push({'x': q, 'color': 'blue'});
       for (const r of Array.from(signal_output[6]))
-        newArr.push({ name: "r", value: { x: r, y: inputs.data.ecg[r]}});
+        newArr.push({'x': r, 'color': 'black'});
       for (const s of Array.from(signal_output[7]))
-        newArr.push({ name: "s", value: { x: s, y: inputs.data.ecg[s]}});
+        newArr.push({'x': s, 'color': 'white'});
       for (const t of Array.from(signal_output[8]))
-        newArr.push({ name: "t", value: { x: t, y: inputs.data.ecg[t]}});
+        newArr.push({'x': t, 'color': 'orange'});
 
     console.log("newParr: " + JSON.stringify(newArr));
     setDot(newArr);
@@ -95,7 +97,7 @@ function Cardiogram() {
         command: 0x02,
         action: calculateBeatPerMinute,
         flushData: flushDatas,
-        texts: ["Heart beat: " + heartBeat],
+        texts: ["Heart beat: " + heartBeat , "QRS_Duration: " + QRS_Duration, "PR_RR_Interval: " + PR_RR_Interval],
         title: (openModal, changeFilterShow) => (
           <>
             <h2 className="measure-title">Cardiogram</h2>

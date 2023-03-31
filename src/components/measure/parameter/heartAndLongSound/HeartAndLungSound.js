@@ -67,12 +67,17 @@ function HeartAndLungSound() {
     console.log(inputs.data);
     console.log(inputs.freq);
     setSound(inputs.data.pcg);
-    const signal_output = Array.from(
-      // eslint-disable-next-line no-undef
-      PCG_signal_processing(inputs.data.pcg, inputs.freq)
-    );
-    console.log(signal_output);
     
+    // const signal_output = Array.from(
+    //   // eslint-disable-next-line no-undef
+    //   PCG_signal_processing(inputs.data.pcg, inputs.freq)
+    // );
+    console.log(
+      // eslint-disable-next-line no-undef
+      PCG_signal_processing(inputs.data.pcg, inputs.freq));
+    // setHeartBeat(signal_output[2]);
+    // setRespirationRate(signal_output[3]);
+    // setQualityIndex(signal_output[0]);
   };
 
   return (

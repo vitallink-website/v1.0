@@ -437,28 +437,32 @@ def spike_removal(original_signal, fs):
 
     # Find the start of the spike, finding the last zero crossing before spike position. If that is empty, take the start of the window:
     non_zeros = list((np.where(zero_crossings[0:spike_position+1] != 0))[0])
-    spike_start = max([0 , non_zeros[len(non_zeros)-1]])
 
-    # Find the end of the spike, finding the first zero crossing after spike position. If that is empty, take the end of the window:
-    zero_crossings[0:spike_position+1] = np.zeros(spike_position+1)
-    non_zeros = list((np.where(zero_crossings != 0))[0])
-    spike_end = min([non_zeros[0] , windowsize])
-    # if non_zeros != []:
-    #   spike_end = min([non_zeros[0] , windowsize])
-    # else: 
-    #   spike_end = windowsize
+    if non_zeros != []:
 
-    # Set to Zero
-    sampleframes[spike_start:spike_end+1,window_num] = 0.0001*np.zeros(spike_end+1-spike_start)
+      spike_start = max([0 , non_zeros[len(non_zeros)-1]])
 
-    # Recaclulate MAAs
-    MAAs = (abs(sampleframes)).max(0)
+      # Find the end of the spike, finding the first zero crossing after spike position. If that is empty, take the end of the window:
+      zero_crossings[0:spike_position+1] = np.zeros(spike_position+1)
+      non_zeros = list((np.where(zero_crossings != 0))[0])
+      spike_end = min([non_zeros[0] , windowsize])
+      # if non_zeros != []:
+      #   spike_end = min([non_zeros[0] , windowsize])
+      # else: 
+      #   spike_end = windowsize
+
+      # Set to Zero
+      sampleframes[spike_start:spike_end+1,window_num] = 0.0001*np.zeros(spike_end+1-spike_start)
+
+      # Recaclulate MAAs
+      MAAs = (abs(sampleframes)).max(0)
 
   despiked_signal = np.array(np.reshape(sampleframes, (-1, 1), order = 'F'))
 
   # Add the trailing samples back to the signal:
   despiked_signal = np.append(despiked_signal, original_signal[len(despiked_signal):])
   return despiked_signal
+
 
 def heart_signal_preprocessing(heart_signal, fs):
   # 25-400Hz 4th order Butterworth band pass

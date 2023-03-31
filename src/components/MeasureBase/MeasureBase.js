@@ -43,9 +43,10 @@ function MeasureBase({
   const closeBluModal = () => setBluShow(false);
 
   const [scale, setScale] = useState(
-    values.includes("pcg") ? 10001 : diagrams.length % 2 === 0 ? 201 : 401
+    values.includes("pcg") ? 50001 :  
+    diagrams.length % 2 === 0 ? 2001 : 401
   );
-
+  const [forceScale, setForceScale] = useState(0);
   let temp = {
     red: [],
     ecg: [],
@@ -116,12 +117,13 @@ function MeasureBase({
   const startInput = () => {
     setLoading(true);
     flushData && flushData();
+    setFilterShow(false);
     temp = {
       red: [],
       ecg: [],
       force: [],
       ir: [],
-       pcg: [],
+      pcg: [],
       temperature: [],
     };
     setData(init);
@@ -135,7 +137,15 @@ function MeasureBase({
     }, [sampleTime * 1000 + pendingTime]);
   };
 
-  const getStreamOfData = (key) => {
+  const getStreamOfData = (key) => {    
+    if(diagrams.length === 2){
+      if (active === 1) {
+        if(data[key].length > scale*(forceScale+1))
+          setForceScale(forceScale+1)
+        return data[key].slice(scale*forceScale, data[key].length);
+      }
+      if (active === -1) return data[key];
+    }
     if (data[key] && data[key].length > scale) {
       if(filterShow)
         return filteredData;
@@ -147,7 +157,6 @@ function MeasureBase({
     if (key === "temperature" && data[key].length > 0) return data[key];
     return [...new Array(scale).fill(0)];
   };
-  // console.log(getStreamOfData());
   return (
     <div className="measure-section">
       <br />
@@ -179,6 +188,9 @@ function MeasureBase({
               flow={getStreamOfData(key.name)}
               texts={texts}
               calculatedDots={key.calculatedDots}
+              dotShow = {filterShow}
+              xAxisDomain = {values.includes("temperature") ? sampleTime :
+                              diagrams.length % 2 ? "" : 2000}
             />
           </Col>
         ))}
