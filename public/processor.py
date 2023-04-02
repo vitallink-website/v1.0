@@ -611,7 +611,7 @@ def Heart_Lung_Separation(pcg_signal, fs):
   # Quality Index of lung signal:
   lung_signal_snr = Lung_SNR(lung_signal, fs)
   lung_quality_ind = Lung_Quality_Index(lung_signal_snr)
-  return [heart_signal, lung_signal, heart_quality_ind, lung_quality_ind]
+  return [heart_quality_ind, lung_quality_ind, heart_signal, lung_signal, heart_signal_snr, lung_signal_snr, pcg_filtered]
 
 # def Record_Audio(heart_signal, lung_signal, fs):
 #   sf.write('heart_sound.wav', heart_sound, fs)
@@ -619,16 +619,16 @@ def Heart_Lung_Separation(pcg_signal, fs):
 
 
 def PCG_Signal_Processing(pcg_signal, fs):
-  heart_signal, lung_signal, heart_quality_ind, lung_quality_ind = Heart_Lung_Separation(pcg_signal, fs)
+  heart_quality_ind, lung_quality_ind, heart_signal, lung_signal, heart_signal_snr, lung_signal_snr, pcg_filtered = Heart_Lung_Separation(pcg_signal, fs)
   heart_rate, preprocessed_heart_signal = HeartRate(heart_signal, fs)
   respiration_rate, preprocessed_lung_signal = Respiration_Rate(lung_signal, fs)
-  return heart_quality_ind, lung_quality_ind, heart_rate, respiration_rate
+  return heart_rate, respiration_rate, heart_quality_ind, lung_quality_ind, pcg_filtered, heart_signal, lung_signal, heart_signal_snr, lung_signal_snr
 
 
 def PCG_signal_processing_Adapter(PCG, fs):
-    PCG_array = np.asarray(PCG.to_py())
+    array = np.asarray(PCG.to_py())
     try :
-      return PCG_Signal_Processing(PCG_array, fs)
+      return PCG_Signal_Processing(array, fs)
     except: 
       return -1
 

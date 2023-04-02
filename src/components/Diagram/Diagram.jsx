@@ -26,9 +26,16 @@ const Diagram = ({
   calculatedDots = [],
   dotShow = false,
   xAxisDomain = "",
+  type,
 }) => {
   const getSteam = () => {
     let steam = [...flow].map((item, id) => {
+    if(type === "column")
+      return {
+        label: item?.id ?? id,
+        y: item?.value ?? item,
+      };      
+    else  
       return {
         x: item?.id ?? id,
         y: item?.value ?? item,
@@ -67,8 +74,9 @@ const Diagram = ({
     animationDuration: 500,
     data: [
       {
-        type: "line",
         lineColor: "#8884d8",
+        color:  "#8884d8",
+        type: type,
         lineThickness: 1,
         dataPoints: getSteam(),
       },

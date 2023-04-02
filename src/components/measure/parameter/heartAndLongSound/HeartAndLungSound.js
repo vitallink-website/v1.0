@@ -1,11 +1,12 @@
 import React from "react";
-import { Row, Col, Button, Form } from "react-bootstrap";
+import { Row, Col, Button, Dropdown , DropdownButton } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import MeasureBase from "../../../MeasureBase/MeasureBase";
 import { useState } from "react";
 import { shareData } from "../../share/Share";
 import { AiFillPlayCircle } from "react-icons/ai";
 import { useAddToDB } from "../../../../utilities/AddToDB";
+import axios from "axios";
 
 function HeartAndLungSound() {
   const [sound, setSound] = useState([]);
@@ -13,72 +14,51 @@ function HeartAndLungSound() {
   const [respirationRate, setRespirationRate] = useState(0);
   const [qualityIndex, setQualityIndex] = useState(0);
   const dbFunc = useAddToDB("PCGData");
+  const [filterActiveNum, setFilterActiveNum] = useState(0);
 
-  // const prepareWavFile = (sound) => {
-  //   let max = Math.abs(sound[0]);
-  //   for (let i = 1; i < sound.length; ++i) {
-  //     var temp = Math.abs(sound[i])
-  //     if (temp > max)
-  //       max = temp;
-  //   }
-  //   var newData = sound.map(function(item) { return item/max } )
-  //   const blob = new Blob([newData], { type: 'audio/wav' });
-  //   const url = URL.createObjectURL(blob);
-  //   console.log(url);
-  //   var audio = new Audio(url);
-  //   audio.play().catch(console.log);
-  // };
-
-  function playWave(byteArray) {
-    var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    var myAudioBuffer = audioCtx.createBuffer(1, byteArray.length, 16000);
-    var nowBuffering = myAudioBuffer.getChannelData(0);
-    for (var i = 0; i < byteArray.length; i++) {
-      nowBuffering[i] = byteArray[i];
-    }
-
-    var source = audioCtx.createBufferSource();
-    source.buffer = myAudioBuffer;
-    source.connect(audioCtx.destination);
-    source.start();
-  }
-
-  var context = new AudioContext();
-  var arrayBuffer;
-  function playByteArray(byteArray) {
-    context = new (window.AudioContext || window.webkitAudioContext)();
-    // var arrayBuffer = new ArrayBuffer(byteArray.length);
-    var arrayBuffer = new ArrayBuffer(byteArray.length);
-    for (var i = 0; i < byteArray.length; i++) {
-      arrayBuffer[i] = byteArray[i];
-    }
-    context.decodeAudioData(arrayBuffer, function (buffer) {
-      var source = context.createBufferSource();
-      source.buffer = buffer;
-      source.connect(context.destination);
-      source.start();
-    });
-  }
-
-  const playAudio = () => {
-  };
-
-  const calculate = (inputs) => {
+  async function calculate(inputs) {
     console.log(inputs.data);
     console.log(inputs.freq);
     setSound(inputs.data.pcg);
     
-    // const signal_output = Array.from(
-    //   // eslint-disable-next-line no-undef
-    //   PCG_signal_processing(inputs.data.pcg, inputs.freq)
-    // );
-    console.log(
+    const signal_output = Array.from(
       // eslint-disable-next-line no-undef
-      PCG_signal_processing(inputs.data.pcg, inputs.freq));
-    // setHeartBeat(signal_output[2]);
-    // setRespirationRate(signal_output[3]);
-    // setQualityIndex(signal_output[0]);
+      await PCG_signal_processing(inputs.data.pcg, inputs.freq)
+    );
+    console.log(signal_output);   
+    setHeartBeat(signal_output[0]);
+    setRespirationRate(signal_output[1]);
+    setQualityIndex(signal_output[2]);
+
+    return [Array.from(signal_output[4]), //pcg_filtered
+            Array.from(signal_output[5]), //heart_signal
+            Array.from(signal_output[6]), //lung_signal
+            Array.from(signal_output[7]), //heart_signal_snr
+            Array.from(signal_output[8])];//lung_signal_snr
   };
+
+  async function calculateBeatPerMinuteAPI(inputs) {
+    let payload = {
+      pcg: "[" + inputs.data.pcg.toString() + "]",
+      fs: inputs.freq,
+    };
+    let res = await axios.post("http://127.0.0.1:5000//PCG_signal", payload);    
+    console.log(res.data);
+    setHeartBeat(res.data.heart_rate);
+    setRespirationRate(res.data.respiration_rate);
+    setQualityIndex(res.data.lung_quality_ind);
+
+    return [Array.from(res.data.pcg_filtered), //pcg_filtered
+            Array.from(res.data.heart_signal), //heart_signal
+            Array.from(res.data.lung_signal), //lung_signal
+            Array.from(res.data.heart_signal_snr), //heart_signal_snr
+            Array.from(res.data.lung_signal_snr)];//lung_signal_snr
+  }
+
+  function handleChange(number, changeFilterShow){
+    setFilterActiveNum(number);
+    changeFilterShow(number)
+  }
 
   return (
     <MeasureBase
@@ -91,9 +71,9 @@ function HeartAndLungSound() {
           },
         ],
         command: 0x03,
-        action: calculate,
+        action: calculateBeatPerMinuteAPI,
         texts: ["Heart beat: " + heartBeat, "Quality index: " + qualityIndex],
-        title: (openModal) => (
+        title: (openModal, changeFilterShow) => (
           <>
             <h2 className="measure-title">Heart and Lung Sound</h2>
             <Row style={{ display: "flex", alignItems: "center" }}>
@@ -106,16 +86,15 @@ function HeartAndLungSound() {
                 <Button onClick={openModal}>Start</Button>
               </Col>
               <Col sm={3}>
-                <Button>Filtered signal</Button>
-              </Col>
-              <Col sm={2}>
-                <Form.Select>
-                  <option value={null}>Choose...</option>
-                  <option value={2}>heart</option>
-                  <option value={1}>lung</option>
-                  <option value={0}>both</option>
-                </Form.Select>
-              </Col>
+                <DropdownButton id="dropdown-basic-button" title="Choose signal">
+                  <Dropdown.Item onClick={() => handleChange(5, changeFilterShow)} active={filterActiveNum === 5}>heart</Dropdown.Item>
+                  <Dropdown.Item onClick={() => handleChange(4, changeFilterShow)} active={filterActiveNum === 4}>heart with filter</Dropdown.Item>
+                  <Dropdown.Item onClick={() => handleChange(3, changeFilterShow)} active={filterActiveNum === 3}>lung</Dropdown.Item>
+                  <Dropdown.Item onClick={() => handleChange(2, changeFilterShow)} active={filterActiveNum === 2}>lung with filter</Dropdown.Item>
+                  <Dropdown.Item onClick={() => handleChange(1, changeFilterShow)} active={filterActiveNum === 1}>both with filter</Dropdown.Item>
+                  <Dropdown.Item onClick={() => handleChange(0, changeFilterShow)} active={filterActiveNum === 0}>both without filter</Dropdown.Item>
+                </DropdownButton>
+              </Col>             
             </Row>
           </>
         ),
@@ -124,7 +103,7 @@ function HeartAndLungSound() {
             <Row className="mt-5"></Row>
             <Row className="mt-5">
               <Col>
-                <Button onClick={() => playAudio()}>
+                <Button>
                   play <AiFillPlayCircle />
                 </Button>
               </Col>

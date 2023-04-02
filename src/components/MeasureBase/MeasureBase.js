@@ -35,16 +35,16 @@ function MeasureBase({
   const closeModal = () => setShow(false);
   const openModal = () => setShow(true);
 
-  const [filterShow, setFilterShow] = useState(false);
-  const changeFilterShow = () => {
-    active === -1 ? setFilterShow(true) : setFilterShow(false);
+  const [filterShow, setFilterShow] = useState(0);
+  const changeFilterShow = (number) => {
+    active === -1 ? setFilterShow(number) : setFilterShow(0);
   };
   const [bluShow, setBluShow] = useState(true);
   const closeBluModal = () => setBluShow(false);
 
   const [scale, setScale] = useState(
     values.includes("pcg") ? 50001 :  
-    diagrams.length % 2 === 0 ? 2001 : 401
+    diagrams.length % 2 === 0 ? 4001 : 401
   );
   const [forceScale, setForceScale] = useState(0);
   let temp = {
@@ -104,7 +104,7 @@ function MeasureBase({
         time: Math.ceil(bluetooth.GetTime()),
         freq: Math.ceil(data[values[0]].length / sampleTime),
       });
-      console.log(filterdDataTemp);
+      console.log("filter: " + filterdDataTemp);
       filterdDataTemp && setFilteredData(filterdDataTemp);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -117,7 +117,8 @@ function MeasureBase({
   const startInput = () => {
     setLoading(true);
     flushData && flushData();
-    setFilterShow(false);
+    setFilterShow(0);
+    setForceScale(0);
     temp = {
       red: [],
       ecg: [],
@@ -147,8 +148,10 @@ function MeasureBase({
       if (active === -1) return data[key];
     }
     if (data[key] && data[key].length > scale) {
-      if(filterShow)
-        return filteredData;
+      if(filterShow){
+        console.log(filteredData[filterShow-1]);
+        return filteredData[filterShow-1];
+      }
       if (active === 1) {
         return data[key].slice(data[key].length - scale, data[key].length);
       }
@@ -163,7 +166,7 @@ function MeasureBase({
       <br />
       <Row className="align-items-center">
         <Col xs={12} sm={10}>
-          {title(openModal, changeFilterShow)}
+          {title(openModal, changeFilterShow, filterShow)}
         </Col>
         <Col xs={12} sm={2}>
           <Form>
@@ -190,7 +193,9 @@ function MeasureBase({
               calculatedDots={key.calculatedDots}
               dotShow = {filterShow}
               xAxisDomain = {values.includes("temperature") ? sampleTime :
-                              diagrams.length % 2 ? "" : 2000}
+                              diagrams.length % 2 ? "" : 
+                              (active === 1) ? 4000 : ""}
+              type = "line"
             />
           </Col>
         ))}

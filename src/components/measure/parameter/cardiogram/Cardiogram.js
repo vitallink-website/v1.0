@@ -29,12 +29,12 @@ function Cardiogram() {
       console.log(signal_output[1]);
       console.log(signal_output[2]);
       console.log(signal_output[3]);
-      console.log(Array.from(signal_output[4]));
-      console.log(Array.from(signal_output[5]));
-      console.log(Array.from(signal_output[6]));
-      console.log(Array.from(signal_output[7]));
-      console.log(Array.from(signal_output[8]));
-      console.log(Array.from(signal_output[9]));
+      // console.log(Array.from(signal_output[4]));
+      // console.log(Array.from(signal_output[5]));
+      // console.log(Array.from(signal_output[6]));
+      // console.log(Array.from(signal_output[7]));
+      // console.log(Array.from(signal_output[8]));
+      // console.log(Array.from(signal_output[9]));
       const heartBeat = parseInt(
         signal_output[Object.keys(signal_output)[0]]
       );
@@ -66,7 +66,7 @@ function Cardiogram() {
 
     console.log("newParr: " + JSON.stringify(newArr));
     setDot(newArr);
-    return Array.from(signal_output[9])
+    return [filterd_signal];
   }
     else
       console.log("array is empty or freq is 0");
@@ -98,7 +98,7 @@ function Cardiogram() {
         action: calculateBeatPerMinute,
         flushData: flushDatas,
         texts: ["Heart beat: " + heartBeat , "QRS_Duration: " + QRS_Duration, "PR_RR_Interval: " + PR_RR_Interval],
-        title: (openModal, changeFilterShow) => (
+        title: (openModal, changeFilterShow, filterShow) => (
           <>
             <h2 className="measure-title">Cardiogram</h2>
             <Row style={{ display: "flex", alignItems: "center" }}>
@@ -112,7 +112,7 @@ function Cardiogram() {
                 <Button onClick={openModal}>Start</Button>
               </Col>
               <Col sm={3}>
-                <Button onClick={changeFilterShow}>Filtered signal</Button>
+                <Button onClick={() => changeFilterShow(filterShow ? 0 : 1)}>{filterShow ? "main" : "Filtered" } signal</Button>
               </Col>
             </Row>
           </>
