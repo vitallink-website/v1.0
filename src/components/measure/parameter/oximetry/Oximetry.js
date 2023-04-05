@@ -51,7 +51,10 @@ const Oximetry = () => {
     setSaved(1);
   }
 
-  const flushDatas = () => setSaved(0);
+  const flushDatas = () => {setSaved(0);
+                            setHeartBeat('');
+                            setSPO2('');
+                            setQualityIndex('');}
 
   return (
     <MeasureBase

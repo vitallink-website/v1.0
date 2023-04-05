@@ -14,11 +14,11 @@ function BPWithoutCalibration() {
   const dbFunc = useAddToDB("BPData");
   const [saved, setSaved] = useState(0);
   
-  const calculate = (inputs) => {
+  async function calculate (inputs) {
     console.log(inputs.data);
     const signal_output = Array.from(
     // eslint-disable-next-line no-undef
-      BloodPressure(inputs.data.ir, inputs.data.force, inputs.freq)
+      await BloodPressure(inputs.data.ir, inputs.data.force, inputs.freq)
     ); // HeartRate, SpO2, Quality_index
     const SYS_ = 100;//parseInt(signal_output[0]);
     const DIA_ = 200;//parseInt(signal_output[1]);
@@ -34,7 +34,11 @@ function BPWithoutCalibration() {
     setSaved(1);
   }
 
-  const flushDatas = () => setSaved(0)
+  const flushDatas = () => {setSaved(0);
+                            setDIA('');
+                            setSYS('');
+                            setQualityIndex('');
+                          }
 
   return (
     <MeasureBase

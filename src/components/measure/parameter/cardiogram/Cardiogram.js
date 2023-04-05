@@ -5,6 +5,7 @@ import { shareData } from "../../share/Share";
 import MeasureBase from "../../../MeasureBase/MeasureBase";
 import {useAddToDB} from "../../../../utilities/AddToDB";
 import { FcCheckmark } from "react-icons/fc";
+import { set } from "rsuite/esm/utils/dateUtils";
 
 function Cardiogram() {
   const dbFunc = useAddToDB("cardiogramData");
@@ -16,12 +17,12 @@ function Cardiogram() {
   const [dot, setDot] = useState([]);
   const [saved, setSaved] = useState(0);
   
-  const calculateBeatPerMinute = (inputs) => {
+  async function calculateBeatPerMinute(inputs){
     console.log(inputs.data);
     console.log(inputs.freq);
     const signal_output = Array.from(
       // eslint-disable-next-line no-undef
-      ECG_signal_processing(inputs.data.ecg, inputs.freq)
+      await ECG_signal_processing(inputs.data.ecg, inputs.freq)
     ); // HeartRate, PR_RR, QRS_duration, Quality_index, P, Q, R, S, T
     
     if (inputs.freq !== 0 && signal_output.length !== 0) {
@@ -82,7 +83,10 @@ function Cardiogram() {
   }
 
   const flushDatas = () => {setDot([]);
-                            setSaved(0);};
+                            setSaved(0);
+                            setHeartBeat("");
+                            setPR_RR_Interval("");
+                            setQRSDuration("");};
 
   return (
     <MeasureBase

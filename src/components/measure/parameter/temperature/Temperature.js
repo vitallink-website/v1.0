@@ -25,7 +25,9 @@ function Temperature() {
     setSaved(1);
   }
 
-  const flushDatas = () => setSaved(0)
+  const flushDatas = () => {setSaved(0);
+                            setQualityIndex('');
+                            setTemperature('');}
 
   return (
     <MeasureBase

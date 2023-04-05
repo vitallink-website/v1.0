@@ -99,13 +99,13 @@ function MeasureBase({
       setLoading(false);
     } else if (active === -1) {
       bluetooth.stop();
-      const filterdDataTemp = action({
+      action({
         data: data,
         time: Math.ceil(bluetooth.GetTime()),
         freq: Math.ceil(data[values[0]].length / sampleTime),
+      }).then((filterdDataTemp) => {
+        filterdDataTemp && setFilteredData(filterdDataTemp);
       });
-      console.log("filter: " + filterdDataTemp);
-      filterdDataTemp && setFilteredData(filterdDataTemp);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active]);
@@ -149,7 +149,6 @@ function MeasureBase({
     }
     if (data[key] && data[key].length > scale) {
       if(filterShow){
-        console.log(filteredData[filterShow-1]);
         return filteredData[filterShow-1];
       }
       if (active === 1) {

@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col, Button, Dropdown , DropdownButton } from "react-bootstrap";
+import { Row, Col, Button, Dropdown, DropdownButton } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import MeasureBase from "../../../MeasureBase/MeasureBase";
 import { useState } from "react";
@@ -15,49 +15,103 @@ function HeartAndLungSound() {
   const [qualityIndex, setQualityIndex] = useState(0);
   const dbFunc = useAddToDB("PCGData");
   const [filterActiveNum, setFilterActiveNum] = useState(0);
+  const [saved, setSaved] = useState(0);
+
+  const flushDatas = () => {
+    setSaved(0);
+    setQualityIndex("");
+    setHeartBeat("");
+    setRespirationRate("");
+  };
 
   async function calculate(inputs) {
     console.log(inputs.data);
     console.log(inputs.freq);
     setSound(inputs.data.pcg);
-    
+
     const signal_output = Array.from(
       // eslint-disable-next-line no-undef
       await PCG_signal_processing(inputs.data.pcg, inputs.freq)
     );
-    console.log(signal_output);   
+    console.log(signal_output);
     setHeartBeat(signal_output[0]);
     setRespirationRate(signal_output[1]);
     setQualityIndex(signal_output[2]);
 
-    return [Array.from(signal_output[4]), //pcg_filtered
-            Array.from(signal_output[5]), //heart_signal
-            Array.from(signal_output[6]), //lung_signal
-            Array.from(signal_output[7]), //heart_signal_snr
-            Array.from(signal_output[8])];//lung_signal_snr
-  };
+    return [
+      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      [2, 4, 6, 8, 10, 12, 14, 16, 18, 20],
+      [5, 10, 15, 20, 25, 30, 35, 40, 45, 50],
+      [3, 6, 9, 12, 15, 18, 21, 24, 27, 30],
+      [4, 8, 12, 16, 20, 24, 28, 32, 36, 40],
+    ];
 
-  async function calculateBeatPerMinuteAPI(inputs) {
-    let payload = {
-      pcg: "[" + inputs.data.pcg.toString() + "]",
-      fs: inputs.freq,
-    };
-    let res = await axios.post("http://127.0.0.1:5000//PCG_signal", payload);    
-    console.log(res.data);
-    setHeartBeat(res.data.heart_rate);
-    setRespirationRate(res.data.respiration_rate);
-    setQualityIndex(res.data.lung_quality_ind);
-
-    return [Array.from(res.data.pcg_filtered), //pcg_filtered
-            Array.from(res.data.heart_signal), //heart_signal
-            Array.from(res.data.lung_signal), //lung_signal
-            Array.from(res.data.heart_signal_snr), //heart_signal_snr
-            Array.from(res.data.lung_signal_snr)];//lung_signal_snr
+    // return [Array.from(signal_output[4]), //pcg_filtered
+    //         Array.from(signal_output[5]), //heart_signal
+    //         Array.from(signal_output[6]), //lung_signal
+    //         Array.from(signal_output[7]), //heart_signal_snr
+    //         Array.from(signal_output[8])];//lung_signal_snr
   }
 
-  function handleChange(number, changeFilterShow){
+  async function getDataAPI(data, fs) {
+    let payload = {
+      pcg: "[" + data.toString() + "]",
+      fs: fs,
+    };
+    let res = await axios.post("http://127.0.0.1:5000//PCG_signal", payload);
+    return res.data;
+  }
+
+  async function calculateBeatPerMinuteAPI(inputs) {
+    console.log(inputs.data);
+    return getDataAPI(inputs.data.pcg, inputs.freq).then((res) => {
+      console.log(res);
+      setHeartBeat(res.heart_rate);
+      setRespirationRate(res.respiration_rate);
+      setQualityIndex(res.lung_quality_ind);
+      return [
+        res.lung_signal_pre
+          .slice(1, -1)
+          .replace(/\n/g, " ")
+          .split(/\b\s+/)
+          .map(function (item) {
+            return Number(item);
+          }),
+        res.heart_signal_pre
+          .slice(1, -1)
+          .replace(/\n/g, " ")
+          .split(/\b\s+/)
+          .map(function (item) {
+            return Number(item);
+          }),
+        res.lung_signal
+          .slice(1, -1)
+          .replace(/\n/g, " ")
+          .split(/\b\s+/)
+          .map(function (item) {
+            return Number(item);
+          }),
+        res.heart_signal
+          .slice(1, -1)
+          .replace(/\n/g, " ")
+          .split(/\b\s+/)
+          .map(function (item) {
+            return Number(item);
+          }),
+        res.pcg_filtered
+          .slice(1, -1)
+          .replace(/\n/g, " ")
+          .split(/\b\s+/)
+          .map(function (item) {
+            return Number(item);
+          }),
+      ];
+    });
+  }
+
+  function handleChange(number, changeFilterShow) {
     setFilterActiveNum(number);
-    changeFilterShow(number)
+    changeFilterShow(number);
   }
 
   return (
@@ -86,15 +140,48 @@ function HeartAndLungSound() {
                 <Button onClick={openModal}>Start</Button>
               </Col>
               <Col sm={3}>
-                <DropdownButton id="dropdown-basic-button" title="Choose signal">
-                  <Dropdown.Item onClick={() => handleChange(5, changeFilterShow)} active={filterActiveNum === 5}>heart</Dropdown.Item>
-                  <Dropdown.Item onClick={() => handleChange(4, changeFilterShow)} active={filterActiveNum === 4}>heart with filter</Dropdown.Item>
-                  <Dropdown.Item onClick={() => handleChange(3, changeFilterShow)} active={filterActiveNum === 3}>lung</Dropdown.Item>
-                  <Dropdown.Item onClick={() => handleChange(2, changeFilterShow)} active={filterActiveNum === 2}>lung with filter</Dropdown.Item>
-                  <Dropdown.Item onClick={() => handleChange(1, changeFilterShow)} active={filterActiveNum === 1}>both with filter</Dropdown.Item>
-                  <Dropdown.Item onClick={() => handleChange(0, changeFilterShow)} active={filterActiveNum === 0}>both without filter</Dropdown.Item>
+                <DropdownButton
+                  id="dropdown-basic-button"
+                  title="Choose signal"
+                >
+                  <Dropdown.Item
+                    onClick={() => handleChange(5, changeFilterShow)}
+                    active={filterActiveNum === 5}
+                  >
+                    heart
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={() => handleChange(4, changeFilterShow)}
+                    active={filterActiveNum === 4}
+                  >
+                    heart with filter
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={() => handleChange(3, changeFilterShow)}
+                    active={filterActiveNum === 3}
+                  >
+                    lung
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={() => handleChange(2, changeFilterShow)}
+                    active={filterActiveNum === 2}
+                  >
+                    lung with filter
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={() => handleChange(1, changeFilterShow)}
+                    active={filterActiveNum === 1}
+                  >
+                    both with filter
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={() => handleChange(0, changeFilterShow)}
+                    active={filterActiveNum === 0}
+                  >
+                    both without filter
+                  </Dropdown.Item>
                 </DropdownButton>
-              </Col>             
+              </Col>
             </Row>
           </>
         ),
