@@ -174,6 +174,20 @@ function Cardiogram() {
                 </h5>
               </Col>
             </Row>
+            <div>
+              <br />
+              <br />
+              <br />
+            </div>
+            <Row>
+              <AbnormalityDetection
+                hrv={hrv}
+                hrvVal={hrvVal}
+                ssTime={ssTime}
+                singleSpike={singleSpike}
+                PQRST_ss={PQRST_ss}
+              ></AbnormalityDetection>
+            </Row>
             <Row className="measure-button-row">
               <Col>
                 <Link to="/Measure/Measurement">
@@ -198,15 +212,6 @@ function Cardiogram() {
                   Save {saved ? <FcCheckmark /> : ""}
                 </Button>
               </Col>
-            </Row>
-            <Row>
-              <AbnormalityDetection
-                hrv={hrv}
-                hrvVal={hrvVal}
-                ssTime={ssTime}
-                singleSpike={singleSpike}
-                PQRST_ss={PQRST_ss}
-              ></AbnormalityDetection>
             </Row>
           </>
         ),

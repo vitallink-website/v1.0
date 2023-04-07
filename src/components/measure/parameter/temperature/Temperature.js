@@ -12,7 +12,7 @@ function Temperature() {
   const dbFunc = useAddToDB("TemperatureData");
   const [saved, setSaved] = useState(0);
 
-  const calculateTemperature = (inputs) => {
+  async function calculateTemperature(inputs){
     console.log(inputs.data.temperature);
     const average = inputs.data.temperature.reduce((a, b) => a + b, 0) / inputs.data.temperature.length;
     setTemperature(Number(average).toFixed(2));

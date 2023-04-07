@@ -146,12 +146,13 @@ function MeasureBase({
       }
       if (active === -1) return data[key];
     }
-    if (data[key] && data[key].length > scale) {
+    if (data[key]) {
       if(filterShow){
         return filteredData[filterShow-1];
       }
       if (active === 1) {
-        return data[key].slice(data[key].length - scale, data[key].length);
+        const start = data[key].length > scale ? data[key].length - scale : 0;
+        return data[key].slice(start, data[key].length);
       }
       if (active === -1) return data[key];
     }
@@ -191,8 +192,8 @@ function MeasureBase({
               calculatedDots={key.calculatedDots}
               dotShow = {filterShow}
               xAxisDomain = {values.includes("temperature") ? sampleTime :
-                              diagrams.length % 2 ? "" : 
-                              (active === 1) ? 4000 : ""}
+                              diagrams.length % 2 === 0 ? (active === 1) ? 4000 : "" : 
+                              (active === 1) ? scale : ""}
               type = "line"
             />
           </Col>

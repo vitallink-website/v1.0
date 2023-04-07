@@ -45,7 +45,7 @@ const Diagram = ({
       steam = steam.map((item, e) => {
         for (const element of calculatedDots) {
           if (element['x'] === e) {item.markerColor = element['color'];
-                                    item.markerSize = 10}
+                                    item.markerSize = 10}                                    
         }
         return item;
       });
@@ -77,6 +77,7 @@ const Diagram = ({
         lineColor: "#8884d8",
         color:  "#8884d8",
         type: type,
+        markerSize: 0,
         lineThickness: 1,
         dataPoints: getSteam(),
       },
@@ -89,12 +90,12 @@ const Diagram = ({
       <div className="canva-chart">
         <CanvasJSChart options={options} />
       </div>
-      <Button onClick={(e) => downloadSVGAsPNG(e, dataKey, texts)}>
+      {/* <Button onClick={(e) => downloadSVGAsPNG(e, dataKey, texts)}>
         download PNG
       </Button>
       <Button onClick={(e) => downloadPDFAsPNG(e, dataKey, texts)}>
         download PDF
-      </Button>
+      </Button> */}
     </div>
   );
 };
