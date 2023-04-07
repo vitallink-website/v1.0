@@ -11,7 +11,7 @@ def filter(data, cutoff, fs, order, filter_type):
     nyq = fs / 2
     normal_cutoff = cutoff / nyq
     # Get the filter coefficients 
-    b, a = butter(order, normal_cutoff, btype = filter_type, analog = False)
+    b, a = bessel(order, normal_cutoff, btype = filter_type, analog = False)
     y = filtfilt(b, a, data)
     return y
 
@@ -135,7 +135,7 @@ def PQRST(ECG_filtered, fs):
     P = np.array(P); T = np.array(T)
     # ----------------------------------------------------------------------------
 
-    return P.tolist(), Q.tolist(), R.tolist(), S.tolist(), T.tolist()
+    return P, Q, R, S, T 
 
 def Quality_ECG(ECG_filtered, fs, t):
     num = int(np.floor(len(t)/(fs/3)))
@@ -152,12 +152,42 @@ def Quality_ECG(ECG_filtered, fs, t):
 def clearing_ECG(ECG, fs):
     ECG_filtered1 = filter(ECG, 5, fs, 10, 'high')
     ECG_filtered = filter(ECG_filtered1, 20, fs, 10, 'low')
-    window_size = 5
-    clear_ECG = ECG_filtered.copy()
-    for i in range(len(ECG)):
-        if (i < len(ECG)-window_size) & (i > window_size):
-            clear_ECG[i] = np.mean(ECG_filtered[i-window_size:i+window_size])
-    return clear_ECG
+    return ECG_filtered
+
+def Signle_Spike(ECG_filtered, P, T, fs):
+    ECG = ECG_filtered.copy()
+    A = P[1:] - int(0.05*fs)
+    B = T[1:] + int(0.05*fs)
+    N = int(np.mean(B-A))
+    ss_time = np.linspace(0, N/fs, N, endpoint = True)
+    single_spike = ECG[int(A[0]):int(A[0])+N];
+    for i in range(1, len(A)-1):
+        single_spike += ECG[int(A[i]):int(A[i])+N]
+    single_spike /= (len(A)-1)
+    single_spike /= np.max(single_spike)
+    R_s = int(N/4) + np.argmax(single_spike[int(N/4):int(3*N/4)])
+    Q_s = max(find_peaks(-single_spike[:R_s], height = 0.1)[0])
+    if ~Q_s.any():
+      Q_s = np.argmin(single_spike[:R_s])
+    P_s = max(find_peaks(single_spike[:Q_s], height = 0.1)[0])
+    if ~P_s.any():
+      P_s = np.argmax(single_spike[:Q_s])
+    S_s = min(find_peaks(-single_spike[R_s:], height = 0.1)[0]) + R_s
+    if ~S_s.any():
+      S_s = np.argmin(single_spike[R_s:-int(0.05*fs)]) + R_s
+    T_s = min(find_peaks(single_spike[S_s:], height = 0.1)[0]) + S_s
+    if ~T_s.any():
+      T_s = np.argmax(single_spike[S_s:-int(0.05*fs)]) + S_s
+
+    PQRST_ss = [P_s, Q_s, R_s, S_s, T_s]
+    return ss_time, single_spike, PQRST_ss
+
+def HRV(ECG_filtered, R, fs):
+    RR = R[1:] - R[:-1] 
+    HR = 60*fs/np.mean(RR)
+    hrv = np.append(HR, 60*fs/RR)
+    hrv_val = np.mean(abs(hrv - int(HR)))
+    return hrv, hrv_val
 
 def ECG_signal_processing(ECG, fs):
     t = np.linspace(0, len(ECG)/fs, len(ECG), endpoint = True)
@@ -171,7 +201,9 @@ def ECG_signal_processing(ECG, fs):
     t_PQ = (t[P] + t[Q]) / 2
     QRS_duration = np.mean(t_ST - t_PQ)
     Quality_index = Quality_ECG(ECG_filtered, fs, t)
-    return round(HeartRate), round(PR_RR,2), round(QRS_duration*1000,2), round(Quality_index,2), P, Q, R, S, T, ECG_filtered
+    ss_time, single_spike, PQRST_ss = Signle_Spike(ECG_filtered, P, T, fs)
+    hrv, hrv_val = HRV(ECG_filtered, R, fs)
+    return round(HeartRate), round(PR_RR,2), round(QRS_duration*1000,2), round(Quality_index), P, Q, R, S, T, ECG_filtered, ss_time, single_spike, PQRST_ss, hrv, round(hrv_val)
 
 ########################################### end of cardiogram
 

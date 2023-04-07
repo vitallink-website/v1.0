@@ -68,15 +68,14 @@ function MeasureBase({
       return "";
     });
     if (active === 1) {
-      let cv = {
+      setData({
         red: temp.red,
         ecg: temp.ecg,
         force: temp.force,
         ir: temp.ir,
         pcg: temp.pcg,
         temperature: temp.temperature,
-      };
-      setData(cv);
+      });
     }
   };
 
