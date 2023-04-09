@@ -64,6 +64,7 @@ function HeartAndLungSound() {
 
   async function calculateBeatPerMinuteAPI(inputs) {
     console.log(inputs.data);
+    setSound(inputs.data.pcg)
     return getDataAPI(inputs.data.pcg, inputs.freq).then((res) => {
       console.log(res);
       setHeartBeat(res.heart_rate);
@@ -114,6 +115,15 @@ function HeartAndLungSound() {
     changeFilterShow(number);
   }
 
+  async function playAudio(){
+    let payload = {
+      sound: "[" + sound.toString() + "]",
+    };
+    let res = await axios.post("http://127.0.0.1:5000/rcv_audio", payload);
+    res.play();
+    return res.data;
+  }
+
   return (
     <MeasureBase
       {...{
@@ -126,6 +136,7 @@ function HeartAndLungSound() {
         ],
         command: 0x03,
         action: calculateBeatPerMinuteAPI,
+        flushData: flushDatas,
         texts: ["Heart beat: " + heartBeat, "Quality index: " + qualityIndex],
         title: (openModal, changeFilterShow) => (
           <>
@@ -190,7 +201,7 @@ function HeartAndLungSound() {
             <Row className="mt-5"></Row>
             <Row className="mt-5">
               <Col>
-                <Button>
+                <Button onClick={() =>  playAudio()}>
                   play <AiFillPlayCircle />
                 </Button>
               </Col>

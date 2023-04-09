@@ -4,16 +4,16 @@ import { Link } from "react-router-dom";
 import CanvasJSReact from "../../../Diagram/canvasjs.react";
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
-function AbnormalityDetection({ hrv, hrvVal, ssTime, singleSpike, PQRST_ss }) {
+function AbnormalityDetection({ heartBeat, hrv, hrvVal, ssTime, singleSpike, PQRST_ss }) {
 
   const getHrvSteam = () => {
     let steam = [...hrv].map((item, id) => {
       return {
-        x: item?.id ?? id,
-        y: item?.value ?? item,
+        label: item?.id ?? id,
+        y: heartBeat < item ? [heartBeat, item] : [item, heartBeat],
       };
     })
-    return steam;
+    return (steam);
   }
 
   const getSingleSpikeSteam = () => {
@@ -24,14 +24,10 @@ function AbnormalityDetection({ hrv, hrvVal, ssTime, singleSpike, PQRST_ss }) {
           };
         })
     if (PQRST_ss.length > 0) {
-      console.log("pqrst " + PQRST_ss );
-      console.log("size " + steam.length);
       let i = 0;
       let color = ["red", "blue", "black", "white", "orange"];
       steam = steam.map((item, e) => {
-        console.log("hry " + PQRST_ss[i] , e);
         if (Number(PQRST_ss[i]) === Number(e)) {
-          console.log(color[i]);
           item.markerColor = color[i];
           i++;
           item.markerSize = 10;
@@ -63,12 +59,12 @@ function AbnormalityDetection({ hrv, hrvVal, ssTime, singleSpike, PQRST_ss }) {
       animationDuration: 500,
       data: [
         {
-          type: "line",
+          type: data === 'hrv' ? "rangeBar" : "line",
           lineColor: "#8884d8",
           color: "#8884d8",
           lineThickness: 1,
           fill: { value: 20 },
-          dataPoints: data === 'hrv' ? getHrvSteam() : getSingleSpikeSteam(),
+          dataPoints: data === 'hrv' ? [...getHrvSteam()] : getSingleSpikeSteam(),
         },
       ],
     };

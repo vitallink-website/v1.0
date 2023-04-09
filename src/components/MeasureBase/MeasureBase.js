@@ -43,8 +43,7 @@ function MeasureBase({
   const closeBluModal = () => setBluShow(false);
 
   const [scale, setScale] = useState(
-    values.includes("pcg") ? 50001 :  
-    diagrams.length % 2 === 0 ? 4001 : 401
+    values.includes("pcg") ? 50001 : diagrams.length % 2 === 0 ? 4001 : 401
   );
   const [forceScale, setForceScale] = useState(0);
   let temp = {
@@ -61,13 +60,13 @@ function MeasureBase({
   const endTime = useRef(null);
 
   const hanldeCallback = (inputs) => {
-    KEYS.map((key) => {
-      if (values.includes(key)) {
-        temp[key] = [...temp[key], ...inputs[key]];
-      }
-      return "";
-    });
     if (active === 1) {
+      KEYS.map((key) => {
+        if (values.includes(key)) {
+          temp[key] = [...temp[key], ...inputs[key]];
+        }
+        return "";
+      });
       setData({
         red: temp.red,
         ecg: temp.ecg,
@@ -78,6 +77,10 @@ function MeasureBase({
       });
     }
   };
+
+  useEffect(() => {
+    console.log("hi");
+  }, []);
 
   useEffect(() => {
     if (bluetooth && command) bluetooth.sendCommand(command, hanldeCallback);
@@ -98,6 +101,7 @@ function MeasureBase({
       setLoading(false);
     } else if (active === -1) {
       bluetooth.stop();
+      console.log(data.pcg.length);
       action({
         data: data,
         time: Math.ceil(bluetooth.GetTime()),
@@ -118,14 +122,6 @@ function MeasureBase({
     flushData && flushData();
     setFilterShow(0);
     setForceScale(0);
-    temp = {
-      red: [],
-      ecg: [],
-      force: [],
-      ir: [],
-      pcg: [],
-      temperature: [],
-    };
     setData(init);
     startTime.current = setTimeout(() => {
       setActive(1);
@@ -137,24 +133,28 @@ function MeasureBase({
     }, [sampleTime * 1000 + pendingTime]);
   };
 
-  const getStreamOfData = (key) => {    
-    if(diagrams.length === 2){
+  const getStreamOfData = (key) => {
+    if (diagrams.length === 2) {
       if (active === 1) {
-        if(data[key].length > scale*(forceScale+1))
-          setForceScale(forceScale+1)
-        return data[key].slice(scale*forceScale, data[key].length);
+        if (data[key].length > scale * (forceScale + 1))
+          setForceScale(forceScale + 1);
+        return data[key].slice(scale * forceScale, data[key].length);
       }
-      if (active === -1) return data[key];
+      if (active === -1) {
+        return data[key];
+      }
     }
     if (data[key]) {
-      if(filterShow){
-        return filteredData[filterShow-1];
+      if (filterShow) {
+        return filteredData[filterShow - 1];
       }
       if (active === 1) {
         const start = data[key].length > scale ? data[key].length - scale : 0;
         return data[key].slice(start, data[key].length);
       }
-      if (active === -1) return data[key];
+      if (active === -1) {
+        return data[key];
+      }
     }
     if (key === "temperature" && data[key].length > 0) return data[key];
     return [...new Array(scale).fill(0)];
@@ -190,11 +190,19 @@ function MeasureBase({
               flow={getStreamOfData(key.name)}
               texts={texts}
               calculatedDots={key.calculatedDots}
-              dotShow = {filterShow}
-              xAxisDomain = {values.includes("temperature") ? sampleTime :
-                              diagrams.length % 2 === 0 ? (active === 1) ? 4000 : "" : 
-                              (active === 1) ? scale : ""}
-              type = "line"
+              dotShow={filterShow}
+              xAxisDomain={
+                values.includes("temperature")
+                  ? sampleTime
+                  : diagrams.length % 2 === 0
+                  ? active === 1
+                    ? 4000
+                    : ""
+                  : active === 1
+                  ? scale
+                  : ""
+              }
+              type="line"
             />
           </Col>
         ))}

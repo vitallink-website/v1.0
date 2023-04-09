@@ -1,17 +1,4 @@
 import * as React from "react";
-
-import {
-  ComposedChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Legend,
-  Scatter,
-  Brush,
-  ResponsiveContainer,
-} from "recharts";
-import { Button } from "react-bootstrap";
 import {
   downloadPDFAsPNG,
   downloadSVGAsPNG,

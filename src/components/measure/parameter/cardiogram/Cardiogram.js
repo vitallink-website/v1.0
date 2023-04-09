@@ -84,7 +84,7 @@ function Cardiogram() {
         Array.from(signal_output[6]),
         Array.from(signal_output[7]),
         Array.from(signal_output[8])
-        );
+      );
       setDot(newArr);
       let filterd_signal = Array.from(signal_output[9]);
       return [filterd_signal];
@@ -181,6 +181,7 @@ function Cardiogram() {
             </div>
             <Row>
               <AbnormalityDetection
+                heartBeat={heartBeat}
                 hrv={hrv}
                 hrvVal={hrvVal}
                 ssTime={ssTime}
