@@ -4,25 +4,31 @@ import { Link } from "react-router-dom";
 import CanvasJSReact from "../../../Diagram/canvasjs.react";
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
-function AbnormalityDetection({ heartBeat, hrv, hrvVal, ssTime, singleSpike, PQRST_ss }) {
-
+function AbnormalityDetection({
+  heartBeat,
+  hrv,
+  hrvVal,
+  ssTime,
+  singleSpike,
+  PQRST_ss,
+}) {
   const getHrvSteam = () => {
     let steam = [...hrv].map((item, id) => {
       return {
         label: item?.id ?? id,
         y: heartBeat < item ? [heartBeat, item] : [item, heartBeat],
       };
-    })
-    return (steam);
-  }
+    });
+    return steam;
+  };
 
   const getSingleSpikeSteam = () => {
     let steam = [...singleSpike].map((item, id) => {
-          return {
-            x: item?.id ?? id,
-            y: item?.value ?? item,
-          };
-        })
+      return {
+        x: item?.id ?? id,
+        y: item?.value ?? item,
+      };
+    });
     if (PQRST_ss.length > 0) {
       let i = 0;
       let color = ["red", "blue", "black", "white", "orange"];
@@ -31,14 +37,14 @@ function AbnormalityDetection({ heartBeat, hrv, hrvVal, ssTime, singleSpike, PQR
           item.markerColor = color[i];
           i++;
           item.markerSize = 10;
-        }
-        else{
+        } else {
           item.markerSize = 1;
         }
         return item;
-      })}
-      return steam;
-  }
+      });
+    }
+    return steam;
+  };
 
   function getOptions(data) {
     return {
@@ -51,20 +57,29 @@ function AbnormalityDetection({ heartBeat, hrv, hrvVal, ssTime, singleSpike, PQR
       axisY: {
         labelFontFamily: "system-ui",
         gridThickness: 0,
+        stripLines: [
+          {
+            startValue: heartBeat,
+            endValue: heartBeat+0.03,
+            lineDashType: "dot",
+            color: "black",
+          },
+        ],
       },
       axisX: {
         labelFontFamily: "system-ui",
       },
       animationEnabled: true,
       animationDuration: 500,
+      dataPointWidth: 2,
       data: [
         {
-          type: data === 'hrv' ? "rangeBar" : "line",
+          type: data === "hrv" ? "rangeColumn" : "line",
           lineColor: "#8884d8",
           color: "#8884d8",
-          lineThickness: 1,
-          fill: { value: 20 },
-          dataPoints: data === 'hrv' ? [...getHrvSteam()] : getSingleSpikeSteam(),
+          lineThickness: 0,
+          dataPoints:
+            data === "hrv" ? [...getHrvSteam()] : getSingleSpikeSteam(),
         },
       ],
     };

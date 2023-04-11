@@ -11,10 +11,10 @@ import AbnormalityDetection from "./AbnormalityDetection";
 function Cardiogram() {
   const dbFunc = useAddToDB("cardiogramData");
 
-  const [heartBeat, setHeartBeat] = useState(0);
-  const [qualityIndex, setQualityIndex] = useState(0);
-  const [PR_RR_Interval, setPR_RR_Interval] = useState(0);
-  const [QRS_Duration, setQRSDuration] = useState(0);
+  const [heartBeat, setHeartBeat] = useState("");
+  const [qualityIndex, setQualityIndex] = useState("");
+  const [PR_RR_Interval, setPR_RR_Interval] = useState("");
+  const [QRS_Duration, setQRSDuration] = useState("");
   const [dot, setDot] = useState([]);
   const [saved, setSaved] = useState(0);
   const [hrv, setHrv] = useState([]);
@@ -88,7 +88,8 @@ function Cardiogram() {
       setDot(newArr);
       let filterd_signal = Array.from(signal_output[9]);
       return [filterd_signal];
-    } else console.log("array is empty or freq is 0");
+    } else {console.log("array is empty or freq is 0");
+            alert("Please repeat procedure")}
   }
 
   function addToDB() {
@@ -145,8 +146,8 @@ function Cardiogram() {
                 <Button onClick={openModal}>Start</Button>
               </Col>
               <Col sm={3}>
-                <Button onClick={() => changeFilterShow(filterShow ? 0 : 1)}>
-                  {filterShow ? "main" : "Filtered"} signal
+                <Button onClick={() => changeFilterShow(filterShow ? 0 : 1)} disabled = {heartBeat == "" }>
+                  {filterShow ? "main" : "Filterd"} signal
                 </Button>
               </Col>
             </Row>

@@ -16,6 +16,7 @@ function HeartAndLungSound() {
   const dbFunc = useAddToDB("PCGData");
   const [filterActiveNum, setFilterActiveNum] = useState(0);
   const [saved, setSaved] = useState(0);
+  const [fs, setFs] = useState(0);
 
   const flushDatas = () => {
     setSaved(0);
@@ -64,14 +65,15 @@ function HeartAndLungSound() {
 
   async function calculateBeatPerMinuteAPI(inputs) {
     console.log(inputs.data);
-    setSound(inputs.data.pcg)
+    setSound(inputs.data.pcg);
+    setFs(inputs.freq);
     return getDataAPI(inputs.data.pcg, inputs.freq).then((res) => {
       console.log(res);
       setHeartBeat(res.heart_rate);
       setRespirationRate(res.respiration_rate);
       setQualityIndex(res.lung_quality_ind);
       return [
-        res.lung_signal_pre
+        res.pcg_filtered
           .slice(1, -1)
           .replace(/\n/g, " ")
           .split(/\b\s+/)
@@ -85,13 +87,6 @@ function HeartAndLungSound() {
           .map(function (item) {
             return Number(item);
           }),
-        res.lung_signal
-          .slice(1, -1)
-          .replace(/\n/g, " ")
-          .split(/\b\s+/)
-          .map(function (item) {
-            return Number(item);
-          }),
         res.heart_signal
           .slice(1, -1)
           .replace(/\n/g, " ")
@@ -99,7 +94,14 @@ function HeartAndLungSound() {
           .map(function (item) {
             return Number(item);
           }),
-        res.pcg_filtered
+        res.lung_signal_pre
+          .slice(1, -1)
+          .replace(/\n/g, " ")
+          .split(/\b\s+/)
+          .map(function (item) {
+            return Number(item);
+          }),
+        res.lung_signal
           .slice(1, -1)
           .replace(/\n/g, " ")
           .split(/\b\s+/)
@@ -113,15 +115,29 @@ function HeartAndLungSound() {
   function handleChange(number, changeFilterShow) {
     setFilterActiveNum(number);
     changeFilterShow(number);
+    console.log(filterActiveNum);
   }
 
-  async function playAudio(){
+  async function playAudio() {
     let payload = {
       sound: "[" + sound.toString() + "]",
+      fs: fs,
     };
     let res = await axios.post("http://127.0.0.1:5000/rcv_audio", payload);
-    res.play();
-    return res.data;
+    if (res.statusText === "OK") {
+      const { data } = await axios.get("http://127.0.0.1:5000/snd_audio", {
+        responseType: "arraybuffer",
+        headers: {
+          "Content-Type": "audio/x-wav",
+        },
+      });
+      const blob = new Blob([data], {
+        type: "audio/x-wav",
+      });
+      const url = URL.createObjectURL(blob);
+      let audio = new Audio(url)
+      audio.play();
+    }
   }
 
   return (
@@ -142,56 +158,52 @@ function HeartAndLungSound() {
           <>
             <h2 className="measure-title">Heart and Lung Sound</h2>
             <Row style={{ display: "flex", alignItems: "center" }}>
-              <Col sm={5}>
+              <Col md={4}>
                 <h5 className="measure-title">
                   put the microphone on your heart position and press
                 </h5>
               </Col>
-              <Col sm={2}>
+              <Col md={2}>
                 <Button onClick={openModal}>Start</Button>
               </Col>
-              <Col sm={3}>
+              <Col md={3}>
                 <DropdownButton
                   id="dropdown-basic-button"
                   title="Choose signal"
                 >
                   <Dropdown.Item
-                    onClick={() => handleChange(5, changeFilterShow)}
-                    active={filterActiveNum === 5}
+                    onClick={() => handleChange(4, changeFilterShow)}
+                    active={filterActiveNum === 4 || filterActiveNum === 5}
                   >
                     heart
                   </Dropdown.Item>
                   <Dropdown.Item
-                    onClick={() => handleChange(4, changeFilterShow)}
-                    active={filterActiveNum === 4}
-                  >
-                    heart with filter
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    onClick={() => handleChange(3, changeFilterShow)}
-                    active={filterActiveNum === 3}
+                    onClick={() => handleChange(2, changeFilterShow)}
+                    active={filterActiveNum === 2 || filterActiveNum === 3}
                   >
                     lung
                   </Dropdown.Item>
                   <Dropdown.Item
-                    onClick={() => handleChange(2, changeFilterShow)}
-                    active={filterActiveNum === 2}
-                  >
-                    lung with filter
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    onClick={() => handleChange(1, changeFilterShow)}
-                    active={filterActiveNum === 1}
-                  >
-                    both with filter
-                  </Dropdown.Item>
-                  <Dropdown.Item
                     onClick={() => handleChange(0, changeFilterShow)}
-                    active={filterActiveNum === 0}
+                    active={filterActiveNum === 0 || filterActiveNum === 1}
                   >
-                    both without filter
+                    both
                   </Dropdown.Item>
                 </DropdownButton>
+              </Col>
+              <Col md={3}>
+                <Button
+                  onClick={() =>
+                    handleChange(
+                      filterActiveNum % 2
+                        ? filterActiveNum - 1
+                        : filterActiveNum + 1,
+                      changeFilterShow
+                    )
+                  }
+                >
+                  {filterActiveNum % 2 ? "Filterd" : "main"} signal
+                </Button>
               </Col>
             </Row>
           </>
@@ -201,7 +213,7 @@ function HeartAndLungSound() {
             <Row className="mt-5"></Row>
             <Row className="mt-5">
               <Col>
-                <Button onClick={() =>  playAudio()}>
+                <Button onClick={() => playAudio()}>
                   play <AiFillPlayCircle />
                 </Button>
               </Col>

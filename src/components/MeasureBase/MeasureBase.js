@@ -61,6 +61,7 @@ function MeasureBase({
 
   const hanldeCallback = (inputs) => {
     if (active === 1) {
+      console.log("heyyy")
       KEYS.map((key) => {
         if (values.includes(key)) {
           temp[key] = [...temp[key], ...inputs[key]];
@@ -100,7 +101,6 @@ function MeasureBase({
       closeModal();
       setLoading(false);
     } else if (active === -1) {
-      bluetooth.stop();
       console.log(data.pcg.length);
       action({
         data: data,
@@ -130,6 +130,7 @@ function MeasureBase({
     }, [pendingTime]);
     endTime.current = setTimeout(() => {
       setActive(-1);
+      bluetooth.stop();
     }, [sampleTime * 1000 + pendingTime]);
   };
 
@@ -153,6 +154,7 @@ function MeasureBase({
         return data[key].slice(start, data[key].length);
       }
       if (active === -1) {
+        console.log(data[key].length);
         return data[key];
       }
     }
