@@ -10,6 +10,7 @@ const Diagram = ({
   dataKey = "",
   flow = [],
   texts = "",
+  fs,
   calculatedDots = [],
   dotShow = false,
   xAxisDomain = "",
@@ -24,7 +25,7 @@ const Diagram = ({
       };      
     else  
       return {
-        x: item?.id ?? id,
+        x: item?.id ?? id/fs,
         y: item?.value ?? item,
       };
     });
@@ -51,11 +52,16 @@ const Diagram = ({
     axisY: {
       labelFontFamily: "system-ui",
       gridThickness: 0,
+      tickThickness: 0,
+      labelFormatter: function(e) { 
+        return "";
+      }
     },
     axisX: {
       minimum: 0,
       maximum: xAxisDomain != "" ? xAxisDomain : null,
       labelFontFamily: "system-ui",
+      // interval: 0.5
     },
     animationEnabled: true,
     animationDuration: 500,

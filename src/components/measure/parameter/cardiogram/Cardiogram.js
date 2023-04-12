@@ -7,6 +7,7 @@ import { useAddToDB } from "../../../../utilities/AddToDB";
 import { FcCheckmark } from "react-icons/fc";
 import { set } from "rsuite/esm/utils/dateUtils";
 import AbnormalityDetection from "./AbnormalityDetection";
+import Swal from "sweetalert2";
 
 function Cardiogram() {
   const dbFunc = useAddToDB("cardiogramData");
@@ -22,7 +23,15 @@ function Cardiogram() {
   const [ssTime, setSsTime] = useState([]);
   const [singleSpike, setSingleSpike] = useState([]);
   const [PQRST_ss, setPQRST_ss] = useState([]);
-
+  const [ArrythmiaType, setArrythmiaType] = useState("");
+  const types = [
+    "Normal",
+    "Sinus Tachicardia",
+    "Sinus Bradicardia",
+    "Premature Atrial Contrature (PAC)",
+    "Paroxysmal Atrial Tachycardia (PAT)",
+    "Multifocul Atrial Tachycardia (MAT)",
+  ];
   function makePQRST(ps, qs, rs, ss, ts) {
     let newArr = [];
     for (const p of ps) newArr.push({ x: Number(p), color: "red" });
@@ -41,8 +50,8 @@ function Cardiogram() {
       // eslint-disable-next-line no-undef
       await ECG_signal_processing(inputs.data.ecg, inputs.freq)
     ); // HeartRate, PR_RR, QRS_duration, Quality_index, P, Q, R, S, T
-
-    if (inputs.freq !== 0 && signal_output.length !== 0) {
+    console.log(signal_output);
+    if (inputs.freq !== 0 && signal_output.length !== 0 && !signal_output[16]) {
       console.log(signal_output[0]);
       console.log(signal_output[1]);
       console.log(signal_output[2]);
@@ -77,6 +86,7 @@ function Cardiogram() {
       setPQRST_ss(ssPQRST);
       setHrv(Array.from(signal_output[13]));
       setHrvVal(parseInt(signal_output[Object.keys(signal_output)[14]]));
+      setArrythmiaType(parseInt(signal_output[Object.keys(signal_output)[15]]));
       // console.log(Array.from(signal_output[13]));
       let newArr = makePQRST(
         Array.from(signal_output[4]),
@@ -88,8 +98,14 @@ function Cardiogram() {
       setDot(newArr);
       let filterd_signal = Array.from(signal_output[9]);
       return [filterd_signal];
-    } else {console.log("array is empty or freq is 0");
-            alert("Please repeat procedure")}
+    } else {
+      console.log("array is empty or freq is 0");
+      Swal.fire({
+        icon: "error",
+        title: "Something went wrong",
+        text: "Please repeat procedure!",
+      });
+    }
   }
 
   function addToDB() {
@@ -146,7 +162,10 @@ function Cardiogram() {
                 <Button onClick={openModal}>Start</Button>
               </Col>
               <Col sm={3}>
-                <Button onClick={() => changeFilterShow(filterShow ? 0 : 1)} disabled = {heartBeat == "" }>
+                <Button
+                  onClick={() => changeFilterShow(filterShow ? 0 : 1)}
+                  disabled={heartBeat == ""}
+                >
                   {filterShow ? "main" : "Filterd"} signal
                 </Button>
               </Col>
@@ -189,6 +208,14 @@ function Cardiogram() {
                 singleSpike={singleSpike}
                 PQRST_ss={PQRST_ss}
               ></AbnormalityDetection>
+            </Row>
+            <Row>
+              <div>
+                <br />
+              </div>
+              <h5 style={{ color: "black" }}>
+                Arrythmia Type: {types[ArrythmiaType]}
+              </h5>
             </Row>
             <Row className="measure-button-row">
               <Col>

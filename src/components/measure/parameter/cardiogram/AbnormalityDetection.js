@@ -25,7 +25,7 @@ function AbnormalityDetection({
   const getSingleSpikeSteam = () => {
     let steam = [...singleSpike].map((item, id) => {
       return {
-        x: item?.id ?? id,
+        x: item?.id ?? ssTime[id],
         y: item?.value ?? item,
       };
     });
@@ -60,7 +60,7 @@ function AbnormalityDetection({
         stripLines: [
           {
             startValue: heartBeat,
-            endValue: heartBeat+0.03,
+            endValue: heartBeat+0.08,
             lineDashType: "dot",
             color: "black",
           },

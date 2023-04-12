@@ -60,8 +60,8 @@ function MeasureBase({
   const endTime = useRef(null);
 
   const hanldeCallback = (inputs) => {
+    console.log("heyyy: " + active)
     if (active === 1) {
-      console.log("heyyy")
       KEYS.map((key) => {
         if (values.includes(key)) {
           temp[key] = [...temp[key], ...inputs[key]];
@@ -78,10 +78,6 @@ function MeasureBase({
       });
     }
   };
-
-  useEffect(() => {
-    console.log("hi");
-  }, []);
 
   useEffect(() => {
     if (bluetooth && command) bluetooth.sendCommand(command, hanldeCallback);
@@ -129,6 +125,7 @@ function MeasureBase({
       bluetooth.start();
     }, [pendingTime]);
     endTime.current = setTimeout(() => {
+      console.log("end of time");
       setActive(-1);
       bluetooth.stop();
     }, [sampleTime * 1000 + pendingTime]);
@@ -188,12 +185,13 @@ function MeasureBase({
         {diagrams.map((key) => (
           <Col xs={12} sm={diagrams.length % 2 === 0 ? 6 : 12} key={key.name}>
             <Diagram
-              dataKey={key.name}
-              flow={getStreamOfData(key.name)}
-              texts={texts}
-              calculatedDots={key.calculatedDots}
-              dotShow={filterShow}
-              xAxisDomain={
+              dataKey = {key.name}
+              flow = {getStreamOfData(key.name)}
+              texts = {texts}
+              calculatedDots = {key.calculatedDots}
+              dotShow = {filterShow}
+              fs = {active === 1 ? 1 : Math.ceil(data[values[0]].length / sampleTime)}
+              xAxisDomain = {
                 values.includes("temperature")
                   ? sampleTime
                   : diagrams.length % 2 === 0
