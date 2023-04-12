@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Row, Col, Button } from "react-bootstrap";
+import { Row, Col, Button, Dropdown, DropdownButton } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { shareData } from "../../share/Share";
 import MeasureBase from "../../../MeasureBase/MeasureBase";
 import { useAddToDB } from "../../../../utilities/AddToDB";
 import { FcCheckmark } from "react-icons/fc";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const Oximetry = () => {
   const dbFunc = useAddToDB("oximetryData");
@@ -14,6 +15,7 @@ const Oximetry = () => {
   const [SPO2, setSPO2] = useState(0);
   const [qualityIndex, setQualityIndex] = useState(0);
   const [saved, setSaved] = useState(0);
+  const [filterActiveNum, setFilterActiveNum] = useState(0);
 
   const calculateBeatPerMinute = (inputs) => {
     console.log(inputs.data);
@@ -31,16 +33,39 @@ const Oximetry = () => {
   };
 
   async function calculateBeatPerMinuteAPI(inputs) {
+    console.log(inputs.data);
     let payload = {
       IR: "[" + inputs.data.ir.toString() + "]",
-      Red: "[" +inputs.data.red.toString() + "]",
+      Red: "[" + inputs.data.red.toString() + "]",
       fs: inputs.freq,
     };
-    let res = await axios.post("http://127.0.0.1:5000//PPG_signal", payload);    
+    let res = await axios.post("http://127.0.0.1:5000//PPG_signal", payload);
     console.log(res.data);
-    setHeartBeat(res.data.HeartRate);
-    setSPO2(res.data.SpO2);
-    setQualityIndex(res.data.Quality_index);
+    if (!Number(res.data.Try_Again)) {
+      setHeartBeat(res.data.HeartRate);
+      setSPO2(res.data.SpO2);
+      setQualityIndex(res.data.Quality_index);
+      return [
+        res.data.clear_IR
+          .slice(1, -1)
+          .split(",")
+          .map(function (item) {
+            return Number(item);
+          }),
+          inputs.data.red,
+          res.data.clear_Red
+          .slice(1, -1)
+          .split(",")
+          .map(function (item) {
+            return Number(item);
+          })
+      ];
+    } else
+      Swal.fire({
+        icon: "error",
+        title: "Something went wrong",
+        text: "Please repeat procedure!",
+      });
   }
 
   function addToDB() {
@@ -51,10 +76,17 @@ const Oximetry = () => {
     setSaved(1);
   }
 
-  const flushDatas = () => {setSaved(0);
-                            setHeartBeat('');
-                            setSPO2('');
-                            setQualityIndex('');}
+  const flushDatas = () => {
+    setSaved(0);
+    setHeartBeat("");
+    setSPO2("");
+    setQualityIndex("");
+  };
+
+  function handleChange(number, changeFilterShow) {
+    setFilterActiveNum(number);
+    changeFilterShow(number);
+  }
 
   return (
     <MeasureBase
@@ -74,17 +106,50 @@ const Oximetry = () => {
           "SPO2: " + SPO2,
           "Quality index: " + qualityIndex,
         ],
-        title: (openModal) => (
+        title: (openModal, changeFilterShow, filterShow) => (
           <>
             <h2 className="measure-title">Oximetry</h2>
             <Row style={{ display: "flex", alignItems: "center" }}>
-              <Col sm={8}>
+              <Col sm={4}>
                 <h5 className="measure-title">
                   Please put your finger on PPG sensors and then press
                 </h5>
               </Col>
-              <Col sm={2}>
+              <Col md={2}>
                 <Button onClick={openModal}>Start</Button>
+              </Col>
+              <Col md={3}>
+                <DropdownButton
+                  id="dropdown-basic-button"
+                  title="Choose signal"
+                >
+                  <Dropdown.Item
+                    onClick={() => handleChange(0, changeFilterShow)}
+                    active={filterActiveNum === 0}
+                  >
+                    ir
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={() => handleChange(2, changeFilterShow)}
+                    active={filterActiveNum === 2}
+                  >
+                    red
+                  </Dropdown.Item>
+                </DropdownButton>
+              </Col>
+              <Col md={3}>
+                <Button
+                  onClick={() =>
+                    handleChange(
+                      filterActiveNum % 2
+                        ? filterActiveNum - 1
+                        : filterActiveNum + 1,
+                      changeFilterShow
+                    )
+                  }
+                >
+                  {filterActiveNum % 2 ? "Filterd" : "main"} signal
+                </Button>
               </Col>
             </Row>
           </>

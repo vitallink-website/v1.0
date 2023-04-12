@@ -115,7 +115,6 @@ function HeartAndLungSound() {
   function handleChange(number, changeFilterShow) {
     setFilterActiveNum(number);
     changeFilterShow(number);
-    console.log(filterActiveNum);
   }
 
   async function playAudio() {
