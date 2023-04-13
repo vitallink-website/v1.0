@@ -7,6 +7,7 @@ from scipy.interpolate import pchip_interpolate
 from scipy.signal import butter, filtfilt, find_peaks, lfilter
 from scipy.fft import fft, fftshift
 
+
 def filter(data, cutoff, fs, order, filter_type):
     nyq = fs / 2
     normal_cutoff = cutoff / nyq
@@ -151,8 +152,19 @@ def Quality_ECG(ECG_filtered, fs, t):
 
 def clearing_ECG(ECG, fs):
     ECG_filtered1 = filter(ECG, 5, fs, 10, 'high')
-    ECG_filtered = filter(ECG_filtered1, 20, fs, 10, 'low')
-    return ECG_filtered
+    ECG_filtered = filter(ECG_filtered1, 20, fs, 10, 'low')     
+    clear_ECG = ECG_filtered.copy()
+    window_size = 5
+    for i in range(window_size+1):
+        coef = np.append(np.arange(window_size+1-i,window_size+1),np.arange(window_size+1,0,-1))
+        clear_ECG[i] = coef @ ECG_filtered[:i+window_size+1] / sum(coef)
+    coef = np.append(np.arange(1,window_size+1),np.arange(window_size+1,0,-1))
+    for i in range(window_size+1, len(ECG)-window_size):
+        clear_ECG[i] = coef @ ECG_filtered[i-window_size:i+window_size+1] / sum(coef)
+    for i in range(len(ECG)-window_size, len(ECG)):
+        coef = np.append(np.arange(1,window_size+1),np.arange(window_size+1,i-len(ECG)+window_size+1,-1))
+        clear_ECG[i] = coef @ ECG_filtered[i-window_size:] / sum(coef)        
+    return clear_ECG
 
 def Signle_Spike(ECG_filtered, P, T, fs):
     ECG = ECG_filtered.copy()
@@ -189,22 +201,70 @@ def HRV(ECG_filtered, R, fs):
     hrv_val = np.mean(abs(hrv - int(HR)))
     return hrv, hrv_val
 
-def ECG_signal_processing(ECG, fs):
+def det_Arrhythmia_PQRST(HeartRate, P, Q, R, S, T, hrv_val, hrv, t):
+    # 0: Normal
+    # 1: Sinus Tachicardia
+    # 2: Sinus Bradicardia 
+    # 3: Premature Atrial Contrature (PAC)
+    # 4: Paroxysmal Atrial Tachycardia (PAT)
+    # 5: Multifocul Atrial Tachycardia (MAT)
+    if (np.mean(R[2:] - R[:-2]) > 2.5*np.mean(np.sort(R[1:] - R[:-1])[:int(len(hrv)/2)])):
+        arrhythmia_type = 3
+    elif (HeartRate < 60):
+        arrhythmia_type = 2
+    elif (HeartRate > 100):
+        if (t[P[1:]] - t[Q[:-1]]) < 0.05:
+            arrhythmia_type = 4
+        else:
+          arrhythmia_type = 1
+    else:
+        if (hrv_val > 8):
+            arrhythmia_type = 5
+        else: 
+            arrhythmia_type = 0
+    return arrhythmia_type
+
+def ECG_Parameters(ECG, fs):
     t = np.linspace(0, len(ECG)/fs, len(ECG), endpoint = True)
     ECG_filtered = clearing_ECG(ECG, fs)
     HeartRate = HeartBeat_ECG(ECG_filtered, fs)
     P, Q, R, S, T = PQRST(ECG_filtered, fs)
     RR_interval = np.mean(t[R[1:]]-t[R[:-1]])
-    PR_interval = np.mean(t[R] - t[P])
+    PR_interval = np.mean(t[Q] - t[P])
     PR_RR = PR_interval / RR_interval
-    t_ST = (t[S] + t[T]) / 2
-    t_PQ = (t[P] + t[Q]) / 2
-    QRS_duration = np.mean(t_ST - t_PQ)
+    # t_ST = (t[S] + t[T]) / 2
+    # t_PQ = (t[P] + t[Q]) / 2
+    # QRS_duration = np.mean(t_ST - t_PQ)
+    QRS_duration = np.mean(t[S] - t[Q])
     Quality_index = Quality_ECG(ECG_filtered, fs, t)
     ss_time, single_spike, PQRST_ss = Signle_Spike(ECG_filtered, P, T, fs)
     hrv, hrv_val = HRV(ECG_filtered, R, fs)
-    return round(HeartRate), round(PR_RR,2), round(QRS_duration*1000,2), round(Quality_index), P, Q, R, S, T, ECG_filtered, ss_time, single_spike, PQRST_ss, hrv, round(hrv_val)
+    arrhythmia_type_PQRST = det_Arrhythmia_PQRST(HeartRate, P, Q, R, S, T, hrv_val, hrv, t)
+    return ECG_filtered, round(HeartRate), round(PR_RR,2), round(QRS_duration*1000,2), round(Quality_index), P, Q, R, S, T, ss_time, single_spike, PQRST_ss, hrv, round(hrv_val), arrhythmia_type_PQRST
 
+def ECG_signal_processing(ECG, fs):
+    Try_Again = 0
+    try:
+      ECG_filtered, HeartRate, PR_RR, QRS_duration, Quality_index, P, Q, R, S, T, ss_time, single_spike, PQRST_ss, hrv, hrv_val, arrhythmia_type_PQRST = ECG_Parameters(ECG, fs)
+    except ValueError:
+        Try_Again = 1
+        ECG_filtered = None
+        HeartRate = None
+        PR_RR = None
+        QRS_duration = None
+        Quality_index = None
+        P = None
+        Q = None 
+        R = None
+        S = None
+        T = None
+        ss_time = None
+        single_spike = None
+        PQRST_ss = None
+        hrv = None
+        hrv_val = None
+        arrhythmia_type_PQRST = None
+    return HeartRate, PR_RR, QRS_duration, Quality_index, P, Q, R, S, T,ECG_filtered, ss_time, single_spike, PQRST_ss, hrv, hrv_val, arrhythmia_type_PQRST,Try_Again
 ########################################### end of cardiogram
 
 ########################################### start of oximetry
