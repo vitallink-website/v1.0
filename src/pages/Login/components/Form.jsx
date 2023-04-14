@@ -6,11 +6,7 @@ import { Dropdown } from "primereact/Dropdown";
 import { useState } from "react";
 import { ButtonStyle } from "../../../components/reusable/ButtonStyle";
 import { Link } from "react-router-dom";
-
-const Container = styled.div`
-  display: grid;
-  place-items: center;
-`;
+import { ContainerWithoutHeight } from "../../../components/reusable/Container";
 
 const Title = styled.h1`
   font-size: 36px;
@@ -44,7 +40,7 @@ const LoginForm = () => {
   ];
 
   return (
-    <Container>
+    <ContainerWithoutHeight>
       <LogoRow>
         <Image src={Icon} alt="icon" width="60px" />
         <Title>Hekidesk</Title>
@@ -69,7 +65,7 @@ const LoginForm = () => {
           Sign up
         </Link>
       </LogoRow>
-    </Container>
+    </ContainerWithoutHeight>
   );
 };
 

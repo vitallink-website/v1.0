@@ -6,11 +6,7 @@ import { Image } from "primereact/image";
 import { Link } from "react-router-dom";
 import { Button } from "primereact/button";
 import { ButtonStyle } from "../../../components/reusable/ButtonStyle";
-
-const Container = styled.div`
-  display: grid;
-  place-items: center;
-`;
+import { ContainerWithoutHeight } from "../../../components/reusable/Container";
 
 const Title = styled.h1`
   font-size: 36px;
@@ -45,7 +41,7 @@ const ButtonOKStyle = {
 
 const HomeForm = () => {
   return (
-    <Container>
+    <ContainerWithoutHeight>
       <LogoRow>
         <Image src={Icon} alt="icon" width="60px" />
         <Title>Hekidesk</Title>
@@ -60,7 +56,7 @@ const HomeForm = () => {
         />
         Select User
       </Link>
-      <Link to="/device" style={ButtonStyle}>
+      <Link to="/register-device" style={ButtonStyle}>
         <img
           src={DeviceIcon}
           alt="user"
@@ -70,7 +66,7 @@ const HomeForm = () => {
         Select Device
       </Link>
       <Button style={ButtonOKStyle}>OK</Button>
-    </Container>
+    </ContainerWithoutHeight>
   );
 };
 

@@ -3,14 +3,10 @@ import Icon from "../../../assets/svg/hekidesk-green.svg";
 import { Image } from "primereact/image";
 import { Button } from "primereact/button";
 import { ButtonStyle } from "../../../components/reusable/ButtonStyle";
-import { InputText } from "primereact/inputtext";
 import { useState } from "react";
 import { Dropdown } from "primereact/Dropdown";
-
-const Container = styled.div`
-  display: grid;
-  place-items: center;
-`;
+import { InputTextGroup } from "../../../components/reusable/InputTextGroup";
+import { ContainerWithoutHeight } from "../../../components/reusable/Container";
 
 const Title = styled.h1`
   font-size: 36px;
@@ -24,29 +20,6 @@ const LogoRow = styled.div`
   margin-top: 1em;
 `;
 
-const InputGroup = ({ state, setState, label, placeHolder }) => {
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        width: "100%",
-        margin: "0.5em 0",
-      }}
-    >
-      <label htmlFor={label}>Username</label>
-      <InputText
-        id={label}
-        aria-describedby={label}
-        style={{ width: "100%" }}
-        value={state}
-        onChange={(e) => setState(e.target.value)}
-        placeholder={placeHolder}
-      />
-    </div>
-  );
-};
-
 const RegisterForm = () => {
   const [form, setForm] = useState({
     username: "",
@@ -57,28 +30,32 @@ const RegisterForm = () => {
   });
   const onChangeValue = (n, v) => setForm({ ...form, [n]: v });
   return (
-    <Container>
+    <ContainerWithoutHeight>
       <LogoRow>
         <Image src={Icon} alt="icon" width="60px" />
         <Title>Hekidesk</Title>
       </LogoRow>
-      <InputGroup
+      <InputTextGroup
         state={form.username}
         placeHolder={"Name"}
+        label="Name"
         setState={(v) => onChangeValue("username", v)}
       />
-      <InputGroup
+      <InputTextGroup
         state={form.dof}
-        placeHolder={"Date of birth"}
+        label={"Date of birth"}
+        placeHolder={"YYYY-MM-DD"}
         setState={(v) => onChangeValue("dof", v)}
       />
-      <InputGroup
+      <InputTextGroup
         state={form.weight}
+        label={"Weight"}
         placeHolder={"Weight (kg)"}
         setState={(v) => onChangeValue("weight", v)}
       />
-      <InputGroup
+      <InputTextGroup
         state={form.height}
+        label={"Height"}
         placeHolder={"Height (cm)"}
         setState={(v) => onChangeValue("height", v)}
       />
@@ -105,7 +82,7 @@ const RegisterForm = () => {
 
       <br />
       <Button style={ButtonStyle}>Sign in</Button>
-    </Container>
+    </ContainerWithoutHeight>
   );
 };
 
