@@ -5,6 +5,7 @@ import { Button } from "primereact/button";
 import { Dropdown } from "primereact/Dropdown";
 import { useState } from "react";
 import { ButtonStyle } from "../../../components/reusable/ButtonStyle";
+import { Link } from "react-router-dom";
 
 const Container = styled.div`
   display: grid;
@@ -29,7 +30,7 @@ const LogoRow = styled.div`
   margin-top: 3em;
 `;
 
-const HomeForm = () => {
+const LoginForm = () => {
   const [selected, setSelected] = useState(null);
   const users = [
     { name: "Test1", code: "Ts1" },
@@ -59,8 +60,17 @@ const HomeForm = () => {
       />
       <br />
       <Button style={ButtonStyle}>Sign in</Button>
+      <LogoRow>
+        <p>Dont have an account?</p>
+        <Link
+          to="/register-user"
+          style={{ color: "var(--title-color)", margin: "0 0.5em" }}
+        >
+          Sign up
+        </Link>
+      </LogoRow>
     </Container>
   );
 };
 
-export default HomeForm;
+export default LoginForm;

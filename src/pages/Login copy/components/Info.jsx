@@ -12,14 +12,13 @@ const ImageWrapper = styled.span`
   overflow: hidden;
 `;
 
-const LoginBanner = () => {
+const RegisterInfo = () => {
   return (
     <span>
       <br />
       <br />
       <br />
-      <br />
-      <Text>Log in to your account and get started.</Text>
+      <Text>Create new account</Text>
       <ImageWrapper>
         <Image src={Icon} alt="icon" width="100%" />
       </ImageWrapper>
@@ -27,4 +26,4 @@ const LoginBanner = () => {
   );
 };
 
-export default LoginBanner;
+export default RegisterInfo;
