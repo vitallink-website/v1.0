@@ -1,9 +1,11 @@
 import styled from "styled-components";
 import Icon from "../../../assets/svg/hekidesk-green.svg";
 import UserIcon from "../../../assets/icon/user.svg";
+import DeviceIcon from "../../../assets/icon/device.svg";
 import { Image } from "primereact/image";
 import { Link } from "react-router-dom";
 import { Button } from "primereact/button";
+import { ButtonStyle } from "../../../components/reusable/ButtonStyle";
 
 const Container = styled.div`
   display: grid;
@@ -13,46 +15,32 @@ const Container = styled.div`
 const Title = styled.h1`
   font-size: 36px;
   color: var(--title-color);
-  margin-left: 0.5em;
+  margin-left: 0.2em;
 `;
 
 const Text = styled.h5`
   font-size: 24px;
-  margin: 1em;
+  margin: 0.8em;
   color: var(--title-color);
 `;
 
 const LogoRow = styled.div`
   display: flex;
   align-items: center;
-  margin-top: 200em;
+  margin-top: 3em;
 `;
-
-const ButtonStyle = {
-  backgroundColor: "var(--title-color)",
-  borderColor: "var(--title-color)",
-  color: "white",
-  fontSize: "28em",
-  width: "100%",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  padding: "0.6em 1.2em",
-  borderRadius: "6px",
-  textDecoration: "auto",
-  margin: "1.2em 0",
-};
 
 const ButtonOKStyle = {
   backgroundColor: "white",
   border: "2px solid var(--title-color)",
-  fontSize: "28em",
+  fontSize: "18px",
   width: "100%",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
   margin: "1em 0",
   color: "var(--title-color)",
+  padding: "0.4em 0.6em",
 };
 
 const HomeForm = () => {
@@ -64,11 +52,21 @@ const HomeForm = () => {
       </LogoRow>
       <Text>Home</Text>
       <Link to="/login" style={ButtonStyle}>
-        <img src={UserIcon} alt="user" style={{ marginRight: "1em" }} />
+        <img
+          src={UserIcon}
+          alt="user"
+          style={{ marginRight: "0.8em" }}
+          width={"20"}
+        />
         Select User
       </Link>
       <Link to="/device" style={ButtonStyle}>
-        <img src={UserIcon} alt="user" style={{ marginRight: "1em" }} />
+        <img
+          src={DeviceIcon}
+          alt="user"
+          style={{ marginRight: "0.8em" }}
+          width={"20"}
+        />
         Select Device
       </Link>
       <Button style={ButtonOKStyle}>OK</Button>
