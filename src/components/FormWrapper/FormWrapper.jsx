@@ -26,7 +26,7 @@ const FormSection = styled.div`
   position: relative;
 `;
 
-const FormWrapper = ({ children1, children2 }) => {
+const FormWrapper = ({ children1 = null, children2 = null }) => {
   return (
     <Wrapper>
       <InfoSection>{children1}</InfoSection>

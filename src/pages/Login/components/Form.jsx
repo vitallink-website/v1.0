@@ -2,7 +2,6 @@ import styled from "styled-components";
 import Icon from "../../../assets/svg/hekidesk-green.svg";
 import UserIcon from "../../../assets/icon/user.svg";
 import { Image } from "primereact/image";
-import { Link } from "react-router-dom";
 import { Button } from "primereact/button";
 
 const Container = styled.div`
@@ -31,22 +30,18 @@ const LogoRow = styled.div`
 const ButtonStyle = {
   backgroundColor: "var(--title-color)",
   borderColor: "var(--title-color)",
-  color: "white",
-  fontSize: "28em",
+  fontSize: "32em",
   width: "100%",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  padding: "0.6em 1.2em",
-  borderRadius: "6px",
-  textDecoration: "auto",
-  margin: "1.2em 0",
+  margin: "1em 0",
 };
 
 const ButtonOKStyle = {
   backgroundColor: "white",
   border: "2px solid var(--title-color)",
-  fontSize: "28em",
+  fontSize: "32em",
   width: "100%",
   display: "flex",
   alignItems: "center",
@@ -63,14 +58,14 @@ const HomeForm = () => {
         <Title>Hekidesk</Title>
       </LogoRow>
       <Text>Home</Text>
-      <Link to="/login" style={ButtonStyle}>
+      <Button style={ButtonStyle}>
         <img src={UserIcon} alt="user" style={{ marginRight: "1em" }} />
         Select User
-      </Link>
-      <Link to="/device" style={ButtonStyle}>
+      </Button>
+      <Button style={ButtonStyle}>
         <img src={UserIcon} alt="user" style={{ marginRight: "1em" }} />
         Select Device
-      </Link>
+      </Button>
       <Button style={ButtonOKStyle}>OK</Button>
     </Container>
   );
