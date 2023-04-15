@@ -3,9 +3,17 @@
   src: url(./assets/font/OpenSans-Regular.ttf);
 }
 
+
+
 :root {
+  --nav-color-top: #139FD5;
+  --nav-color-bottom: #7ADEE3;
   --bg-color: #d7ecf8;
   --title-color: #2cafa4;
+  --black: #09090c;
+  --grey: #a4b2bc;
+  --white: #fff;
+  --background: rgba(137, 171, 245, 0.37);
 }
 
 body,
@@ -19,3 +27,12 @@ body,
 body {
   background-color: var(--bg-color);
 }
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
