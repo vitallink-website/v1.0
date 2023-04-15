@@ -148,7 +148,7 @@ const Oximetry = () => {
                     )
                   }
                 >
-                  {filterActiveNum % 2 ? "Filterd" : "main"} signal
+                  {filterActiveNum % 2 ?  "main" : "Filterd"} signal
                 </Button>
               </Col>
             </Row>

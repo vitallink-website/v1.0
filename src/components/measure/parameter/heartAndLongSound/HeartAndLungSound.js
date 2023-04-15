@@ -1,6 +1,6 @@
 import React from "react";
 import { Row, Col, Button, Dropdown, DropdownButton } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useAsyncError } from "react-router-dom";
 import MeasureBase from "../../../MeasureBase/MeasureBase";
 import { useState } from "react";
 import { shareData } from "../../share/Share";
@@ -10,6 +10,12 @@ import axios from "axios";
 
 function HeartAndLungSound() {
   const [sound, setSound] = useState([]);
+  const [filterdSound, setFilterdSound] = useState([]);
+  const [heartSound, setHeartSound] = useState([]);
+  const [preHeartSound, setPreHeartSound] = useState([]);
+  const [lungSound, setLungSound] = useState([]);
+  const [preLungSound, setPreLungSound] = useState([]);
+
   const [heartBeat, setHeartBeat] = useState(0);
   const [respirationRate, setRespirationRate] = useState(0);
   const [qualityIndex, setQualityIndex] = useState(0);
@@ -17,6 +23,7 @@ function HeartAndLungSound() {
   const [filterActiveNum, setFilterActiveNum] = useState(0);
   const [saved, setSaved] = useState(0);
   const [fs, setFs] = useState(0);
+  const [position, setPosition] = useState("heart");
 
   const flushDatas = () => {
     setSaved(0);
@@ -39,19 +46,7 @@ function HeartAndLungSound() {
     setRespirationRate(signal_output[1]);
     setQualityIndex(signal_output[2]);
 
-    return [
-      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-      [2, 4, 6, 8, 10, 12, 14, 16, 18, 20],
-      [5, 10, 15, 20, 25, 30, 35, 40, 45, 50],
-      [3, 6, 9, 12, 15, 18, 21, 24, 27, 30],
-      [4, 8, 12, 16, 20, 24, 28, 32, 36, 40],
-    ];
-
-    // return [Array.from(signal_output[4]), //pcg_filtered
-    //         Array.from(signal_output[5]), //heart_signal
-    //         Array.from(signal_output[6]), //lung_signal
-    //         Array.from(signal_output[7]), //heart_signal_snr
-    //         Array.from(signal_output[8])];//lung_signal_snr
+    return [];
   }
 
   async function getDataAPI(data, fs) {
@@ -59,7 +54,8 @@ function HeartAndLungSound() {
       pcg: "[" + data.toString() + "]",
       fs: fs,
     };
-    let res = await axios.post("http://127.0.0.1:5000//PCG_signal", payload);
+    let addr = (position === 'heart') ? "http://127.0.0.1:5000//PCG_signal/heart" : "http://127.0.0.1:5000//PCG_signal/optional";
+    let res = await axios.post(addr, payload);
     return res.data;
   }
 
@@ -72,43 +68,47 @@ function HeartAndLungSound() {
       setHeartBeat(res.heart_rate);
       setRespirationRate(res.respiration_rate);
       setQualityIndex(res.lung_quality_ind);
-      return [
-        res.pcg_filtered
-          .slice(1, -1)
-          .replace(/\n/g, " ")
-          .split(/\b\s+/)
-          .map(function (item) {
-            return Number(item);
-          }),
-        res.heart_signal_pre
-          .slice(1, -1)
-          .replace(/\n/g, " ")
-          .split(/\b\s+/)
-          .map(function (item) {
-            return Number(item);
-          }),
-        res.heart_signal
-          .slice(1, -1)
-          .replace(/\n/g, " ")
-          .split(/\b\s+/)
-          .map(function (item) {
-            return Number(item);
-          }),
-        res.lung_signal_pre
-          .slice(1, -1)
-          .replace(/\n/g, " ")
-          .split(/\b\s+/)
-          .map(function (item) {
-            return Number(item);
-          }),
-        res.lung_signal
-          .slice(1, -1)
-          .replace(/\n/g, " ")
-          .split(/\b\s+/)
-          .map(function (item) {
-            return Number(item);
-          }),
-      ];
+      const filterdSound = res.pcg_filtered
+        .slice(1, -1)
+        .replace(/\n/g, " ")
+        .split(/\b\s+/)
+        .map(function (item) {
+          return Number(item);
+        });
+      const preHeartSound = res.heart_signal_pre
+        .slice(1, -1)
+        .replace(/\n/g, " ")
+        .split(/\b\s+/)
+        .map(function (item) {
+          return Number(item);
+        });
+      const heartSound = res.heart_signal
+        .slice(1, -1)
+        .replace(/\n/g, " ")
+        .split(/\b\s+/)
+        .map(function (item) {
+          return Number(item);
+        });
+      const preLungSound = res.lung_signal_pre
+        .slice(1, -1)
+        .replace(/\n/g, " ")
+        .split(/\b\s+/)
+        .map(function (item) {
+          return Number(item);
+        });
+      const lungSound = res.lung_signal
+        .slice(1, -1)
+        .replace(/\n/g, " ")
+        .split(/\b\s+/)
+        .map(function (item) {
+          return Number(item);
+        });
+      setFilterdSound(filterdSound);
+      setPreHeartSound(preHeartSound);
+      setHeartSound(heartSound);
+      setPreLungSound(preLungSound);
+      setLungSound(lungSound);
+      return [filterdSound, preHeartSound, heartSound, preLungSound, lungSound];
     });
   }
 
@@ -118,8 +118,15 @@ function HeartAndLungSound() {
   }
 
   async function playAudio() {
+    const finalSound = (filterActiveNum === 0) ? sound :
+                       (filterActiveNum === 1) ? filterdSound : 
+                       (filterActiveNum === 2) ? preHeartSound :
+                       (filterActiveNum === 3) ? heartSound :
+                       (filterActiveNum === 4) ? preLungSound :
+                       (filterActiveNum === 5) ? lungSound : sound;
+    console.log(finalSound)
     let payload = {
-      sound: "[" + sound.toString() + "]",
+      sound: "[" + finalSound.toString() + "]",
       fs: fs,
     };
     let res = await axios.post("http://127.0.0.1:5000/rcv_audio", payload);
@@ -134,7 +141,7 @@ function HeartAndLungSound() {
         type: "audio/x-wav",
       });
       const url = URL.createObjectURL(blob);
-      let audio = new Audio(url)
+      let audio = new Audio(url);
       audio.play();
     }
   }
@@ -157,7 +164,7 @@ function HeartAndLungSound() {
           <>
             <h2 className="measure-title">Heart and Lung Sound</h2>
             <Row style={{ display: "flex", alignItems: "center" }}>
-              <Col md={4}>
+              <Col md={2}>
                 <h5 className="measure-title">
                   put the microphone on your heart position and press
                 </h5>
@@ -165,10 +172,21 @@ function HeartAndLungSound() {
               <Col md={2}>
                 <Button onClick={openModal}>Start</Button>
               </Col>
+              <Col md={2}>
+                <DropdownButton id="dropdown-basic-button" title="Position">
+                  <Dropdown.Item active = {position === "heart"} onClick={() => setPosition("heart")}>
+                    heart
+                  </Dropdown.Item>
+                  <Dropdown.Item active = {position === "optional"} onClick={() => setPosition("optional")}>
+                    optional
+                  </Dropdown.Item>
+                </DropdownButton>
+              </Col>
               <Col md={3}>
                 <DropdownButton
                   id="dropdown-basic-button"
                   title="Choose signal"
+                  disabled={heartBeat === ""}
                 >
                   <Dropdown.Item
                     onClick={() => handleChange(4, changeFilterShow)}
@@ -192,6 +210,7 @@ function HeartAndLungSound() {
               </Col>
               <Col md={3}>
                 <Button
+                  disabled={heartBeat === ""}
                   onClick={() =>
                     handleChange(
                       filterActiveNum % 2
