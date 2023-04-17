@@ -31,6 +31,8 @@ function MeasureBase({
   const [filteredData, setFilteredData] = useState();
   const [sampleTime, setTime] = useState(10);
 
+  const [funcCall, setFuncCall] = useState(false);
+
   const [show, setShow] = useState(false);
   const closeModal = () => setShow(false);
   const openModal = () => setShow(true);
@@ -60,7 +62,6 @@ function MeasureBase({
   const endTime = useRef(null);
 
   const hanldeCallback = (inputs) => {
-    console.log("hey: " + active);
     if (active === 1) {
       KEYS.map((key) => {
         if (values.includes(key)) {
@@ -76,6 +77,9 @@ function MeasureBase({
         pcg: temp.pcg,
         temperature: temp.temperature,
       });
+    }
+    else if(active === 0) {
+      setFuncCall(1);
     }
   };
 
@@ -93,10 +97,11 @@ function MeasureBase({
   }, []);
 
   useEffect(() => {
+    hanldeCallback(data);
     if (active === 1) {
       closeModal();
       setLoading(false);
-    } else if (active === 0) {
+    } else if (active === 0 && funcCall == 1) {
       console.log("here");
       action({
         data: data,
@@ -107,7 +112,7 @@ function MeasureBase({
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active]);
+  }, [active, funcCall]);
 
   useEffect(() => {
     return bluetooth.turnOff;
@@ -126,7 +131,6 @@ function MeasureBase({
     }, [pendingTime]);
     endTime.current = setTimeout(() => {
       setActive(active => 1-active);
-      console.log("end of time " + active);
       bluetooth.stop();
     }, [sampleTime * 1000 + pendingTime]);
   };
@@ -151,7 +155,6 @@ function MeasureBase({
         return data[key].slice(start, data[key].length);
       }
       if (active === 0) {
-        console.log(data[key].length);
         return data[key];
       }
     }
