@@ -53,8 +53,8 @@ const Diagram = ({
       labelFontFamily: "system-ui",
       gridThickness: 0,
       tickThickness: 0,
-      labelFormatter: function(e) { 
-        return "";
+      labelFormatter: dataKey === "temperature" ? "" : function(e) { 
+        return "" ;
       }
     },
     axisX: {
