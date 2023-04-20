@@ -32,21 +32,26 @@ function HeartAndLungSound() {
     setRespirationRate("");
   };
 
+  function makeArrayFormString(arr) {
+    return arr.slice(1, -1)
+    .replace(/\n/g, " ")
+    .split(/\b\s+/)
+    .map(function (item) {
+      return Number(item);
+    });
+  }
+
   async function calculate(inputs) {
     console.log(inputs.data);
-    console.log(inputs.freq);
-    setSound(inputs.data.pcg);
-
-    const signal_output = Array.from(
-      // eslint-disable-next-line no-undef
-      await PCG_signal_processing(inputs.data.pcg, inputs.freq)
+    let payload = {
+      pcg: "[" + inputs.data.pcg + "]",
+      fs: inputs.freq,
+    };
+    let res = await axios.post(
+      "http://127.0.0.1:5000//PCG_signal/heart",
+      payload
     );
-    console.log(signal_output);
-    setHeartBeat(signal_output[0]);
-    setRespirationRate(signal_output[1]);
-    setQualityIndex(signal_output[2]);
-
-    return [];
+    console.log(res);
   }
 
   async function getDataAPI(data, fs) {
@@ -54,7 +59,10 @@ function HeartAndLungSound() {
       pcg: "[" + data.toString() + "]",
       fs: fs,
     };
-    let addr = (position === 'heart') ? "http://127.0.0.1:5000//PCG_signal/heart" : "http://127.0.0.1:5000//PCG_signal/optional";
+    let addr =
+      position === "heart"
+        ? "http://127.0.0.1:5000//PCG_signal/heart"
+        : "http://127.0.0.1:5000//PCG_signal/optional";
     let res = await axios.post(addr, payload);
     return res.data;
   }
@@ -68,41 +76,11 @@ function HeartAndLungSound() {
       setHeartBeat(res.heart_rate);
       setRespirationRate(res.respiration_rate);
       setQualityIndex(res.lung_quality_ind);
-      const filterdSound = res.pcg_filtered
-        .slice(1, -1)
-        .replace(/\n/g, " ")
-        .split(/\b\s+/)
-        .map(function (item) {
-          return Number(item);
-        });
-      const preHeartSound = res.heart_signal_pre
-        .slice(1, -1)
-        .replace(/\n/g, " ")
-        .split(/\b\s+/)
-        .map(function (item) {
-          return Number(item);
-        });
-      const heartSound = res.heart_signal
-        .slice(1, -1)
-        .replace(/\n/g, " ")
-        .split(/\b\s+/)
-        .map(function (item) {
-          return Number(item);
-        });
-      const preLungSound = res.lung_signal_pre
-        .slice(1, -1)
-        .replace(/\n/g, " ")
-        .split(/\b\s+/)
-        .map(function (item) {
-          return Number(item);
-        });
-      const lungSound = res.lung_signal
-        .slice(1, -1)
-        .replace(/\n/g, " ")
-        .split(/\b\s+/)
-        .map(function (item) {
-          return Number(item);
-        });
+      const filterdSound = makeArrayFormString(res.pcg_filtered);
+      const preHeartSound = makeArrayFormString(res.heart_signal_pre);
+      const heartSound = makeArrayFormString(res.heart_signal);
+      const preLungSound = makeArrayFormString(res.lung_signal_pre);
+      const lungSound = makeArrayFormString(res.lung_signal);
       setFilterdSound(filterdSound);
       setPreHeartSound(preHeartSound);
       setHeartSound(heartSound);
@@ -118,13 +96,21 @@ function HeartAndLungSound() {
   }
 
   async function playAudio() {
-    const finalSound = (filterActiveNum === 0) ? sound :
-                       (filterActiveNum === 1) ? filterdSound : 
-                       (filterActiveNum === 2) ? preHeartSound :
-                       (filterActiveNum === 3) ? heartSound :
-                       (filterActiveNum === 4) ? preLungSound :
-                       (filterActiveNum === 5) ? lungSound : sound;
-    console.log(finalSound)
+    const finalSound =
+      filterActiveNum === 0
+        ? sound
+        : filterActiveNum === 1
+        ? filterdSound
+        : filterActiveNum === 2
+        ? preHeartSound
+        : filterActiveNum === 3
+        ? heartSound
+        : filterActiveNum === 4
+        ? preLungSound
+        : filterActiveNum === 5
+        ? lungSound
+        : sound;
+    console.log(finalSound);
     let payload = {
       sound: "[" + finalSound.toString() + "]",
       fs: fs,
@@ -174,10 +160,16 @@ function HeartAndLungSound() {
               </Col>
               <Col md={2}>
                 <DropdownButton id="dropdown-basic-button" title="Position">
-                  <Dropdown.Item active = {position === "heart"} onClick={() => setPosition("heart")}>
+                  <Dropdown.Item
+                    active={position === "heart"}
+                    onClick={() => setPosition("heart")}
+                  >
                     heart
                   </Dropdown.Item>
-                  <Dropdown.Item active = {position === "optional"} onClick={() => setPosition("optional")}>
+                  <Dropdown.Item
+                    active={position === "optional"}
+                    onClick={() => setPosition("optional")}
+                  >
                     optional
                   </Dropdown.Item>
                 </DropdownButton>
