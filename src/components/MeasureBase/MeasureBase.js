@@ -102,7 +102,6 @@ function MeasureBase({
       closeModal();
       setLoading(false);
     } else if (active === 0 && funcCall == 1) {
-      console.log("here");
       action({
         data: data,
         time: Math.ceil(bluetooth.GetTime()),
