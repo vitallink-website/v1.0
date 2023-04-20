@@ -218,6 +218,8 @@ function MeasureBase({
         show={show}
         closeModal={closeModal}
         autoStart={startInput}
+        message = {values.includes("pcg") ? "put the microphone on your selected position and press" :
+                                            "Put your hand on the device, after calibration it start its process"}
       />
       {children()}
       {bluetooth.isConnected ? (
