@@ -1,56 +1,45 @@
-import * as saveSvgAsPng from "save-svg-as-png";
 import { jsPDF } from "jspdf";
 
-export function prepareSvgFile(texts) {
-  const svg = document.querySelector(".recharts-surface");
-  const svgNS = "http://www.w3.org/2000/svg";
-  if (texts !== "") {
-    let newText = document.createElementNS(svgNS, "text");
-    newText.setAttributeNS(null, "x", 60);
-    newText.setAttributeNS(null, "y", 450);
-    newText.setAttributeNS(null, "font-size", "28");
-    newText.setAttributeNS(null, "font-family", "cursive");
-    texts.map((text) => {
-      let tspan = document.createElement("tspan");
-      tspan.setAttribute("x", "60");
-      tspan.setAttribute("dy", "2em");
-      tspan.textContent = text;
-      newText.appendChild(tspan);
-      return "";
-    });
-    svg.appendChild(newText);
-  }
-  return svg;
+export function prepareURLFile(queryName, texts) {
+  var oldCanvas = document.querySelector(queryName)
+  var newCanvas = document.createElement('canvas');
+  var context = newCanvas.getContext('2d');
+
+  //set dimensions
+  newCanvas.width = oldCanvas.width;
+  newCanvas.height = oldCanvas.height + 200;
+  context.fillStyle = "white";
+  context.fillRect(0, 0, newCanvas.width, newCanvas.height);
+
+  context.drawImage(oldCanvas, 0, 0);
+  var yPosition = 50;
+  texts.map((text) => {
+    context.fillStyle = "black";
+    context.font = "25px Comic Sans MS";
+    context.fillText(text, 50, oldCanvas.height + yPosition);
+    yPosition += 50;
+  });
+  var dataURL = newCanvas.toDataURL("image/jpeg", 1.0);
+  return dataURL;
+}
+
+function downloadImage(data, filename = 'untitled.jpeg') {
+  var a = document.createElement('a');
+  a.href = data;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
 }
 
 export function downloadSVGAsPNG(e, dataKey, texts) {
-  const svg = prepareSvgFile(texts);
+  var dataURL = prepareURLFile('#chartContainer canvas', texts); 
   const fileName = dataKey + ".png";
-  saveSvgAsPng.saveSvgAsPng(svg, fileName, {
-    scale: 2.0,
-    backgroundColor: "white",
-    width: "1500",
-    height: "800",
-    top: "-100",
-    left: "25",
-  });
+  downloadImage(dataURL, fileName);
 }
 
 export function downloadPDFAsPNG(e, dataKey, texts) {
-  const element = prepareSvgFile(texts);
+  var dataURL = prepareURLFile('#chartContainer canvas', texts); 
   const fileName = dataKey + ".pdf";
-
-  saveSvgAsPng
-    .svgAsPngUri(element, {
-      scale: 2.0,
-      backgroundColor: "white",
-      width: "1500",
-      height: "800",
-      top: "-100",
-      left: "25",
-    })
-    .then((dataUrl) => {
-      const doc = new jsPDF();
-      doc.addImage(dataUrl, "png", 0, 10, 200, 100).save(fileName);
-    });
+  const doc = new jsPDF();
+  doc.addImage(dataURL, "png", 0, 10, 200, 100).save(fileName);
 }
