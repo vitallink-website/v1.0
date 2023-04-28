@@ -7,17 +7,12 @@ import { useState } from "react";
 import { ButtonStyle } from "../../../components/reusable/ButtonStyle";
 import { Link } from "react-router-dom";
 import { ContainerWithoutHeight } from "../../../components/reusable/Container";
+import { Text } from "../../../components/reusable/Text";
 
 const Title = styled.h1`
   font-size: 36px;
   color: var(--title-color);
   margin-left: 0.2em;
-`;
-
-const Text = styled.h5`
-  font-size: 24px;
-  margin: 1.5em;
-  color: var(--title-color);
 `;
 
 const LogoRow = styled.div`

@@ -1,10 +1,9 @@
 import styled from "styled-components";
 import Icon from "../../../assets/svg/hekidesk-transparent.svg";
-import BluetoothIcon from "../../../assets/icon/bluetooth.svg";
 import HeartbeatIcon from "../../../assets/icon/heartbeat.svg";
-import StethoscopeIcon from "../../../assets/icon/stethoscope.svg";
 import SearchIcon from "../../../assets/icon/question.svg";
 import { Image } from "primereact/image";
+import { Text } from "../../../components/reusable/Text";
 
 const ImageWrapper = styled.span`
   position: absolute;
@@ -23,13 +22,6 @@ const QuestionWrapper = styled.span`
   height: auto;
   overflow: hidden;
   cursor: pointer;
-`;
-
-const Text = styled.h4`
-  margin-top: 1em;
-  font-size: 28px;
-  font-weight: bold;
-  color: white;
 `;
 
 const List = styled.ul`
@@ -52,17 +44,9 @@ const ListItems = styled.li`
 const InfoHome = () => {
   return (
     <span>
-      <Text>Smart Listening Device - Smart Activity Fitness Tracker</Text>
+      <Text>Smart Device</Text>
       <List>
-        <ListItems>
-          <Image
-            src={StethoscopeIcon}
-            alt="Image"
-            width="14px"
-            style={{ margin: "0em 1em" }}
-          />
-          AMAZING AUSCULTATION EXPERIENCE
-        </ListItems>
+       
         <ListItems>
           <Image
             src={HeartbeatIcon}
@@ -72,15 +56,7 @@ const InfoHome = () => {
           />
           PERSONAL HEALTH MONITORING
         </ListItems>
-        <ListItems>
-          <Image
-            src={BluetoothIcon}
-            alt="Image"
-            width="10px"
-            style={{ margin: "0em 1em" }}
-          />
-          BLUETOOTH CONNECTION
-        </ListItems>
+     
       </List>
       <ImageWrapper>
         <Image src={Icon} alt="icon" width="100%" />

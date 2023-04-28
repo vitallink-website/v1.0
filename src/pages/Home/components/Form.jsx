@@ -4,21 +4,10 @@ import UserIcon from "../../../assets/icon/user.svg";
 import DeviceIcon from "../../../assets/icon/device.svg";
 import { Image } from "primereact/image";
 import { Link } from "react-router-dom";
-import { Button } from "primereact/button";
 import { ButtonStyle } from "../../../components/reusable/ButtonStyle";
 import { ContainerWithoutHeight } from "../../../components/reusable/Container";
-
-const Title = styled.h1`
-  font-size: 36px;
-  color: var(--title-color);
-  margin-left: 0.2em;
-`;
-
-const Text = styled.h5`
-  font-size: 24px;
-  margin: 0.8em;
-  color: var(--title-color);
-`;
+import { Text } from "../../../components/reusable/Text";
+import { Title } from "../../../components/reusable/Title";
 
 const LogoRow = styled.div`
   display: flex;
@@ -37,6 +26,7 @@ const ButtonOKStyle = {
   margin: "1em 0",
   color: "var(--title-color)",
   padding: "0.4em 0.6em",
+  textDecoration: "none",
 };
 
 const HomeForm = () => {
@@ -65,7 +55,9 @@ const HomeForm = () => {
         />
         Select Device
       </Link>
-      <Button style={ButtonOKStyle}>OK</Button>
+      <Link to="/base" style={ButtonOKStyle}>
+        Go to Measurement
+      </Link>
     </ContainerWithoutHeight>
   );
 };

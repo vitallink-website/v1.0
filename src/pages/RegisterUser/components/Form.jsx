@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Dropdown } from "primereact/Dropdown";
 import { InputTextGroup } from "../../../components/reusable/InputTextGroup";
 import { ContainerWithoutHeight } from "../../../components/reusable/Container";
+import { useNavigate } from "react-router-dom";
 
 const Title = styled.h1`
   font-size: 36px;
@@ -17,7 +18,16 @@ const Title = styled.h1`
 const LogoRow = styled.div`
   display: flex;
   align-items: center;
-  margin-top: 1em;
+`;
+
+const Row = styled.div`
+  display: flex;
+  width: 100%;
+  gap: 20px;
+`;
+
+const Col = styled.div`
+  width: 50%;
 `;
 
 const RegisterForm = () => {
@@ -29,6 +39,9 @@ const RegisterForm = () => {
     gender: 0,
   });
   const onChangeValue = (n, v) => setForm({ ...form, [n]: v });
+
+  const history = useNavigate();
+
   return (
     <ContainerWithoutHeight>
       <LogoRow>
@@ -79,9 +92,16 @@ const RegisterForm = () => {
           placeholder="Select a gender"
         />
       </div>
-
-      <br />
-      <Button style={ButtonStyle}>Sign in</Button>
+      <Row>
+        <Col>
+          <Button style={ButtonStyle} onClick={() => history(-1)}>
+            back
+          </Button>
+        </Col>
+        <Col>
+          <Button style={ButtonStyle}>Sign in</Button>
+        </Col>
+      </Row>
     </ContainerWithoutHeight>
   );
 };

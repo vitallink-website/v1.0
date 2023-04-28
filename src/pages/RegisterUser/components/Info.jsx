@@ -17,7 +17,6 @@ const RegisterInfo = () => {
     <span>
       <br />
       <br />
-      <br />
       <Text>Create new account</Text>
       <ImageWrapper>
         <Image src={Icon} alt="icon" width="100%" />
