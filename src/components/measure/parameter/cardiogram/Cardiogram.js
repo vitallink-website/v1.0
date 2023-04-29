@@ -5,7 +5,6 @@ import { shareData } from "../../share/Share";
 import MeasureBase from "../../../MeasureBase/MeasureBase";
 import { useAddToDB } from "../../../../utilities/AddToDB";
 import { FcCheckmark } from "react-icons/fc";
-import { set } from "rsuite/esm/utils/dateUtils";
 import AbnormalityDetection from "./AbnormalityDetection";
 import Swal from "sweetalert2";
 import axios from "axios";
@@ -36,14 +35,13 @@ function Cardiogram() {
   ];
 
   function makePQRST(ps, qs, rs, ss, ts) {
-    console.log(ps)
     let newArr = [];
     for (const p of ps) newArr.push({ x: Number(p), color: "red" });
     for (const q of qs) newArr.push({ x: Number(q), color: "blue" });
     for (const r of rs) newArr.push({ x: Number(r), color: "black" });
     for (const s of ss) newArr.push({ x: Number(s), color: "white" });
     for (const t of ts) newArr.push({ x: Number(t), color: "orange" });
-    console.log("newParr: " + JSON.stringify(newArr));
+    // console.log("newParr: " + JSON.stringify(newArr));
     return newArr;
   }
 
@@ -79,13 +77,11 @@ function Cardiogram() {
 
       setSsTime(makeArrayFormString(res.data.ss_time));
       setSingleSpike(makeArrayFormString(res.data.single_spike));
-      console.log(res.data.PQRST_ss)
       setPQRST_ss(makeArrayFormString(res.data.PQRST_ss));
       setHrv(makeArrayFormString(res.data.hrv));
       setHrvVal(res.data.hrv_val);
       setArrythmiaType(parseInt(res.data.arrhythmia_type_PQRST));
       let filterd_signal = makeArrayFormString(res.data.ECG_filtered);
-      console.log(filterd_signal)
       return [filterd_signal];
     }
     else {
@@ -219,7 +215,11 @@ function Cardiogram() {
                       "Heart beat: " + heartBeat,
                       "PR/RR Interval: " + PR_RR_Interval,
                       "QRS Duration: " + QRS_Duration,
-                    ])
+                    ], 
+                    ['#chartContainerAbnormality1 canvas', '#chartContainerAbnormality2 canvas'],
+                    [ ["hrv: " + hrvVal],
+                      ["Arrythmia Type: " + types[ArrythmiaType]]]
+                    )
                   }
                 >
                   output

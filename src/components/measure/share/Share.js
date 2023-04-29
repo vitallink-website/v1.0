@@ -5,15 +5,12 @@ import {
 } from "../../../utilities/time";
 import { prepareURLFile } from "../../../utilities/downloadFile";
 
-export function shareCardiogramData(dataName, texts) {
 
-}
-
-export async function shareData(dataName, texts) {
+export async function shareData(dataName, texts, extraChartName = [], extraText = []) {
   const showTime1 = GetCurrentDateTime();
   const showTime2 = GetCurrentDateTimeForFileName();
 
-  var dataURL = prepareURLFile(texts);
+  var dataURL = prepareURLFile(texts, extraChartName, extraText);
   const fileName = showTime2 + "-" + dataName + ".png";
   const file = await (await fetch(dataURL)).blob();
   const image = new File([file], fileName, { type: file.type });
@@ -28,4 +25,5 @@ export async function shareData(dataName, texts) {
     }
   } else
     console.log("This device does not support sharing files.");
+
 }

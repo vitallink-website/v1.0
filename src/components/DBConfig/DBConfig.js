@@ -3,6 +3,15 @@ export const DBUser = {
   version: 7,
   objectStoresMeta: [
     {
+      store: "PCGData",
+      storeConfig: { keyPath: "dateAndId", autoIncrement: false },
+      storeSchema: [
+        { name: "userId", keypath: "userId", options: { unique: false } },
+        { name: "heartBeatSound", keypath: "heartBeatSound", options: { unique: false } },
+        { name: "respirationRate", keypath: "respirationRate", options: { unique: false } },
+      ],
+    },
+    {
       store: "cardiogramData",
       storeConfig: { keyPath: "dateAndId", autoIncrement: false },
       storeSchema: [
@@ -27,14 +36,6 @@ export const DBUser = {
       storeSchema: [
         { name: "userId", keypath: "userId", options: { unique: false } },
         { name: "SYS_DIA", keypath: "SYS_DIA", options: { unique: false } },
-      ],
-    },
-    {
-      store: "PCGData",
-      storeConfig: { keyPath: "dateAndId", autoIncrement: false },
-      storeSchema: [
-        { name: "userId", keypath: "userId", options: { unique: false } },
-        { name: "PCG", keypath: "PCG", options: { unique: false } },
       ],
     },
     {
