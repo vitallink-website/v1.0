@@ -8,7 +8,7 @@ export const MeasureModal = ({ loading, show, closeModal, autoStart, message }) 
       </Modal.Header>
       {loading ? (
         <Modal.Body style={{ display: "flex", alignItems: "center" }}>
-          Please Hold your finger until plotting starts!
+          Please wait until plotting starts!
           <Spinner animation="border" />
         </Modal.Body>
       ) : (

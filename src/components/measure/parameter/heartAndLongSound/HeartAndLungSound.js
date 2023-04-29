@@ -7,6 +7,7 @@ import { shareData } from "../../share/Share";
 import { AiFillPlayCircle } from "react-icons/ai";
 import { useAddToDB } from "../../../../utilities/AddToDB";
 import axios from "axios";
+import { FcCheckmark } from "react-icons/fc";
 
 function HeartAndLungSound() {
   const [sound, setSound] = useState([]);
@@ -27,18 +28,29 @@ function HeartAndLungSound() {
 
   const flushDatas = () => {
     setSaved(0);
+    setFilterActiveNum(0);
     setQualityIndex("");
     setHeartBeat("");
     setRespirationRate("");
   };
 
   function makeArrayFormString(arr) {
-    return arr.slice(1, -1)
-    .replace(/\n/g, " ")
-    .split(/\b\s+/)
-    .map(function (item) {
-      return Number(item);
-    });
+    return arr
+      // .slice(1, -1)
+      // .replace(/\n/g, " ")
+      // .split(/\b\s+/)
+      .split(" ")
+      .map(function (item) {
+        return Number(item);
+      });
+  }
+
+  function addToDB() {
+    var dataParameter = {};
+    dataParameter["heartBeatSound"] = heartBeat;
+    dataParameter["respirationRate"] = respirationRate;
+    dbFunc.updateHistory(dataParameter);
+    setSaved(1);
   }
 
   async function calculate(inputs) {
@@ -184,13 +196,13 @@ function HeartAndLungSound() {
                     onClick={() => handleChange(4, changeFilterShow)}
                     active={filterActiveNum === 4 || filterActiveNum === 5}
                   >
-                    heart
+                  lung
                   </Dropdown.Item>
                   <Dropdown.Item
                     onClick={() => handleChange(2, changeFilterShow)}
                     active={filterActiveNum === 2 || filterActiveNum === 3}
-                  >
-                    lung
+                    >
+                    heart
                   </Dropdown.Item>
                   <Dropdown.Item
                     onClick={() => handleChange(0, changeFilterShow)}
@@ -265,9 +277,9 @@ function HeartAndLungSound() {
                 </Button>
               </Col>
               <Col>
-                <Link to="/">
-                  <Button>Save</Button>
-                </Link>
+                <Button disabled={heartBeat === ""} onClick={() => addToDB()}>
+                  Save {saved ? <FcCheckmark /> : ""}
+                </Button>
               </Col>
             </Row>
           </>
