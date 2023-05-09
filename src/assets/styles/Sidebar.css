@@ -1,0 +1,196 @@
+.sidebar-container{
+  background-image: linear-gradient(var(--nav-color-top),  var(--nav-color-bottom));
+  width: 6.5rem;
+  height: 95vh;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  transition:all .6s ease;
+}
+
+.sidebar{
+  margin-right: 145px !important;
+}
+
+@media (max-width: 960px) {
+  .sidebar-container{ 
+    height: 70vh;
+  }
+  .sidebar{
+    margin-right: 175px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .sidebar-container{
+    position: fixed;
+    bottom: 0;
+    width: calc(100vw - 4rem) !important;
+    height: 8vh;
+    z-index: 1;
+    right: 2rem;
+    left: 2rem;
+    border-radius: 20px 20px 0 0;
+    transition:all .001s ease;
+  }
+  .sidebar-container a{
+    display: inline-block !important;
+    margin: 0.5rem;
+  }
+  .sidebar{
+    margin-right: 175px !important;
+  }
+  .SlickBar{
+    display: flex;
+    flex-direction: row !important;
+    top: 0 !important;
+  } 
+  .logo{
+    width: 20% !important;
+    transition: all 0.5s ease;
+    margin-bottom: 0 !important;
+  }
+  .logo-text{
+    margin-top: 0px !important;
+  }
+  .sidebar-text{
+    display: none;
+  }
+  .sidebar{
+    margin-right: 0 !important;
+  }
+  .sidebar-container a:hover{
+    border-radius: 35px !important;
+    width: 3.5rem !important;
+    transition:all 0.1s ease;
+  }
+}
+
+.sidebar-container:hover{
+  width: 13rem;
+  transition:all 0.4s ease;
+}
+
+.sidebar-container a{
+  text-decoration: none;
+  color: var(--white);
+  padding: 1.2rem 0;
+  cursor: pointer;
+  display: flex;
+  padding-left: 1rem;
+  transition:all 0.1s ease;
+}
+
+.sidebar-container a:hover{
+  background-color: white;
+  border-radius: 35px 0px 0px 35px;
+  color: var(--nav-color-top) !important;
+  padding-right: 7px;
+  border-right: 2px solid var(--white);
+  width: 11.575rem;
+  transition:all 0.1s ease;
+}
+
+.sidebar-container a:hover img 
+{
+  filter: invert(49%) sepia(73%) saturate(563%) hue-rotate(150deg) brightness(93%) contrast(93%);;
+}
+
+.logo{
+  width: 100%;
+  transition: all 0.5s ease;
+  margin-bottom: 2.5rem;
+}
+
+.logo img{
+  margin-left: 0.8rem;
+  transition: all 0.5s ease !important;
+}
+
+.logo .logo-text{
+  margin-top: 0.5rem;
+  transition: all 0.5s ease !important;
+}
+
+.sidebar-container:hover .logo .logo-text{
+  margin-left: 2.5rem;
+  transition: all 0.5s ease !important;
+}
+
+.sidebar-container:hover .logo img{
+  margin-left: 3.5rem;
+  transition: all 0.5s ease !important;
+}
+
+.SlickBar{
+  color: var(--white);
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  top: 2rem;
+  left: 1.2rem;
+  border-radius: 0 30px 30px 0;
+}
+
+.sidebar-text{
+  opacity: 0;
+  margin-left: 0;
+  transition: all 0.3s ease !important;
+}
+
+.sidebar-container:hover .sidebar-text{
+  width: 100%;
+  overflow: hidden;
+  opacity: 1;
+  margin-left: 1.5rem;
+  transition: all 0.5s ease !important;
+}
+
+.sidebar-btn{
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  background-color: transparent !important;
+  border: none !important;
+}
+
+.sidebar-item{
+  margin-left: 0.2rem;
+}
+
+.profile{
+  position: absolute;
+  right: 1.5rem;
+  top: 0.5rem;
+}
+
+.hello-profile{
+  padding-top: 8px;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+  color: #A8BEC5;
+}
+
+.name-profile{
+  font-style: normal;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 27px;
+  color: #68767A;
+}
+
+.profile-col{
+  padding-right: 0px !important;
+  padding-left: 0px !important;
+}
+
+.bell-profile{
+  margin-top: 15px !important;
+  margin-right: 15px !important;
+}

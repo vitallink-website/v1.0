@@ -1,0 +1,47 @@
+.box {
+  margin: 2rem;
+  position: relative;
+  padding: 2rem;
+  background-color: white;
+  min-height: calc(100vh - 4rem);
+  border-radius: 2rem;
+}
+
+
+
+.title-name {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 28.3324px;
+  line-height: 39px;
+  color: #1c6963;
+  margin-bottom: 15px;
+}
+
+.top-img {
+  max-width:100%;
+  margin-bottom: 25px;
+}
+
+.card {
+  margin-bottom: 30px;
+  background-color: #E8F0F4;
+  border: none;
+  height: 175px;
+}
+
+.card-text {
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 20px !important;
+  line-height: 27px;
+  align-items: center;
+}
+
+.record-text{
+  color: #68767A;
+  font-size: 12.8px;
+}
+
