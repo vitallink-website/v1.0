@@ -1,4 +1,3 @@
-import styled from "styled-components";
 import Icon from "../../../assets/svg/hekidesk-green.svg";
 import { Image } from "primereact/image";
 import { Button } from "primereact/button";
@@ -8,27 +7,8 @@ import { Dropdown } from "primereact/Dropdown";
 import { InputTextGroup } from "../../../components/reusable/InputTextGroup";
 import { ContainerWithoutHeight } from "../../../components/reusable/Container";
 import { useNavigate } from "react-router-dom";
+import { Col, LogoRow, Row, Title } from "./CSS";
 
-const Title = styled.h1`
-  font-size: 36px;
-  color: var(--title-color);
-  margin-left: 0.2em;
-`;
-
-const LogoRow = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const Row = styled.div`
-  display: flex;
-  width: 100%;
-  gap: 20px;
-`;
-
-const Col = styled.div`
-  width: 50%;
-`;
 
 const RegisterForm = () => {
   const [form, setForm] = useState({

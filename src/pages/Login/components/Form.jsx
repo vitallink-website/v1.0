@@ -1,4 +1,3 @@
-import styled from "styled-components";
 import Icon from "../../../assets/svg/hekidesk-green.svg";
 import { Image } from "primereact/image";
 import { Button } from "primereact/button";
@@ -8,18 +7,8 @@ import { ButtonStyle } from "../../../components/reusable/ButtonStyle";
 import { Link } from "react-router-dom";
 import { ContainerWithoutHeight } from "../../../components/reusable/Container";
 import { Text } from "../../../components/reusable/Text";
+import { LogoRow, Title } from "./CSS";
 
-const Title = styled.h1`
-  font-size: 36px;
-  color: var(--title-color);
-  margin-left: 0.2em;
-`;
-
-const LogoRow = styled.div`
-  display: flex;
-  align-items: center;
-  margin-top: 3em;
-`;
 
 const LoginForm = () => {
   const [selected, setSelected] = useState(null);

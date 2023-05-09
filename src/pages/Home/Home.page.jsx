@@ -1,13 +1,7 @@
-import styled from "styled-components";
 import FormWrapper from "../../components/FormWrapper/FormWrapper";
 import InfoHome from "./components/Info";
 import HomeForm from "./components/Form";
-
-const Container = styled.div`
-  display: grid;
-  place-items: center;
-  min-height: 100vh;
-`;
+import { Container } from "./components/CSS";
 
 const HomePage = () => {
   return (
