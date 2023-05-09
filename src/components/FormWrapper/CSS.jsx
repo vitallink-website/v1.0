@@ -3,7 +3,7 @@ import { devices } from "../../assets/styles/size";
 
 export const Wrapper = styled.div`
   width: 90%;
-  min-height: 95vh;
+  min-height: auto;
   background-color: white;
   padding: 1em;
   border-radius: 40px;
@@ -12,6 +12,7 @@ export const Wrapper = styled.div`
   @media ${devices.tablet} {
     flex-direction: row;
     height: 98vh;
+    min-height: 95vh;
   }
 `;
 
@@ -25,7 +26,7 @@ export const InfoSection = styled.div`
   overflow: hidden;
   @media ${devices.tablet} {
     width: 50%;
-    padding: 6em;
+    padding: 4em;
   }
 `;
 
@@ -35,7 +36,6 @@ export const FormSection = styled.div`
   height: 100%;
   border-radius: 30px;
   position: relative;
-  overflow: hidden;
   @media ${devices.tablet} {
     width: 50%;
     padding: 6em;

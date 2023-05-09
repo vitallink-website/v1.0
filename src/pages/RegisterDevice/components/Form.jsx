@@ -5,7 +5,6 @@ import { InputTextGroup } from "../../../components/reusable/InputTextGroup";
 import { useNavigate } from "react-router-dom";
 import { Col, Container, Row } from "./CSS";
 
-
 const RegisterForm = () => {
   const [form, setForm] = useState({
     serial: "",
@@ -13,6 +12,12 @@ const RegisterForm = () => {
   const onChangeValue = (n, v) => setForm({ ...form, [n]: v });
 
   const history = useNavigate();
+
+  const submitRegisteryCode = () => {
+    // todo
+    // implement registery
+    history("/?is_valid=true"); // or false
+  };
 
   return (
     <Container>
@@ -31,7 +36,11 @@ const RegisterForm = () => {
           </Button>
         </Col>
         <Col>
-          <Button disabled={form.serial < 1000000} style={ButtonStyle}>
+          <Button
+            disabled={form.serial < 1000000}
+            style={ButtonStyle}
+            onClick={submitRegisteryCode}
+          >
             Continue {">"}
           </Button>
         </Col>

@@ -19,3 +19,12 @@ body,
 body {
   background-color: var(--bg-color);
 }
+
+/*custom primereact styles*/
+
+.p-dropdown .p-dropdown-label.p-placeholder {
+  color: white !important;
+}
+.p-dropdown .p-dropdown-trigger {
+  width: 0 !important;
+}
