@@ -26,10 +26,12 @@ function MeasureBase({
 }) {
   const bluetooth = useContext(DeviceContext);
   const [loading, setLoading] = useState(false);
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState("");
   const [data, setData] = useState(init);
   const [filteredData, setFilteredData] = useState();
   const [sampleTime, setTime] = useState(10);
+
+  const [funcCall, setFuncCall] = useState(false);
 
   const [show, setShow] = useState(false);
   const closeModal = () => setShow(false);
@@ -37,7 +39,7 @@ function MeasureBase({
 
   const [filterShow, setFilterShow] = useState(0);
   const changeFilterShow = (number) => {
-    active === -1 ? setFilterShow(number) : setFilterShow(0);
+    active === 0 ? setFilterShow(number) : setFilterShow(0);
   };
   const [bluShow, setBluShow] = useState(true);
   const closeBluModal = () => setBluShow(false);
@@ -60,7 +62,6 @@ function MeasureBase({
   const endTime = useRef(null);
 
   const hanldeCallback = (inputs) => {
-    console.log("heyyy: " + active)
     if (active === 1) {
       KEYS.map((key) => {
         if (values.includes(key)) {
@@ -76,6 +77,9 @@ function MeasureBase({
         pcg: temp.pcg,
         temperature: temp.temperature,
       });
+    }
+    else if(active === 0) {
+      setFuncCall(1);
     }
   };
 
@@ -93,11 +97,11 @@ function MeasureBase({
   }, []);
 
   useEffect(() => {
+    hanldeCallback(data);
     if (active === 1) {
       closeModal();
       setLoading(false);
-    } else if (active === -1) {
-      console.log(data.pcg.length);
+    } else if (active === 0 && funcCall == 1) {
       action({
         data: data,
         time: Math.ceil(bluetooth.GetTime()),
@@ -107,7 +111,7 @@ function MeasureBase({
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active]);
+  }, [active, funcCall]);
 
   useEffect(() => {
     return bluetooth.turnOff;
@@ -125,8 +129,7 @@ function MeasureBase({
       bluetooth.start();
     }, [pendingTime]);
     endTime.current = setTimeout(() => {
-      console.log("end of time");
-      setActive(-1);
+      setActive(active => 1-active);
       bluetooth.stop();
     }, [sampleTime * 1000 + pendingTime]);
   };
@@ -138,7 +141,7 @@ function MeasureBase({
           setForceScale(forceScale + 1);
         return data[key].slice(scale * forceScale, data[key].length);
       }
-      if (active === -1) {
+      if (active === 0) {
         return data[key];
       }
     }
@@ -150,8 +153,7 @@ function MeasureBase({
         const start = data[key].length > scale ? data[key].length - scale : 0;
         return data[key].slice(start, data[key].length);
       }
-      if (active === -1) {
-        console.log(data[key].length);
+      if (active === 0) {
         return data[key];
       }
     }
@@ -163,12 +165,12 @@ function MeasureBase({
       <br />
       <br />
       <Row className="align-items-center">
-        <Col xs={12} sm={10}>
+        <Col md={10} xs={12} sm={10}>
           {title(openModal, changeFilterShow, filterShow)}
         </Col>
-        <Col xs={12} sm={2}>
+        <Col md = {2} xs={12} sm={2}>
           <Form>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form.Group className="mt-5" controlId="formBasicEmail">
               <Form.Label>Sample Time</Form.Label>
               <Form.Control
                 onChange={(e) => setTime(e.target.value)}
@@ -185,13 +187,17 @@ function MeasureBase({
         {diagrams.map((key) => (
           <Col xs={12} sm={diagrams.length % 2 === 0 ? 6 : 12} key={key.name}>
             <Diagram
-              dataKey = {key.name}
-              flow = {getStreamOfData(key.name)}
-              texts = {texts}
-              calculatedDots = {key.calculatedDots}
-              dotShow = {filterShow}
-              fs = {active === 1 ? 1 : Math.ceil(data[values[0]].length / sampleTime)}
-              xAxisDomain = {
+              dataKey={key.name}
+              flow={getStreamOfData(key.name)}
+              texts={texts}
+              calculatedDots={key.calculatedDots}
+              dotShow={filterShow}
+              fs={
+                active === 1
+                  ? 1
+                  : Math.ceil(data[values[0]].length / sampleTime)
+              }
+              xAxisDomain={
                 values.includes("temperature")
                   ? sampleTime
                   : diagrams.length % 2 === 0
@@ -212,6 +218,8 @@ function MeasureBase({
         show={show}
         closeModal={closeModal}
         autoStart={startInput}
+        message = {values.includes("pcg") ? "put the microphone on your selected position and press" :
+                                            "Put your hand on the device, after calibration it start its process"}
       />
       {children()}
       {bluetooth.isConnected ? (

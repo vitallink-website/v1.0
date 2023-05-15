@@ -32,6 +32,14 @@ const Oximetry = () => {
     setQualityIndex(signal_output[2]);
   };
 
+  function makeArrayFormString(arr) {
+    return arr.slice(1, -1)
+      .split(",")
+      .map(function (item) {
+        return Number(item);
+      });
+  }
+
   async function calculateBeatPerMinuteAPI(inputs) {
     console.log(inputs.data);
     let payload = {
@@ -46,19 +54,9 @@ const Oximetry = () => {
       setSPO2(res.data.SpO2);
       setQualityIndex(res.data.Quality_index);
       return [
-        res.data.clear_IR
-          .slice(1, -1)
-          .split(",")
-          .map(function (item) {
-            return Number(item);
-          }),
-          inputs.data.red,
-          res.data.clear_Red
-          .slice(1, -1)
-          .split(",")
-          .map(function (item) {
-            return Number(item);
-          })
+        makeArrayFormString(res.data.clear_IR),
+        inputs.data.red,
+        makeArrayFormString(res.data.clear_Red),
       ];
     } else
       Swal.fire({
@@ -125,13 +123,13 @@ const Oximetry = () => {
                 >
                   <Dropdown.Item
                     onClick={() => handleChange(0, changeFilterShow)}
-                    active={filterActiveNum === 0}
+                    active={filterActiveNum === 0 || filterActiveNum === 1}
                   >
                     ir
                   </Dropdown.Item>
                   <Dropdown.Item
                     onClick={() => handleChange(2, changeFilterShow)}
-                    active={filterActiveNum === 2}
+                    active={filterActiveNum === 2 || filterActiveNum === 3}
                   >
                     red
                   </Dropdown.Item>
@@ -148,7 +146,7 @@ const Oximetry = () => {
                     )
                   }
                 >
-                  {filterActiveNum % 2 ? "Filterd" : "main"} signal
+                  {filterActiveNum % 2 ? "main" : "Filterd"} signal
                 </Button>
               </Col>
             </Row>

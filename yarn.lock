@@ -3489,6 +3489,11 @@
   "resolved" "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001436.tgz"
   "version" "1.0.30001436"
 
+"canvas-to-svg@^1.0.3":
+  "integrity" "sha512-qWQKPW0lRkOCClRmKtTzC5dNLtdOCzEOPYWASvW9ggkq4cRYL0o8RnC4fPc4tNE5WGm5YzJTGFztFG0JuCGXcQ=="
+  "resolved" "https://registry.npmjs.org/canvas-to-svg/-/canvas-to-svg-1.0.3.tgz"
+  "version" "1.0.3"
+
 "canvasjs-react-charts@^1.0.5":
   "integrity" "sha512-8P3KnAvCqftmqf4O/xG6PlIDcTr0IvzuE4l6ACXIOROKtFmnmUu/xPEeq+0vI9Xvh7zXjzZvRqw0p1uxXr034g=="
   "resolved" "https://registry.npmjs.org/canvasjs-react-charts/-/canvasjs-react-charts-1.0.5.tgz"

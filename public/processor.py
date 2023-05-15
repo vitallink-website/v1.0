@@ -4,7 +4,7 @@ from pyodide.ffi import create_proxy
 import pandas as pd
 from copy import copy
 from scipy.interpolate import pchip_interpolate
-from scipy.signal import butter, filtfilt, find_peaks, lfilter
+from scipy.signal import butter, filtfilt, find_peaks, lfilter, bessel
 from scipy.fft import fft, fftshift
 
 
