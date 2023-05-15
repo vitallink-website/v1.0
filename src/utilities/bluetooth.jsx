@@ -12,9 +12,7 @@ export const useSignalFeed = () => {
   const [write_charastirctic, setCharastircticW] = useState();
   const [duration, setDuration] = useState(0);
   const [isConnected, setIsConnected] = useState(false);
-  const [finish, setFinish] = useState(false);
   const Data = [];
-
   const disconnect = () => {
     console.log("disconnect");
 
@@ -26,7 +24,7 @@ export const useSignalFeed = () => {
   const start = async () => {
     console.log("start");
     Data.splice(0, Data.length);
-    setFinish(0);
+
     setDuration(performance.now());
     read_charastirctic.startNotifications();
   };
@@ -40,7 +38,6 @@ export const useSignalFeed = () => {
   const stop = async () => {
     console.log("stop");
     setDuration(0);
-    setFinish(1);
     read_charastirctic.stopNotifications();
   };
 
@@ -95,7 +92,6 @@ export const useSignalFeed = () => {
         const force = [];
         const pcg = [];
         const temperature = [];
-        if(finish) return;
         if (command === 0x01 || command === 0x02) {
           for (let i = 0; i < 8; i++) {
             red.push(data.srcElement.value.getUint16(8 * i + 0, true));

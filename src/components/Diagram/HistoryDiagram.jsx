@@ -34,8 +34,15 @@ const HistoryDiagram = ({ dataKey = "", flow = [], texts = "" }) => {
           <Tooltip />
           <Legend />
           <Line dataKey={dataKey} stroke="#8884d8" animationDuration={500} />
+          <Brush />
         </LineChart>
       </ResponsiveContainer>
+      <Button onClick={(e) => downloadSVGAsPNG(e, dataKey, texts)}>
+        download PNG
+      </Button>
+      <Button onClick={(e) => downloadPDFAsPNG(e, dataKey, texts)}>
+        download PDF
+      </Button>
     </div>
   );
 };

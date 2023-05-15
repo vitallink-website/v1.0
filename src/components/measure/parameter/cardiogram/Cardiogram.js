@@ -5,9 +5,9 @@ import { shareData } from "../../share/Share";
 import MeasureBase from "../../../MeasureBase/MeasureBase";
 import { useAddToDB } from "../../../../utilities/AddToDB";
 import { FcCheckmark } from "react-icons/fc";
+import { set } from "rsuite/esm/utils/dateUtils";
 import AbnormalityDetection from "./AbnormalityDetection";
 import Swal from "sweetalert2";
-import axios from "axios";
 
 function Cardiogram() {
   const dbFunc = useAddToDB("cardiogramData");
@@ -24,7 +24,6 @@ function Cardiogram() {
   const [singleSpike, setSingleSpike] = useState([]);
   const [PQRST_ss, setPQRST_ss] = useState([]);
   const [ArrythmiaType, setArrythmiaType] = useState("");
-
   const types = [
     "Normal",
     "Sinus Tachicardia",
@@ -33,7 +32,6 @@ function Cardiogram() {
     "Paroxysmal Atrial Tachycardia (PAT)",
     "Multifocul Atrial Tachycardia (MAT)",
   ];
-
   function makePQRST(ps, qs, rs, ss, ts) {
     let newArr = [];
     for (const p of ps) newArr.push({ x: Number(p), color: "red" });
@@ -41,50 +39,67 @@ function Cardiogram() {
     for (const r of rs) newArr.push({ x: Number(r), color: "black" });
     for (const s of ss) newArr.push({ x: Number(s), color: "white" });
     for (const t of ts) newArr.push({ x: Number(t), color: "orange" });
-    // console.log("newParr: " + JSON.stringify(newArr));
+    console.log("newParr: " + JSON.stringify(newArr));
     return newArr;
   }
 
-  function makeArrayFormString(arr) {
-    return arr.slice(1, -1)
-      .split(",")
-      .map(function (item) {
-        return Number(item);
-      });
-  }
-
-  async function calculateBeatPerMinuteAPI(inputs){
+  async function calculateBeatPerMinute(inputs) {
     console.log(inputs.data);
-    let payload = {
-      ECG: "[" + inputs.data.ecg.toString() + "]",
-      fs: inputs.freq,
-    };
-    let res = await axios.post("http://127.0.0.1:5000//ECG_signal", payload);
-    console.log(res.data);
-    if(!Number(res.data.Try_Again)){
-      setHeartBeat(Number(res.data.HeartRate));
-      setPR_RR_Interval(res.data.PR_RR);
-      setQRSDuration(res.data.QRS_duration);
-      setQualityIndex(res.data.Quality_index);
+    console.log(inputs.freq);
+    const signal_output = Array.from(
+      // eslint-disable-next-line no-undef
+      await ECG_signal_processing(inputs.data.ecg, inputs.freq)
+    ); // HeartRate, PR_RR, QRS_duration, Quality_index, P, Q, R, S, T
+    console.log(signal_output);
+    if (inputs.freq !== 0 && signal_output.length !== 0 && !signal_output[16]) {
+      console.log(signal_output[0]);
+      console.log(signal_output[1]);
+      console.log(signal_output[2]);
+      console.log(signal_output[3]);
+      // console.log(Array.from(signal_output[4]));
+      // console.log(Array.from(signal_output[5]));
+      // console.log(Array.from(signal_output[6]));
+      // console.log(Array.from(signal_output[7]));
+      // console.log(Array.from(signal_output[8]));
+      // console.log(Array.from(signal_output[9]));
+      const heartBeat = parseInt(signal_output[Object.keys(signal_output)[0]]);
+      const PR_RR_Interval = parseFloat(
+        signal_output[Object.keys(signal_output)[1]]
+      );
+      const QRS_Duration = parseFloat(
+        signal_output[Object.keys(signal_output)[2]]
+      );
+      setHeartBeat(heartBeat);
+      setPR_RR_Interval(PR_RR_Interval);
+      setQRSDuration(QRS_Duration);
+      setQualityIndex(
+        parseInt(signal_output[Object.keys(signal_output)[3]]).toFixed(0)
+      );
+      // console.log(Array.from(signal_output[10]));
+      // console.log(Array.from(signal_output[11]));
+      // console.log(Array.from(signal_output[12]));
+
+      setSsTime(Array.from(signal_output[10]));
+      setSingleSpike(Array.from(signal_output[11]));
+      let ssPQRST = Array.from(signal_output[12]);
+      console.log("ss pqrst" + ssPQRST);
+      setPQRST_ss(ssPQRST);
+      setHrv(Array.from(signal_output[13]));
+      setHrvVal(parseInt(signal_output[Object.keys(signal_output)[14]]));
+      setArrythmiaType(parseInt(signal_output[Object.keys(signal_output)[15]]));
+      // console.log(Array.from(signal_output[13]));
       let newArr = makePQRST(
-        makeArrayFormString(res.data.P),
-        makeArrayFormString(res.data.Q),
-        makeArrayFormString(res.data.R),
-        makeArrayFormString(res.data.S),
-        makeArrayFormString(res.data.T)
+        Array.from(signal_output[4]),
+        Array.from(signal_output[5]),
+        Array.from(signal_output[6]),
+        Array.from(signal_output[7]),
+        Array.from(signal_output[8])
       );
       setDot(newArr);
-
-      setSsTime(makeArrayFormString(res.data.ss_time));
-      setSingleSpike(makeArrayFormString(res.data.single_spike));
-      setPQRST_ss(makeArrayFormString(res.data.PQRST_ss));
-      setHrv(makeArrayFormString(res.data.hrv));
-      setHrvVal(res.data.hrv_val);
-      setArrythmiaType(parseInt(res.data.arrhythmia_type_PQRST));
-      let filterd_signal = makeArrayFormString(res.data.ECG_filtered);
+      let filterd_signal = Array.from(signal_output[9]);
       return [filterd_signal];
-    }
-    else {
+    } else {
+      console.log("array is empty or freq is 0");
       Swal.fire({
         icon: "error",
         title: "Something went wrong",
@@ -126,7 +141,7 @@ function Cardiogram() {
           },
         ],
         command: 0x02,
-        action: calculateBeatPerMinuteAPI,
+        action: calculateBeatPerMinute,
         flushData: flushDatas,
         texts: [
           "Heart beat: " + heartBeat,
@@ -215,11 +230,7 @@ function Cardiogram() {
                       "Heart beat: " + heartBeat,
                       "PR/RR Interval: " + PR_RR_Interval,
                       "QRS Duration: " + QRS_Duration,
-                    ], 
-                    ['#chartContainerAbnormality1 canvas', '#chartContainerAbnormality2 canvas'],
-                    [ ["hrv: " + hrvVal],
-                      ["Arrythmia Type: " + types[ArrythmiaType]]]
-                    )
+                    ])
                   }
                 >
                   output

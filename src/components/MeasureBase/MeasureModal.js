@@ -1,6 +1,6 @@
 import { Button, Modal, Spinner } from "react-bootstrap";
 
-export const MeasureModal = ({ loading, show, closeModal, autoStart, message }) => {
+export const MeasureModal = ({ loading, show, closeModal, autoStart }) => {
   return (
     <Modal show={show} onHide={closeModal}>
       <Modal.Header closeButton>
@@ -8,12 +8,12 @@ export const MeasureModal = ({ loading, show, closeModal, autoStart, message }) 
       </Modal.Header>
       {loading ? (
         <Modal.Body style={{ display: "flex", alignItems: "center" }}>
-          Please wait until plotting starts!
+          Please Hold your finger until plotting starts!
           <Spinner animation="border" />
         </Modal.Body>
       ) : (
         <Modal.Body>
-          {message}
+          Put your hand on the device, after calibration it start its process
         </Modal.Body>
       )}
       <Modal.Footer>

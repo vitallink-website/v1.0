@@ -87,10 +87,10 @@ function AbnormalityDetection({
 
   return (
     <Row>
-      <Col id = "chartContainerAbnormality1">
+      <Col>
         <CanvasJSChart options={getOptions("hrv")} />
       </Col>
-      <Col id = "chartContainerAbnormality2">
+      <Col>
         <CanvasJSChart options={getOptions("singleSpike")} />
       </Col>
     </Row>
