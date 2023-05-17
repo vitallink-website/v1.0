@@ -180,6 +180,11 @@ const Oximetry = () => {
                 </h5>
               </Col>
             </Row>
+            <Row>
+              <Col>
+              <Button onClick={() => sendData()}>send data to backend</Button>
+              </Col>
+            </Row>
             <Row className="measure-button-row">
               <Col>
                 <Link to="/Measure/Measurement">
