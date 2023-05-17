@@ -73,7 +73,7 @@ const Oximetry = () => {
         fs:"130"
   
     };
-    let res = await axios.post("https:/194.147.142.88:5000/PPG_signal", payload);
+    let res = await axios.post("https:/194.147.142.88:443/PPG_signal", payload);
     console.log(res.data);
   }
 
