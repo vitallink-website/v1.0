@@ -32,7 +32,7 @@ function Home({ isSignedIn, isUserSelected }) {
       <div className="home-section">
         {isSignedIn && isUserSelected && (
           <Row>
-            <h1>Welcome to the Hekidesk!</h1>
+            <h1>Welcome to the Vital Link!</h1>
             <h6>Select Measurement to start the process.</h6>
             <Link to="/Measure">
               <Button className="register-btn-inner" size="lg">

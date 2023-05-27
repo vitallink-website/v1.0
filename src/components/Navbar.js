@@ -81,7 +81,7 @@ function NavBar({ username }) {
           </Nav>
           <Nav>
             <Nav.Item className="nav-title">
-              <h1>HekiDesk</h1>
+              <h1>Vital Link</h1>
             </Nav.Item>
           </Nav>
 
