@@ -5,6 +5,8 @@ import MeasureBase from "../../../MeasureBase/MeasureBase";
 import { useAddToDB } from "../../../../utilities/AddToDB";
 import { UserContext } from "../../../../App";
 import { FcCheckmark } from "react-icons/fc";
+import Swal from "sweetalert2";
+import axios from "axios";
 
 function BPWithoutCalibration() {
   const UserInfo = useContext(UserContext);
@@ -16,14 +18,26 @@ function BPWithoutCalibration() {
   
   async function calculate (inputs) {
     console.log(inputs.data);
-    const signal_output = Array.from(
-    // eslint-disable-next-line no-undef
-      await BloodPressure(inputs.data.ir, inputs.data.force, inputs.freq)
-    ); // HeartRate, SpO2, Quality_index
-    const SYS_ = 100;//parseInt(signal_output[0]);
-    const DIA_ = 200;//parseInt(signal_output[1]);
-    setSYS(SYS_);
-    setDIA(DIA_);  
+    let payload = {
+      IR: "[" + inputs.data.ecg.toString() + "]",
+      fource: "[" + inputs.data.force.toString() + "]",
+      fs: inputs.freq,
+    };
+    let res = await axios.post("http://127.0.0.1:5000//bp_signal", payload);
+    console.log(res.data);
+    if(!Number(res.data.Try_Again)){
+      setSYS(res.data.Diastolic);
+      setDIA(res.data.Systolic);  
+      setQualityIndex(res.data.Quality_index);
+    }
+    else {
+      Swal.fire({
+        icon: "error",
+        title: "Something went wrong",
+        text: "Please repeat procedure!",
+      });
+    }
+    
   };
 
   function addToDB(){
