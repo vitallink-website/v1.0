@@ -19,8 +19,8 @@ function BPWithoutCalibration() {
   async function calculate (inputs) {
     console.log(inputs.data);
     let payload = {
-      IR: "[" + inputs.data.ecg.toString() + "]",
-      fource: "[" + inputs.data.force.toString() + "]",
+      IR: "[" + inputs.data.ir.toString() + "]",
+      force: "[" + inputs.data.force.toString() + "]",
       fs: inputs.freq,
     };
     let res = await axios.post("http://127.0.0.1:5000//bp_signal", payload);
