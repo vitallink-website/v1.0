@@ -80,6 +80,10 @@ const Oximetry = () => {
     };
     let res = await axios.post("http://127.0.0.1:5000//PPG_signal", payload);
     console.log(res.data);
+    // var dataParameter = {};
+    // dataParameter["heartBeatPPG"] = 90;
+    // dataParameter["SPO2"] = 90;
+    // dbFunc.updateHistory(dataParameter);
   }
 
   function addToDB() {

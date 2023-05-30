@@ -32,8 +32,9 @@ export const useAddToDB = (DBName) => {
         var newData = {};
         if (typeof data !== 'undefined')
           newData = data.parameters;
-        console.log("new: " + JSON.stringify(newData));
-        newParameter = { ...timeData, ...newData };
+          console.log("old: " + JSON.stringify(newData));
+          newParameter = { ...newData, ...timeData };
+          console.log("new: " + JSON.stringify(newParameter));
       })
       .then(() => {
         updateTimeHistory({
