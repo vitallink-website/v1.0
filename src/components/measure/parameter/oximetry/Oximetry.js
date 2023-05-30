@@ -33,8 +33,11 @@ const Oximetry = () => {
   };
 
   function makeArrayFormString(arr) {
-    return arr.slice(1, -1)
-      .split(",")
+    return arr
+      // .slice(1, -1)
+      // .replace(/\n/g, " ")
+      // .split(/\b\s+/)
+      .split(" ")
       .map(function (item) {
         return Number(item);
       });
@@ -57,6 +60,8 @@ const Oximetry = () => {
         makeArrayFormString(res.data.clear_IR),
         inputs.data.red,
         makeArrayFormString(res.data.clear_Red),
+        makeArrayFormString(res.data.PPG_clear),
+        makeArrayFormString(res.data.PPG_clear),
       ];
     } else
       Swal.fire({
@@ -143,6 +148,12 @@ const Oximetry = () => {
                     active={filterActiveNum === 2 || filterActiveNum === 3}
                   >
                     red
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={() => handleChange(4, changeFilterShow)}
+                    active={filterActiveNum === 4 || filterActiveNum === 5}
+                  >
+                    filtered ppg
                   </Dropdown.Item>
                 </DropdownButton>
               </Col>
