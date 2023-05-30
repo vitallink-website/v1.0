@@ -224,7 +224,7 @@ function HeartAndLungSound() {
                     )
                   }
                 >
-                  {filterActiveNum % 2 ? "Filterd" : "main"} signal
+                  {filterActiveNum % 2 ? "main" : "filtered"} signal
                 </Button>
               </Col>
             </Row>

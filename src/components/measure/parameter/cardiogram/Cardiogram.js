@@ -46,8 +46,8 @@ function Cardiogram() {
   }
 
   function makeArrayFormString(arr) {
-    return arr.slice(1, -1)
-      .split(",")
+    return arr
+      .split(" ")
       .map(function (item) {
         return Number(item);
       });
