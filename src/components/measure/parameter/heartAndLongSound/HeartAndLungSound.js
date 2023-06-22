@@ -60,7 +60,7 @@ function HeartAndLungSound() {
       fs: inputs.freq,
     };
     let res = await axios.post(
-      "http://127.0.0.1:5000//PCG_signal/heart",
+      "https://194.147.142.88//PCG_signal/heart",
       payload
     );
     console.log(res);
@@ -73,8 +73,8 @@ function HeartAndLungSound() {
     };
     let addr =
       position === "heart"
-        ? "http://127.0.0.1:5000//PCG_signal/heart"
-        : "http://127.0.0.1:5000//PCG_signal/optional";
+        ? "https://194.147.142.88//PCG_signal/heart"
+        : "https://194.147.142.88//PCG_signal/optional";
     let res = await axios.post(addr, payload);
     return res.data;
   }
@@ -127,9 +127,9 @@ function HeartAndLungSound() {
       sound: "[" + finalSound.toString() + "]",
       fs: fs,
     };
-    let res = await axios.post("http://127.0.0.1:5000/rcv_audio", payload);
+    let res = await axios.post("https://194.147.142.88/rcv_audio", payload);
     if (res.statusText === "OK") {
-      const { data } = await axios.get("http://127.0.0.1:5000/snd_audio", {
+      const { data } = await axios.get("https://194.147.142.88/snd_audio", {
         responseType: "arraybuffer",
         headers: {
           "Content-Type": "audio/x-wav",

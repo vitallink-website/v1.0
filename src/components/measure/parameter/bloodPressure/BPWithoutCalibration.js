@@ -23,7 +23,7 @@ function BPWithoutCalibration() {
       force: "[" + inputs.data.force.toString() + "]",
       fs: inputs.freq,
     };
-    let res = await axios.post("http://127.0.0.1:5000//bp_signal", payload);
+    let res = await axios.post("https://194.147.142.88//bp_signal", payload);
     console.log(res.data);
     if(!Number(res.data.Try_Again)){
       setSYS(res.data.Diastolic);

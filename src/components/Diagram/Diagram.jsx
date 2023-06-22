@@ -3,8 +3,8 @@ import {
   downloadPDFAsPNG,
   downloadSVGAsPNG,
 } from "../../utilities/downloadFile";
-import CanvasJSReact from "./canvasjs.react";
 import { Button } from "react-bootstrap";
+import CanvasJSReact from "./canvasjs.react";
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 const Diagram = ({

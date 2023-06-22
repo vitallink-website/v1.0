@@ -50,7 +50,7 @@ const Oximetry = () => {
       Red: "[" + inputs.data.red.toString() + "]",
       fs: inputs.freq,
     };
-    let res = await axios.post("http://127.0.0.1:5000//PPG_signal", payload);
+    let res = await axios.post("https://194.147.142.88//PPG_signal", payload);
     console.log(res.data);
     if (!Number(res.data.Try_Again)) {
       setHeartBeat(res.data.HeartRate);
@@ -78,7 +78,7 @@ const Oximetry = () => {
         fs:"130"
   
     };
-    let res = await axios.post("http://127.0.0.1:5000//PPG_signal", payload);
+    let res = await axios.post("https://194.147.142.88/PPG_signal", payload);
     console.log(res.data);
     // var dataParameter = {};
     // dataParameter["heartBeatPPG"] = 90;
