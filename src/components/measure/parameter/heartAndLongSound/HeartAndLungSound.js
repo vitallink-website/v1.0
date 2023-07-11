@@ -35,14 +35,16 @@ function HeartAndLungSound() {
   };
 
   function makeArrayFormString(arr) {
-    return arr
-      // .slice(1, -1)
-      // .replace(/\n/g, " ")
-      // .split(/\b\s+/)
-      .split(" ")
-      .map(function (item) {
-        return Number(item);
-      });
+    return (
+      arr
+        // .slice(1, -1)
+        // .replace(/\n/g, " ")
+        // .split(/\b\s+/)
+        .split(" ")
+        .map(function (item) {
+          return Number(item);
+        })
+    );
   }
 
   function addToDB() {
@@ -60,7 +62,7 @@ function HeartAndLungSound() {
       fs: inputs.freq,
     };
     let res = await axios.post(
-      "https://194.147.142.88//PCG_signal/heart",
+      "https://api.hekidesk.com//PCG_signal/heart",
       payload
     );
     console.log(res);
@@ -73,8 +75,8 @@ function HeartAndLungSound() {
     };
     let addr =
       position === "heart"
-        ? "https://194.147.142.88//PCG_signal/heart"
-        : "https://194.147.142.88//PCG_signal/optional";
+        ? "https://api.hekidesk.com//PCG_signal/heart"
+        : "https://api.hekidesk.com//PCG_signal/optional";
     let res = await axios.post(addr, payload);
     return res.data;
   }
@@ -127,9 +129,9 @@ function HeartAndLungSound() {
       sound: "[" + finalSound.toString() + "]",
       fs: fs,
     };
-    let res = await axios.post("https://194.147.142.88/rcv_audio", payload);
+    let res = await axios.post("https://api.hekidesk.com/rcv_audio", payload);
     if (res.statusText === "OK") {
-      const { data } = await axios.get("https://194.147.142.88/snd_audio", {
+      const { data } = await axios.get("https://api.hekidesk.com/snd_audio", {
         responseType: "arraybuffer",
         headers: {
           "Content-Type": "audio/x-wav",
@@ -196,12 +198,12 @@ function HeartAndLungSound() {
                     onClick={() => handleChange(4, changeFilterShow)}
                     active={filterActiveNum === 4 || filterActiveNum === 5}
                   >
-                  lung
+                    lung
                   </Dropdown.Item>
                   <Dropdown.Item
                     onClick={() => handleChange(2, changeFilterShow)}
                     active={filterActiveNum === 2 || filterActiveNum === 3}
-                    >
+                  >
                     heart
                   </Dropdown.Item>
                   <Dropdown.Item

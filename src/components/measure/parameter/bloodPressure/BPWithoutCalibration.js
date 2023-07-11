@@ -15,32 +15,30 @@ function BPWithoutCalibration() {
   const [qualityIndex, setQualityIndex] = useState(0);
   const dbFunc = useAddToDB("BPData");
   const [saved, setSaved] = useState(0);
-  
-  async function calculate (inputs) {
+
+  async function calculate(inputs) {
     console.log(inputs.data);
     let payload = {
       IR: "[" + inputs.data.ir.toString() + "]",
       force: "[" + inputs.data.force.toString() + "]",
       fs: inputs.freq,
     };
-    let res = await axios.post("https://194.147.142.88//bp_signal", payload);
+    let res = await axios.post("https://api.hekidesk.com//bp_signal", payload);
     console.log(res.data);
-    if(!Number(res.data.Try_Again)){
+    if (!Number(res.data.Try_Again)) {
       setSYS(res.data.Diastolic);
-      setDIA(res.data.Systolic);  
+      setDIA(res.data.Systolic);
       setQualityIndex(res.data.Quality_index);
-    }
-    else {
+    } else {
       Swal.fire({
         icon: "error",
         title: "Something went wrong",
         text: "Please repeat procedure!",
       });
     }
-    
-  };
+  }
 
-  function addToDB(){
+  function addToDB() {
     var dataParameter = {};
     dataParameter["SYS"] = SYS;
     dataParameter["DIA"] = DIA;
@@ -48,11 +46,12 @@ function BPWithoutCalibration() {
     setSaved(1);
   }
 
-  const flushDatas = () => {setSaved(0);
-                            setDIA('');
-                            setSYS('');
-                            setQualityIndex('');
-                          }
+  const flushDatas = () => {
+    setSaved(0);
+    setDIA("");
+    setSYS("");
+    setQualityIndex("");
+  };
 
   return (
     <MeasureBase
@@ -61,7 +60,7 @@ function BPWithoutCalibration() {
         diagrams: [
           {
             name: "ir",
-            calculatedDots: []
+            calculatedDots: [],
           },
           {
             name: "force",
@@ -71,7 +70,10 @@ function BPWithoutCalibration() {
         command: 0x01,
         action: calculate,
         flushData: flushDatas,
-        texts: ["SYS/DIA: " + SYS + "/" + DIA, "Quality index: " + qualityIndex],
+        texts: [
+          "SYS/DIA: " + SYS + "/" + DIA,
+          "Quality index: " + qualityIndex,
+        ],
         title: (openModal) => (
           <>
             <h2 className="measure-title">
@@ -92,30 +94,32 @@ function BPWithoutCalibration() {
         ),
         children: () => (
           <>
-          <Row className="measure-button-row">
-            <Col>
-              <Link to="/Measure/Measurement">
-                <Button> Back</Button>
-              </Link>
-            </Col>
-            <Col>
-              <h5 style={{ color: "black" }}>
-                SYS/DIA: {SYS}/{DIA}  (mmHg)
-              </h5>
-            </Col>
-            <Col>
-              <h5 style={{ color: "black" }}>
-                Quality Index: {Number(0.0).toFixed(2)} (%)
-              </h5>
-            </Col>
-            <Col>
-              <Button onClick={() => {}}>Output</Button>
-            </Col>
-            <Col>
-                <Button onClick={() => addToDB()} >Save {saved ? <FcCheckmark /> : "" }</Button>
-            </Col>
-          </Row>
-        </>
+            <Row className="measure-button-row">
+              <Col>
+                <Link to="/Measure/Measurement">
+                  <Button> Back</Button>
+                </Link>
+              </Col>
+              <Col>
+                <h5 style={{ color: "black" }}>
+                  SYS/DIA: {SYS}/{DIA} (mmHg)
+                </h5>
+              </Col>
+              <Col>
+                <h5 style={{ color: "black" }}>
+                  Quality Index: {Number(0.0).toFixed(2)} (%)
+                </h5>
+              </Col>
+              <Col>
+                <Button onClick={() => {}}>Output</Button>
+              </Col>
+              <Col>
+                <Button onClick={() => addToDB()}>
+                  Save {saved ? <FcCheckmark /> : ""}
+                </Button>
+              </Col>
+            </Row>
+          </>
         ),
       }}
     />

@@ -46,22 +46,20 @@ function Cardiogram() {
   }
 
   function makeArrayFormString(arr) {
-    return arr
-      .split(" ")
-      .map(function (item) {
-        return Number(item);
-      });
+    return arr.split(" ").map(function (item) {
+      return Number(item);
+    });
   }
 
-  async function calculateBeatPerMinuteAPI(inputs){
+  async function calculateBeatPerMinuteAPI(inputs) {
     console.log(inputs.data);
     let payload = {
       ECG: "[" + inputs.data.ecg.toString() + "]",
       fs: inputs.freq,
     };
-    let res = await axios.post("https://194.147.142.88//ECG_signal", payload);
+    let res = await axios.post("https://api.hekidesk.com//ECG_signal", payload);
     console.log(res.data);
-    if(!Number(res.data.Try_Again)){
+    if (!Number(res.data.Try_Again)) {
       setHeartBeat(Number(res.data.HeartRate));
       setPR_RR_Interval(res.data.PR_RR);
       setQRSDuration(res.data.QRS_duration);
@@ -83,8 +81,7 @@ function Cardiogram() {
       setArrythmiaType(parseInt(res.data.arrhythmia_type_PQRST));
       let filterd_signal = makeArrayFormString(res.data.ECG_filtered);
       return [filterd_signal];
-    }
-    else {
+    } else {
       Swal.fire({
         icon: "error",
         title: "Something went wrong",
@@ -211,14 +208,21 @@ function Cardiogram() {
               <Col>
                 <Button
                   onClick={() =>
-                    shareData("CardiogramData", [
-                      "Heart beat: " + heartBeat,
-                      "PR/RR Interval: " + PR_RR_Interval,
-                      "QRS Duration: " + QRS_Duration,
-                    ], 
-                    ['#chartContainerAbnormality1 canvas', '#chartContainerAbnormality2 canvas'],
-                    [ ["hrv: " + hrvVal],
-                      ["Arrythmia Type: " + types[ArrythmiaType]]]
+                    shareData(
+                      "CardiogramData",
+                      [
+                        "Heart beat: " + heartBeat,
+                        "PR/RR Interval: " + PR_RR_Interval,
+                        "QRS Duration: " + QRS_Duration,
+                      ],
+                      [
+                        "#chartContainerAbnormality1 canvas",
+                        "#chartContainerAbnormality2 canvas",
+                      ],
+                      [
+                        ["hrv: " + hrvVal],
+                        ["Arrythmia Type: " + types[ArrythmiaType]],
+                      ]
                     )
                   }
                 >
